@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "e761b3cf-633d-11f0-a4e7-02f49fd3c111",
+  "decision_key": "Decision_Taxa_Happy_FLAVIA",
+  "decision_name": "FLAVIA Privado Define Taxa - Happy",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "dmn-defini-taxas (4).dmn",
+  "deployment_id": "e75d6e0c-633d-11f0-a4e7-02f49fd3c111",
+  "deployment_name": "flavia-dmn-defini-taxas",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-17T18:43:17.427+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:56+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

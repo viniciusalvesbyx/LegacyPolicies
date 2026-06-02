@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "5c5325df-eb41-11f0-ab49-2aa8a781191f",
+  "decision_key": "Definitions_CreditConditions_GPS",
+  "decision_name": "Definição Condições de Crédito GPS",
+  "tenant_id": "",
+  "version": 7,
+  "version_tag": "",
+  "resource": "dmn-defini-condicoes-credito-gps.dmn",
+  "deployment_id": "5c4fa36c-eb41-11f0-ab49-2aa8a781191f",
+  "deployment_name": "dmn-defini-condicoes-credito-gps",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2026-01-06T20:50:40.239+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:50+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

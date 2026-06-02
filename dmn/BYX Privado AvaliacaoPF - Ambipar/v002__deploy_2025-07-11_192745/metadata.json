@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "1ef2e5c3-5e8d-11f0-b05e-fe3e571a18f5",
+  "decision_key": "Definitions_AvaliacaoPF_Ambipar",
+  "decision_name": "BYX Privado AvaliacaoPF - Ambipar",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "dmn-avaliacao-pf-ambipar.dmn",
+  "deployment_id": "1ef09bd0-5e8d-11f0-b05e-fe3e571a18f5",
+  "deployment_name": "dmn-avaliacao-pf-ambipar",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-11T19:27:45.094+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:40+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

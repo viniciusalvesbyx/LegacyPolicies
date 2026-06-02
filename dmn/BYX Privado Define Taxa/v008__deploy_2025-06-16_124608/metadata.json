@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "Decision_Taxa:8:e03c84ad-4aaf-11f0-bc35-b6455c4bf4de",
+  "decision_key": "Decision_Taxa",
+  "decision_name": "BYX Privado Define Taxa",
+  "tenant_id": "",
+  "version": 8,
+  "version_tag": "",
+  "resource": "dmn-defini-taxas.dmn",
+  "deployment_id": "e037c9ba-4aaf-11f0-bc35-b6455c4bf4de",
+  "deployment_name": "dmn-defini-taxas",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-06-16T12:46:08.901+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:43+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

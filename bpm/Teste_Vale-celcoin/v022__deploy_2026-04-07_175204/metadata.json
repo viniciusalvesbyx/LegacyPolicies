@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "7c9c4045-32aa-11f1-a9c1-3a5227d8f32a",
+  "process_key": "Process_c9aeeafd-b684-4f2a-94c2-1c56b1975e72",
+  "process_name": "Teste_Vale-celcoin",
+  "tenant_id": "",
+  "version": 22,
+  "version_tag": "",
+  "resource": "Teste_Vale-celcoin_20260406.bpmn",
+  "deployment_id": "7c9a1d63-32aa-11f1-a9c1-3a5227d8f32a",
+  "deployment_name": "Teste_Vale-celcoin_20260406",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2026-04-07T17:52:04.144+0000",
+  "extracted_at_utc": "2026-06-02T20:10:11+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

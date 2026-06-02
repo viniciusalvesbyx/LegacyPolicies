@@ -1,0 +1,844 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Decision_1" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Decision_Taxa" name="BYX Privado Define Taxa" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_0vau4bc" hitPolicy="FIRST">
+      <input id="Input_1" label="Total overdue amount" biodi:width="192" camunda:inputVariable="total_overdue_amount ">
+        <inputExpression id="InputExpression_1" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_06m62hb" label="Percent of committ income " camunda:inputVariable="percent_of_committ_income ">
+        <inputExpression id="LiteralExpression_1lt2eqz" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_182q72a" label="Score">
+        <inputExpression id="LiteralExpression_1aexjpb" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_1xk05tx" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_1x7zut0">
+          <text>"approved","denied"</text>
+        </outputValues>
+      </output>
+      <output id="Output_1" label="Tax" name="tax" typeRef="double" />
+      <output id="OutputClause_0aat76p" label="Min total number of installments" name="min_total_number_of_installments" typeRef="integer" />
+      <output id="OutputClause_0npijx7" label="Max total number of installments" name="max_total_number_of_installments" typeRef="integer" biodi:width="192" />
+      <output id="OutputClause_16o5w97" label="Max disbursement percent" name="max_disbursement_percent" typeRef="double" />
+      <rule id="DecisionRule_0xv8bat">
+        <inputEntry id="UnaryTests_0nwors3">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0lowfze">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ydr600">
+          <text>&lt;= 0.1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_196qasu">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1i26xzn">
+          <text>17.149</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0z3m4ea">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0lk3skm">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1a609sf">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0yn5rtb">
+        <inputEntry id="UnaryTests_1kvvtrc">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jmkkkx">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cj5q26">
+          <text>&lt;= 0.2</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1w6u38g">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15uxj0x">
+          <text>15.479</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_06io7pc">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ednbrx">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0hi8o2h">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0x9wl2x">
+        <inputEntry id="UnaryTests_1h87573">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05vsjbf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cwxbp0">
+          <text>&lt;= 0.3</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10n7bu0">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ce974d">
+          <text>14.689</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_07579b2">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0p5mxjo">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1od8v2s">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13r0o63">
+        <inputEntry id="UnaryTests_1c9n5i1">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10l3afp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kgm207">
+          <text>&lt;= 0.4</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_122ph2r">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1vojxm8">
+          <text>8.749</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19e2yrt">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0j544vj">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1u4tk2y">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1y9h196">
+        <inputEntry id="UnaryTests_00pvohb">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_067hqwm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11alnql">
+          <text>&lt;= 0.5</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0kup3gm">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0q9n2kc">
+          <text>7.669</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1plexxs">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ixpbxk">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_08l46jw">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ex62dk">
+        <inputEntry id="UnaryTests_0ldh68s">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1oj49qo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14fj4jw">
+          <text>&lt;= 0.6</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1tt6e16">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jbpg57">
+          <text>6.879</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0lo5v58">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1cexuu3">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0v9mo4k">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0xrdap2">
+        <inputEntry id="UnaryTests_0wwukcq">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_022g5zg">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_075l62t">
+          <text>&lt;= 0.7</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1szkxz7">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1r22y9k">
+          <text>5.789</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0trtlwg">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14zethu">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0odnjtk">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0eqmwk8">
+        <inputEntry id="UnaryTests_0wfc27g">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08ezgl2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1uovp52">
+          <text>&lt;= 0.8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_023akh2">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0k0h4q1">
+          <text>4.999</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1v1029r">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1p3j6ds">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0nvliga">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0i3hwiq">
+        <inputEntry id="UnaryTests_1enuk5h">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vhh3gu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0obu6t0">
+          <text>&lt;= 0.9</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_18672u0">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0itmfyc">
+          <text>4.539</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14jhxnj">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qyxg0o">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mder6k">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0d6auwk">
+        <inputEntry id="UnaryTests_0atmu6r">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01lwb7s">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1kdoagx">
+          <text>&lt;= 1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1yyqei4">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1trcl46">
+          <text>3.749</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0dxix0x">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_08smuhq">
+          <text>18</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yyixms">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0xv8ber">
+        <inputEntry id="UnaryTests_0nwors31">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0lowfze1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ydr6001">
+          <text>&lt;= 0.1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0e3xte4">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1i26xzn1">
+          <text>10.969</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1i3meu8">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_03izl5d">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1lsoz5r">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0yn5rgf">
+        <inputEntry id="UnaryTests_1kvvtrc1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jmkkkx1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cj5q261">
+          <text>&lt;= 0.2</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0wh26x1">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15uxj0x1">
+          <text>9.899</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ovcg1d">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1t3e0s9">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rreiy7">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0x9wl4g">
+        <inputEntry id="UnaryTests_1h875731">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05vsjbf1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cwxbp01">
+          <text>&lt;= 0.3</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_03jjklb">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ce974d1">
+          <text>9.399</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_07kyyxo">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jh40sf">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_11gddrd">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13r0o46">
+        <inputEntry id="UnaryTests_1c9n5i11">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10l3afp1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kgm2071">
+          <text>&lt;= 0.4</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1bsmamg">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1vojxm81">
+          <text>5.599</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0yoray3">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jwwj97">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1u2i7b3">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1y9h76">
+        <inputEntry id="UnaryTests_00pvohb1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_067hqwm1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11alnql1">
+          <text>&lt;= 0.5</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1p9ufsk">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0q9n2kc1">
+          <text>4.899</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_03d1yzg">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13b54pu">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04m5yql">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ex62gf">
+        <inputEntry id="UnaryTests_0ldh68s1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1oj49qo1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14fj4jw1">
+          <text>&lt;= 0.6</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zbfkou">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jbpg571">
+          <text>4.399</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1p1k9of">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01f5vln">
+          <text>18</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0p60m72">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0xrdagr4">
+        <inputEntry id="UnaryTests_0wwukcq1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_022g5zg1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_075l62t1">
+          <text>&lt;= 0.7</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ayhvo1">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1r22y9k1">
+          <text>3.699</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jn7vsv">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0skhfhu">
+          <text>18</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15lpj9n">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0eqmw54">
+        <inputEntry id="UnaryTests_0wfc27g1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08ezgl21">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1uovp512">
+          <text>&lt;= 0.8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_01lveps">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0k0h4q11">
+          <text>3.199</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jhyr5j">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0mwpwar">
+          <text>24</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14bk4to">
+          <text>75</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0i3hwgf">
+        <inputEntry id="UnaryTests_1enuk5h1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vhh3gu1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0obu6t01">
+          <text>&lt;= 0.9</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0j0erz9">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0itmfyc1">
+          <text>2.899</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1395eue">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_00edysf">
+          <text>36</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1xr079t">
+          <text>80</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0d6aufd">
+        <inputEntry id="UnaryTests_0atmu6r1">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01lwb7s1">
+          <text>&lt;= 15</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1kdoagx1">
+          <text>&lt;= 1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0jrm92q">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1trcl461">
+          <text>2.399</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0afgw60">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_03g3ydk">
+          <text>36</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_07yjwl5">
+          <text>80</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1rmenpy">
+        <inputEntry id="UnaryTests_1owaz2i">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1tox4sf">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_17yt2kl">
+          <text>&lt;= 0.1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_09pnqlt">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_110q8p8">
+          <text>13.719</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0bqveav">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1smse10">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1dcmlkv">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1qd1vj7">
+        <inputEntry id="UnaryTests_1753i71">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1c18svj">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0eya2zb">
+          <text>&lt;= 0.2</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1mbvvle">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_11unqnb">
+          <text>12.379</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0qvqxki">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gx4g16">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0fe1hkw">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0q7l6pt">
+        <inputEntry id="UnaryTests_16wd7js">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0dlmew4">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0djm8mj">
+          <text>&lt;= 0.3</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ao8su6">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0vst6rl">
+          <text>11.749</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1pb04jg">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1hp4vru">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jaemvr">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0qtza9g">
+        <inputEntry id="UnaryTests_1oa5z06">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_001o2de">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dmkr9r">
+          <text>&lt;= 0.4</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0vqihjj">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1a55m0t">
+          <text>6.999</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_09gqk1u">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1h24jch">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0euon9o">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0kaqhvr">
+        <inputEntry id="UnaryTests_0pfkns3">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0mtlr7j">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rcff41">
+          <text>&lt;= 0.5</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0fgmf4x">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04iy279">
+          <text>6.129</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0nzla4e">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1hmd3qb">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0deem56">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0g0c6zg">
+        <inputEntry id="UnaryTests_1tkbi4b">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0waoqag">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ptfa8e">
+          <text>&lt;= 0.6</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0vhqcu4">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0fqcu3l">
+          <text>5.499</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ifpw01">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ez2c01">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_004wxq9">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_06k53c4">
+        <inputEntry id="UnaryTests_0xgpzmn">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1a20rx0">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0umramz">
+          <text>&lt;= 0.7</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1h1wco4">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0uarze2">
+          <text>4.629</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0d5vmaq">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1s9hief">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_078t1ud">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0c2we5b">
+        <inputEntry id="UnaryTests_1xi9dqd">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ni7swb">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tyb3fp">
+          <text>&lt;= 0.8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ahrt7g">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1gsnmsl">
+          <text>3.999</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1wba2zm">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0pwtt9u">
+          <text>18</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_16o0ws6">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_18g89rf">
+        <inputEntry id="UnaryTests_09ugu52">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0n9deii">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0btazbe">
+          <text>&lt;= 0.9</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0jd8o0c">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01irvb6">
+          <text>3.629</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0yp6dlm">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ojkg2u">
+          <text>18</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rxt6t8">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_18dtbzu">
+        <inputEntry id="UnaryTests_1p93mz6">
+          <text>0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0gewmn2">
+          <text>&lt;= 50</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05rckih">
+          <text>&lt;= 1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0sd4vit">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0iedsyz">
+          <text>2.999</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1d66t7h">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1m3uwju">
+          <text>36</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gevokk">
+          <text>80</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0b6722e">
+        <inputEntry id="UnaryTests_11uv0ln">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0w6numu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jswoiw">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1rs1zu1">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0r8bkxj">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ynt1dn">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qwislf">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_031kys1">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_Taxa">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

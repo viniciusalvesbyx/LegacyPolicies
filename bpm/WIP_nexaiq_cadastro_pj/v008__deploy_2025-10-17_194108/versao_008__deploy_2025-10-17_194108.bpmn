@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0w9uo2i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="cedc0c39-507e-4d9e-a108-6b79714ee6a6" name="WIP_nexaiq_cadastro_pj" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1mgmwnc</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Proccess_NEXAIQ_Cadastro_PJ" name="Proccess NEXAIQ Cadastro PJ" scriptFormat="JavaScript">
+      <bpmn:outgoing>Flow_08xyb7e</bpmn:outgoing>
+      <bpmn:script>function formatDateBRtoISO(dateStr) {
+  if (!dateStr || !dateStr.includes("/")) return "Information not available";
+  const [day, month, year] = dateStr.split("/");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
+const response_cadastro_pj = JSON.parse(execution.getVariable("response_cadastro_pj"));
+
+const total_number_of_employees =
+ response_cadastro_pj.response.informacoes_pj.quantidade_funcionarios ??
+  "Information not available";
+
+const company_data_nexaiq = {
+  company_document_number:
+    response_cadastro_pj.response.dados_cadastrais_pj.cnpj_basico ??
+    "Information not available",
+  legal_name:
+    response_cadastro_pj.response.dados_cadastrais_pj.razao_social ??
+    "Information not available",
+  share_capital:
+    response_cadastro_pj.response.dados_cadastrais_pj.capital_social ??
+    "Information not available",
+  registration_status:
+    response_cadastro_pj.response.dados_cadastrais_pj.situacao_cadastral ??
+    "Information not available",
+  registration_status_reason:
+    response_cadastro_pj.response.dados_cadastrais_pj.motivo_situacao_cadastral ??
+    "Information not available",
+  email:
+    response_cadastro_pj.response.dados_cadastrais_pj.email ??
+    "Information not available",
+  special_status:
+    response_cadastro_pj.response.dados_cadastrais_pj.situacao_especial ??
+    "Information not available",
+
+  cnae: (() =&gt; {
+    const cnae_raw = response_cadastro_pj.response.dados_cadastrais_pj.cnae_principal;
+    if (!cnae_raw) return { code: "Information not available", description: "Information not available" };
+    const [code, description] = cnae_raw.split(" - ");
+    return {
+      code: code.trim(),
+      description: description.trim(),
+    };
+  })(),
+
+  legal_nature: {
+    description:
+      response_cadastro_pj.response.dados_cadastrais_pj.natureza_juridica ??
+      "Information not available",
+  },
+
+  company_start_date: formatDateBRtoISO(
+    response_cadastro_pj.response.dados_cadastrais_pj.data_inicio_atividade
+  ),
+
+  company_size:
+    response_cadastro_pj.response.informacoes_pj.porte_empresa ??
+    response_cadastro_pj.response.dados_cadastrais_pj.porte_empresa ??
+    "Information not available",
+  turnover_rate:
+    response_cadastro_pj.response.informacoes_pj.indice_turnover ??
+    "Information not available",
+  annual_revenue:
+    response_cadastro_pj.response.informacoes_pj.faturamento ??
+    "Information not available",
+  default_risk:
+    response_cadastro_pj.response.informacoes_pj.risco_default ??
+    "Information not available",
+};
+
+
+execution.setVariable("company_data_nexaiq", JSON.stringify(company_data_nexaiq));
+execution.setVariable("total_number_of_employees", total_number_of_employees);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1mgmwnc" sourceRef="StartEvent_1" targetRef="Activity_1rabns2" />
+    <bpmn:endEvent id="Event_1ro1vde">
+      <bpmn:incoming>Flow_08xyb7e</bpmn:incoming>
+      <bpmn:incoming>Flow_0jng0ou</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1qs2tmw" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Consulta_NEXAIQ_Cadastro_PJ" name="Consulta NEXAIQ Cadastro PJ" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/consulta/cadastro/v1/pj</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "cnpj": "${company_document_number}"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "nexaiq_client_id",
+    "password": "nexaiq_client_secret",
+    "grant_type": "client_credentials",
+    "path": "nexaiq_auth_url"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_NEXAIQ_Cadastro_PJ</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_cadastro_pj</camunda:inputParameter>
+          <camunda:inputParameter name="handel_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">nexaiq_base_url</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_010vv72</bpmn:incoming>
+      <bpmn:outgoing>Flow_1t1xd0i</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_065h0ru" attachedToRef="Consulta_NEXAIQ_Cadastro_PJ">
+      <bpmn:outgoing>Flow_0vxr94g</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1fba8b3" errorRef="Error_0xheboa" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0amczv7" attachedToRef="Consulta_NEXAIQ_Cadastro_PJ">
+      <bpmn:outgoing>Flow_05v0ne0</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1f5odht" errorRef="Error_0gcnlk5" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_08xyb7e" sourceRef="Proccess_NEXAIQ_Cadastro_PJ" targetRef="Event_1ro1vde" />
+    <bpmn:scriptTask id="Activity_1rabns2" name="Transformar CNPJ 8 dígitos" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1mgmwnc</bpmn:incoming>
+      <bpmn:outgoing>Flow_010vv72</bpmn:outgoing>
+      <bpmn:script>// Função para calcular os dígitos verificadores do CNPJ
+function calculateCnpjCheckDigits(baseNumber, branch = '0001') {
+  // Garante 8 dígitos no número base e 4 no número da filial
+  baseNumber = baseNumber.toString().padStart(8, '0');
+  branch = branch.toString().padStart(4, '0');
+
+  const cnpjWithoutDigits = baseNumber + branch;
+
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i &lt; weights1.length; i++) {
+    sum += parseInt(cnpjWithoutDigits[i]) * weights1[i];
+  }
+  const remainder1 = sum % 11;
+  const checkDigit1 = remainder1 &lt; 2 ? 0 : 11 - remainder1;
+
+  const cnpjWithFirstDigit = cnpjWithoutDigits + checkDigit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i &lt; weights2.length; i++) {
+    sum += parseInt(cnpjWithFirstDigit[i]) * weights2[i];
+  }
+  const remainder2 = sum % 11;
+  const checkDigit2 = remainder2 &lt; 2 ? 0 : 11 - remainder2;
+
+  const fullCnpj = cnpjWithFirstDigit + checkDigit2;
+  return { numericCnpj: fullCnpj };
+}
+
+// Lógica de transformação da variável no Camunda
+const rawCnpj = execution.getVariable("company_document_number");
+const numericOnly = rawCnpj?.replace(/\D/g, ''); // remove pontos, barras, traços etc.
+
+if (numericOnly &amp;&amp; numericOnly.length &gt; 0) {
+  // Garante que o número tenha 8 dígitos, adicionando zeros à esquerda
+  const baseNumber = numericOnly.padStart(8, '0').slice(0, 8);
+
+  const { numericCnpj } = calculateCnpjCheckDigits(baseNumber);
+  execution.setVariable("company_document_number", numericCnpj);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_010vv72" sourceRef="Activity_1rabns2" targetRef="Consulta_NEXAIQ_Cadastro_PJ" />
+    <bpmn:scriptTask id="Activity_0j65n1e" name="Proccess NEXAIQ Cadastro PJ ERROR" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_05v0ne0</bpmn:incoming>
+      <bpmn:incoming>Flow_0vxr94g</bpmn:incoming>
+      <bpmn:incoming>Flow_1t1xd0i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jng0ou</bpmn:outgoing>
+      <bpmn:script>const total_number_of_employees = "Unable to retrieve company information from NexaIQ API";
+
+const company_data_nexaiq = {
+  company_document_number:"Unable to retrieve company information from NexaIQ API",
+  legal_name:"Unable to retrieve company information from NexaIQ API",
+  share_capital:"Unable to retrieve company information from NexaIQ API",
+  registration_status:"Unable to retrieve company information from NexaIQ API",
+  registration_status_reason:"Unable to retrieve company information from NexaIQ API",
+  email:"Unable to retrieve company information from NexaIQ API",
+  special_status:"Unable to retrieve company information from NexaIQ API",
+  cnae: {
+      code: "Unable to retrieve company information from NexaIQ API",
+      description: "Unable to retrieve company information from NexaIQ API",
+    },
+  legal_nature: {
+    description:"Unable to retrieve company information from NexaIQ API",
+  },
+  company_start_date: "Unable to retrieve company information from NexaIQ API",
+  company_size:"Unable to retrieve company information from NexaIQ API",
+  turnover_rate:"Unable to retrieve company information from NexaIQ API",
+  annual_revenue:"Unable to retrieve company information from NexaIQ API",
+  default_risk:"Unable to retrieve company information from NexaIQ API",
+};
+
+execution.setVariable("company_data_nexaiq", JSON.stringify(company_data_nexaiq));
+execution.setVariable("total_number_of_employees", total_number_of_employees);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_05v0ne0" sourceRef="Event_0amczv7" targetRef="Activity_0j65n1e" />
+    <bpmn:sequenceFlow id="Flow_0vxr94g" sourceRef="Event_065h0ru" targetRef="Activity_0j65n1e" />
+    <bpmn:sequenceFlow id="Flow_0jng0ou" sourceRef="Activity_0j65n1e" targetRef="Event_1ro1vde" />
+    <bpmn:sequenceFlow id="Flow_1t1xd0i" sourceRef="Consulta_NEXAIQ_Cadastro_PJ" targetRef="Activity_0j65n1e" />
+  </bpmn:process>
+  <bpmn:error id="Error_0gcnlk5" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmn:error id="Error_0xheboa" name="BYX524" errorCode="BYX524" />
+  <bpmn:error id="Error_0k7q4i6" name="CNPJ_CPF_Not_Found" errorCode="BYX400" camunda:errorMessage="errorCode" />
+  <bpmn:error id="Error_1irgl60" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="cedc0c39-507e-4d9e-a108-6b79714ee6a6">
+      <bpmndi:BPMNShape id="BPMNShape_12cyuf5" bpmnElement="Consulta_NEXAIQ_Cadastro_PJ">
+        <dc:Bounds x="440" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ahpms" bpmnElement="Proccess_NEXAIQ_Cadastro_PJ">
+        <dc:Bounds x="620" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0efxef2_di" bpmnElement="Activity_1rabns2">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_148sul4_di" bpmnElement="Event_1ro1vde">
+        <dc:Bounds x="762" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_07wcikd" bpmnElement="Activity_0j65n1e">
+        <dc:Bounds x="610" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kzwhlz" bpmnElement="Event_0amczv7">
+        <dc:Bounds x="522" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tt6nva" bpmnElement="Event_065h0ru">
+        <dc:Bounds x="482" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_010vv72_di" bpmnElement="Flow_010vv72">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="440" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08xyb7e_di" bpmnElement="Flow_08xyb7e">
+        <di:waypoint x="720" y="120" />
+        <di:waypoint x="762" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mgmwnc_di" bpmnElement="Flow_1mgmwnc">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05v0ne0_di" bpmnElement="Flow_05v0ne0">
+        <di:waypoint x="540" y="178" />
+        <di:waypoint x="540" y="250" />
+        <di:waypoint x="610" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vxr94g_di" bpmnElement="Flow_0vxr94g">
+        <di:waypoint x="500" y="178" />
+        <di:waypoint x="500" y="270" />
+        <di:waypoint x="610" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jng0ou_di" bpmnElement="Flow_0jng0ou">
+        <di:waypoint x="710" y="280" />
+        <di:waypoint x="780" y="280" />
+        <di:waypoint x="780" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1t1xd0i_di" bpmnElement="Flow_1t1xd0i">
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="575" y="120" />
+        <di:waypoint x="575" y="310" />
+        <di:waypoint x="610" y="310" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

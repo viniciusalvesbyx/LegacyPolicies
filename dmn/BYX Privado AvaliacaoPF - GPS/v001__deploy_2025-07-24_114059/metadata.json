@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "1266b27b-6883-11f0-9894-5646dbaceb31",
+  "decision_key": "Definitions_AvaliacaoPF_GPS",
+  "decision_name": "BYX Privado AvaliacaoPF - GPS",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "dmn-avaliacao-pf-gps.dmn",
+  "deployment_id": "11cc6e48-6883-11f0-9894-5646dbaceb31",
+  "deployment_name": "dmn-avaliacao-pf-gps",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-24T11:40:59.705+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:40+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "a1e58e62-60ad-11f0-b05e-fe3e571a18f5",
+  "decision_key": "Definitions_CreditConditions_Ambipar",
+  "decision_name": "Definição Condições de Crédito Ambipar",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "dmn-defini-condicoes-credito-ambipar.dmn",
+  "deployment_id": "a1e2a82f-60ad-11f0-b05e-fe3e571a18f5",
+  "deployment_name": "dmn-defini-condicoes-credito-ambipar",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-14T12:25:31.005+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:45+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

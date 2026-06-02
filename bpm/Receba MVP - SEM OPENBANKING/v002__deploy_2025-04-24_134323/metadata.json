@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "1736f157-2112-11f0-bf41-0e30a9376da7",
+  "process_key": "Process_0522f6a6-e1e4-425b-8c8a-1692fbaba39f",
+  "process_name": "Receba MVP - SEM FEES - SEM OPENBANKING",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "receba_credit_analysis.bpmn",
+  "deployment_id": "172c1be5-2112-11f0-bf41-0e30a9376da7",
+  "deployment_name": "receba_credit_analysis",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-04-24T13:43:23.032+0000",
+  "extracted_at_utc": "2026-06-02T20:09:56+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

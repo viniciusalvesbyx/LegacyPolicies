@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "727eeb72-213c-11f0-bf41-0e30a9376da7",
+  "process_key": "Process_98da57b5-be25-4de7-a6f3-ebb7ec69daf6",
+  "process_name": "Pine Consignado Privado com BYXDATA - DEV",
+  "tenant_id": "",
+  "version": 5,
+  "version_tag": "",
+  "resource": "Pine Consignado Privado com BYXDATA - DEV.bpmn",
+  "deployment_id": "72779870-213c-11f0-bf41-0e30a9376da7",
+  "deployment_name": "Pine Consignado Privado com BYXDATA - DEV",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-04-24T18:46:35.063+0000",
+  "extracted_at_utc": "2026-06-02T20:08:48+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

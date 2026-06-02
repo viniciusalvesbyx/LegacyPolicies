@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_2" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Happy_Legal_Person_Company_Type_Decision" name="Happy_Legal_Person_Company_Type_Decision" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_0ync7e6" hitPolicy="FIRST">
+      <input id="InputClause_078pv26" label="Company type">
+        <inputExpression id="LiteralExpression_1vfypnv" typeRef="string">
+          <text>type_company</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_0rvr1bl">
+          <text>"denied","approved"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_0m4svxw" label="Reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_1t50hep">
+        <inputEntry id="UnaryTests_07fuyuk">
+          <text>"micro"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0km9i7l">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mbi5zf">
+          <text>"Company size restriction: micro"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0dzp2zn">
+        <inputEntry id="UnaryTests_0qgalek">
+          <text>"Unable to retrieve company information from NexaIQ API"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0heufaq">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_143vcuu">
+          <text>"Company size restriction: Unable to retrieve company information from NexaIQ API"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0vzwi94">
+        <inputEntry id="UnaryTests_0oi7w5x">
+          <text>"Information Not Available"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1isk91t">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ta291a">
+          <text>"Company size restriction: Information Not Available"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_17w0j03">
+        <inputEntry id="UnaryTests_13gf6rj">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02rtjzo">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1d2ap1j">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Happy_Legal_Person_Company_Type_Decision">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

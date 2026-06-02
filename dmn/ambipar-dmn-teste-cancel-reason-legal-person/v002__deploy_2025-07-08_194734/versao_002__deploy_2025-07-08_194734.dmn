@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="ambipar-dmn-teste-cancel-reason" name="ambipar-dmn-teste-cancel-reason-natural-person" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="ambipar-dmn-teste-cancel-reason-legal-person" name="ambipar-dmn-teste-cancel-reason-legal-person" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_190x0qg" hitPolicy="FIRST">
+      <input id="InputClause_1i355sd" label="Document Number" camunda:inputVariable="document_number">
+        <inputExpression id="LiteralExpression_1f9imv7" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_1abfioo">
+          <text>"approved","denied"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_0379uj3" label="Reason" name="reason" typeRef="string" />
+      <output id="OutputClause_1dolf3n" label="Enum" name="reason_enum" typeRef="string" />
+      <rule id="DecisionRule_1jnttg6">
+        <inputEntry id="UnaryTests_1ef27sw">
+          <text>"51823146040"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0wwt9gh">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0uxuw58">
+          <text>"CNPJ is not on the approved list"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02y2tqt">
+          <text>"cnpj_is_not_on_the_approved_list"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0wbugfq">
+        <inputEntry id="UnaryTests_11jeyoo">
+          <text>"62318898073"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_074tn7s">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_129dt3j">
+          <text>"Company type restriction"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0r5zm7b">
+          <text>"company_type_restriction"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1cu0ra5">
+        <inputEntry id="UnaryTests_14f5sdh">
+          <text>"66587650066"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_064g5bf">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_093qmeb">
+          <text>"CNAE code restriction"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0k9277u">
+          <text>"cnae_restriction"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0e09xs9">
+        <inputEntry id="UnaryTests_023js6s">
+          <text>"41520465033"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02b0156">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ja60dh">
+          <text>"Fgts payment debt restriction: company has fgts payment debt"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ggar73">
+          <text>"company_has_fgts_payment_debt"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_157ocxk">
+        <inputEntry id="UnaryTests_0cfcyvv">
+          <text>"32889378080"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02kx77p">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1t4hqyc">
+          <text>"Company Age restriction: &lt;3y"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15ss21s">
+          <text>"company_age_below_3y"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1fo1o8f">
+        <inputEntry id="UnaryTests_1l2s18m">
+          <text>"80574231021"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0hz0n94">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ldmeri">
+          <text>"Company status not regular"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_10fwhbs">
+          <text>"company_status_not_regular"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1fqrlmg">
+        <inputEntry id="UnaryTests_0x9ei50">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0myp9xc">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15zm0nu">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0f8fv32">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0zp1fqw">
+        <inputEntry id="UnaryTests_0jx453a">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1cpgwnw">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02q9dtu">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0nx6uq5">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="ambipar-dmn-teste-cancel-reason-legal-person">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

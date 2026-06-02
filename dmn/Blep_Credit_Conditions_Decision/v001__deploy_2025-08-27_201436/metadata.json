@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "740ab02b-8382-11f0-b2fd-5a11b66d5910",
+  "decision_key": "Blep_Credit_Conditions_Decision",
+  "decision_name": "Blep_Credit_Conditions_Decision",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "blep_credit_conditions_decision.dmn",
+  "deployment_id": "7406df98-8382-11f0-b2fd-5a11b66d5910",
+  "deployment_name": "blep_credit_conditions_decision",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-08-27T20:14:36.407+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:36+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

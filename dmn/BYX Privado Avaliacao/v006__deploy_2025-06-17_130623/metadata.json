@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "Definitions_AvaliacaoPF:6:de8a4753-4b7b-11f0-bc35-b6455c4bf4de",
+  "decision_key": "Definitions_AvaliacaoPF",
+  "decision_name": "BYX Privado Avaliacao",
+  "tenant_id": "",
+  "version": 6,
+  "version_tag": "",
+  "resource": "dmn-avaliacao-pf.dmn",
+  "deployment_id": "de8676c0-4b7b-11f0-bc35-b6455c4bf4de",
+  "deployment_name": "dmn-avaliacao-pf",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-06-17T13:06:23.486+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:38+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

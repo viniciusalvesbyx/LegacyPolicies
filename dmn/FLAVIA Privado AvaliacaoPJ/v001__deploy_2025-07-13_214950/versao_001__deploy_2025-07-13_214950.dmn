@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_2" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Definitions_AvaliacaoPJ_Happy_FLAVIA" name="FLAVIA Privado AvaliacaoPJ" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_0ync7e6" hitPolicy="FIRST">
+      <input id="InputClause_0h3g691" label="Type company" camunda:inputVariable="type_company">
+        <inputExpression id="LiteralExpression_15a6xxh" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0maeq4q" label="Situation special" camunda:inputVariable="has_special_situation">
+        <inputExpression id="LiteralExpression_0c40obs" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_07cyln0" label="CNAE" camunda:inputVariable="cnae_code">
+        <inputExpression id="LiteralExpression_14dpjoo" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0tq5h3f" label="FGTS payment delay record" camunda:inputVariable="has_fgts_debt">
+        <inputExpression id="LiteralExpression_11eav6j" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0ssjr5r" label="Company age in months" camunda:inputVariable="company_age_in_months">
+        <inputExpression id="LiteralExpression_0m0xs82" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0zwo206" label="Score company" camunda:inputVariable="score_company">
+        <inputExpression id="LiteralExpression_19g1bpj" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_0rvr1bl">
+          <text>"denied","approved"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_0m4svxw" label="Reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_15yeunx">
+        <inputEntry id="UnaryTests_0gk2865">
+          <text>["small","others"]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13c5o4i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1881ozc">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0cjwdm0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1wfh29z">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0yqouk4">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0s26kot">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1y1fn6t">
+          <text>"Company type restriction"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0dzp2zn">
+        <inputEntry id="UnaryTests_02z2tto">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1k4cscw">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0fwxgm1">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_173e28b">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1heswm1">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0el4n8x">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0heufaq">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_143vcuu">
+          <text>"Company status not regular"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0nkcf7d">
+        <inputEntry id="UnaryTests_1f5hexv">
+          <text>["large", "middle", "small", "others"]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cahfrw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18pde96">
+          <text>["2550000", "2550102", "8424000", "1220400", "1220401", "1220402", "1220403", "3822000", "9200301", "9200302", "9200399", "9609299", "9329899", "5590699", "6619399"] </text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0pirjth">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1fsau63">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_091mbsg">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0nm4yp2">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0alneyv">
+          <text>"CNAE code restriction"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1844rsz">
+        <inputEntry id="UnaryTests_11cn8fs">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0lx2167">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1k19l4o">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xgvrn7">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jc1knm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ysejj6">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_09gw55y">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0eqmc5v">
+          <text>"Fgts payment debt restriction: company has fgts payment debt"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0jxijux">
+        <inputEntry id="UnaryTests_0xj7kss">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ncb30q">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16fu5nu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02fwk5x">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x4ucd7">
+          <text>&lt; 36</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1nxqamz">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1s73cfk">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ixjs80">
+          <text>"Company Age restriction: &lt;3y"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1d0uk13">
+        <inputEntry id="UnaryTests_1o1kfms">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1gaff5g">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0px439u">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12kafgo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1b44j5i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nbfhtv">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1stp2rv">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_115ejo8">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Definitions_AvaliacaoPJ_Happy_FLAVIA">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

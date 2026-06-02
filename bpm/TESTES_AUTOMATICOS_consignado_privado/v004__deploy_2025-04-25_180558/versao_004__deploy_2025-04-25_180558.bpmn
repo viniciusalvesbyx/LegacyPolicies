@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_08hdnju" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="Process_3992e0e3-d261-4804-9624-1a94e74fa521" name="TESTES_AUTOMATICOS_consignado_privado" isExecutable="true" camunda:versionTag="1" camunda:historyTimeToLive="3">
+    <bpmn:businessRuleTask id="Avaliacao_CPF_DMN1.1_com_restricao_PINE_BYX" name="Avaliação CPF DMN1.1.1 com restrição PINE_ BYX" camunda:resultVariable="result_natural_person" camunda:decisionRef="TESTES_AUTOMATICOS_DMN1.1.1" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_0iunnqn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1chduov</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:scriptTask id="Activity_0zu84yy" name="Preparar variáveis para DMN1" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1hb159b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uqngz8</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+execution.setVariable("is_eligible_for_loan", input_data?.is_eligible_for_loan);
+execution.setVariable("contract_end_date", !input_data?.contract_end_date ? false : true);
+execution.setVariable("leave_of_absense", input_data?.leave_of_absense);
+execution.setVariable("termination_notice", input_data?.termination_notice);
+execution.setVariable("is_pep", input_data?.is_pep);
+execution.setVariable("employment_duration_in_months", input_data?.employment_duration_in_months);
+execution.setVariable("company_document_number", input_data?.company_document_number);
+execution.setVariable("age", input_data?.age);
+execution.setVariable("gender", input_data?.gender);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1chduov" sourceRef="Avaliacao_CPF_DMN1.1_com_restricao_PINE_BYX" targetRef="Activity_0h5te29" />
+    <bpmn:sequenceFlow id="Flow_1uqngz8" sourceRef="Activity_0zu84yy" targetRef="Activity_1rabns2" />
+    <bpmn:startEvent id="Event_15pza2w">
+      <bpmn:outgoing>Flow_1hb159b</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1hb159b" sourceRef="Event_15pza2w" targetRef="Activity_0zu84yy" />
+    <bpmn:serviceTask id="Activity_01idln1" name="Envia Retorno API" camunda:type="external" camunda:topic="PutRestApiReceba">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://credit-analysis-dev.byxcapital.com.br/credit_terms/${credit_terms_key}</camunda:inputParameter>
+          <camunda:inputParameter name="body"> ${body_result3}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1brzk9r</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bgdnbt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Activity_0h5te29" name="Preparar Retorno Geral" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1chduov</bpmn:incoming>
+      <bpmn:outgoing>Flow_1brzk9r</bpmn:outgoing>
+      <bpmn:script>const document_number = execution.getVariable("document_number");
+const credit_terms_key = execution.getVariable("credit_terms_key");
+const input_data_raw = execution.getVariable("input_data");
+const cnpj_blocked = execution.getVariable("cnpj_blocked");
+const company_document_number = execution.getVariable("company_document_number");
+const input_data = JSON.parse(input_data_raw);
+
+const result_natural_person = execution.getVariable("result_natural_person");
+const natural_person_status = result_natural_person.status;
+const natural_person_reason = result_natural_person.reason;
+const age = input_data.age;
+const gender = input_data.gender;
+const min_total_number_of_installments = result_natural_person.min_total_number_of_installments;
+let max_total_number_of_installments = result_natural_person.max_total_number_of_installments;
+const min_disbursement_amount = result_natural_person.min_disbursement_amount;
+const max_disbursement_amount = result_natural_person.max_disbursement_amount;
+const interest_rate = result_natural_person.interest_rate;
+
+var final_age
+var legal_person_status = "approved"
+var legal_person_reason
+
+var identification = { "company_document_number":company_document_number}
+
+var decision = {
+  "natural_person_reason": natural_person_reason,
+}
+
+if (cnpj_blocked != null) {
+  decision["cnpj_blocked"] = cnpj_blocked
+}
+if (cnpj_blocked) {
+  legal_person_reason = "CNPJ Blocklist restriction"
+  decision["legal_person_reason"] = legal_person_reason
+  legal_person_status = "denied"
+}
+
+let credit_terms_conditions = null
+
+var getStatus = () =&gt; {
+  if(natural_person_status == "denied" || legal_person_status == "denied"){
+      return "denied";
+  }else if(natural_person_status === "approved" &amp;&amp; legal_person_status === "approved"){
+      return "approved";
+  }else{
+      return "ERROR";
+  }
+} 
+
+var final_status = getStatus()
+
+if (final_status == "approved"){
+  final_age = age + max_total_number_of_installments/12
+
+  if (gender == "female" &amp;&amp; final_age &gt; 59){
+    max_total_number_of_installments = (59 - age)*12
+  }
+  else if (gender == "male" &amp;&amp; final_age &gt; 64){
+    max_total_number_of_installments = (64 - age)*12
+  }
+  credit_terms_conditions = [{
+    "min_total_number_of_installments": min_total_number_of_installments,
+    "max_total_number_of_installments": max_total_number_of_installments,
+    "min_installment_amount": null,
+    "max_installment_amount": null,
+    "min_disbursement_amount": min_disbursement_amount,
+    "max_disbursement_amount": max_disbursement_amount, 
+    "interest": {
+      "interest_rate_type": "pre_fixed",
+      "pre_fixed": {
+        "min_monthly_rate": interest_rate,
+        "max_monthly_rate": interest_rate,
+        "interest_base": 360 
+      }
+    },
+    "taxes": {
+      "has_iof": true,
+    },
+    "fees": [] 
+  }]
+}
+
+var getCancelReason = () =&gt; {
+  if(natural_person_reason &amp;&amp; legal_person_reason){
+      return natural_person_reason + " - " + legal_person_reason;
+  }else if(natural_person_reason &amp;&amp; !legal_person_reason){
+      return natural_person_reason;
+  }else if(!natural_person_reason &amp;&amp; legal_person_reason){
+      return legal_person_reason;
+  }else{
+      return "ERROR";
+  }
+} 
+
+var jsonData = {
+  "document_number": document_number, 
+  "status": final_status, 
+  "credit_terms_conditions": credit_terms_conditions,
+  "decision_metadata": {
+      "identification": identification,
+      "decision": decision,
+  }, 
+  "input_data": input_data,
+};
+
+if (final_status == "denied"){
+  jsonData["cancel_reason"] = getCancelReason();
+  jsonData['credit_terms_conditions'] = null;
+}
+
+var jsonString = JSON.stringify(jsonData); 
+execution.setVariable("body_result3", jsonString);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1brzk9r" sourceRef="Activity_0h5te29" targetRef="Activity_01idln1" />
+    <bpmn:sequenceFlow id="Flow_1bgdnbt" sourceRef="Activity_01idln1" targetRef="Event_04n7dib" />
+    <bpmn:endEvent id="Event_04n7dib">
+      <bpmn:incoming>Flow_1bgdnbt</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1rvx9h7" />
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_1rabns2" name="Transformar CNPJ 8 dígitos" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1uqngz8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iunnqn</bpmn:outgoing>
+      <bpmn:script>// Função para calcular os dígitos verificadores do CNPJ
+function calculateCnpjCheckDigits(baseNumber, branch = '0001') {
+  baseNumber = baseNumber.toString().padStart(8, '0');
+  branch = branch.toString().padStart(4, '0');
+
+  const cnpjWithoutDigits = baseNumber + branch;
+
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i &lt; weights1.length; i++) {
+    sum += parseInt(cnpjWithoutDigits[i]) * weights1[i];
+  }
+  const remainder1 = sum % 11;
+  const checkDigit1 = remainder1 &lt; 2 ? 0 : 11 - remainder1;
+
+  const cnpjWithFirstDigit = cnpjWithoutDigits + checkDigit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i &lt; weights2.length; i++) {
+    sum += parseInt(cnpjWithFirstDigit[i]) * weights2[i];
+  }
+  const remainder2 = sum % 11;
+  const checkDigit2 = remainder2 &lt; 2 ? 0 : 11 - remainder2;
+
+  const fullCnpj = cnpjWithFirstDigit + checkDigit2;
+  return { numericCnpj: fullCnpj };
+}
+
+// Lógica de transformação da variável no Camunda
+const rawCnpj = execution.getVariable("company_document_number");
+const numericOnly = rawCnpj?.replace(/\D/g, ''); // remove pontos, barras, traços etc.
+
+if (numericOnly &amp;&amp; numericOnly.length === 8) {
+  const { numericCnpj } = calculateCnpjCheckDigits(numericOnly);
+  execution.setVariable("company_document_number", numericCnpj);
+}
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0iunnqn" sourceRef="Activity_1rabns2" targetRef="Avaliacao_CPF_DMN1.1_com_restricao_PINE_BYX" />
+  </bpmn:process>
+  <bpmn:message id="Message_1ff8qhg" name="aguardar-mensagem" />
+  <bpmn:message id="Message_377ctea" name="result-manual-analysis" />
+  <bpmn:error id="Error_0epofsd" name="Timeout - BYX524" errorCode="BYX524" />
+  <bpmn:error id="Error_18ukwc6" name="CNPJ_CPF_Not_Found" errorCode="BYX400" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_3992e0e3-d261-4804-9624-1a94e74fa521">
+      <bpmndi:BPMNShape id="BPMNShape_1w7t1jh" bpmnElement="Avaliacao_CPF_DMN1.1_com_restricao_PINE_BYX">
+        <dc:Bounds x="580" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1amrr5p_di" bpmnElement="Activity_0zu84yy">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15pza2w_di" bpmnElement="Event_15pza2w">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1o25tay" bpmnElement="Activity_01idln1">
+        <dc:Bounds x="910" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zn1bdw" bpmnElement="Activity_0h5te29">
+        <dc:Bounds x="750" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0oq5z2q_di" bpmnElement="Event_04n7dib">
+        <dc:Bounds x="1072" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0efxef2_di" bpmnElement="Activity_1rabns2">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1chduov_di" bpmnElement="Flow_1chduov">
+        <di:waypoint x="680" y="120" />
+        <di:waypoint x="750" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uqngz8_di" bpmnElement="Flow_1uqngz8">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hb159b_di" bpmnElement="Flow_1hb159b">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1brzk9r_di" bpmnElement="Flow_1brzk9r">
+        <di:waypoint x="850" y="120" />
+        <di:waypoint x="910" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bgdnbt_di" bpmnElement="Flow_1bgdnbt">
+        <di:waypoint x="1010" y="120" />
+        <di:waypoint x="1072" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iunnqn_di" bpmnElement="Flow_0iunnqn">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="580" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0w9uo2i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="personal_income_ph3a" name="personal_income_ph3a" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1mgmwnc</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Consult_Personal_Income_PH3A" name="Consult Personal Income PH3A" camunda:asyncAfter="true" camunda:type="external" camunda:topic="PH3ARequestPersonalIncome">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="timeout">30000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_personal_income_ph3A</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="document_number">${document_number}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mgmwnc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gu790l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Proccess_Personal_Income_PH3A" name="Proccess Personal Income PH3A" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1gu790l</bpmn:incoming>
+      <bpmn:outgoing>Flow_18edgfs</bpmn:outgoing>
+      <bpmn:script>const response_personal_income_ph3A = JSON.parse(execution.getVariable("response_personal_income_ph3A"));
+
+const personal_income_ph3A = response_personal_income_ph3A.Data.Income.Personal
+
+const result_natural_person = {
+  "status": "approved"
+}
+
+execution.setVariable("personal_income_ph3A", personal_income_ph3A);
+execution.setVariable("result_natural_person", JSON.stringify(result_natural_person));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:boundaryEvent id="Event_1vqhbp2" attachedToRef="Consult_Personal_Income_PH3A">
+      <bpmn:outgoing>Flow_08bl9ag</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1qxgko7" errorRef="Error_0gcnlk5" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1gu790l" sourceRef="Consult_Personal_Income_PH3A" targetRef="Proccess_Personal_Income_PH3A" />
+    <bpmn:sequenceFlow id="Flow_1mgmwnc" sourceRef="StartEvent_1" targetRef="Consult_Personal_Income_PH3A" />
+    <bpmn:endEvent id="Event_1ro1vde">
+      <bpmn:incoming>Flow_18edgfs</bpmn:incoming>
+      <bpmn:incoming>Flow_185wjf3</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1qs2tmw" />
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_0dvgyv6" name="Personal Income not available">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Unable to retrieve personal income from PH3A",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08bl9ag</bpmn:incoming>
+      <bpmn:outgoing>Flow_185wjf3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_18edgfs" sourceRef="Proccess_Personal_Income_PH3A" targetRef="Event_1ro1vde" />
+    <bpmn:sequenceFlow id="Flow_08bl9ag" sourceRef="Event_1vqhbp2" targetRef="Activity_0dvgyv6" />
+    <bpmn:sequenceFlow id="Flow_185wjf3" sourceRef="Activity_0dvgyv6" targetRef="Event_1ro1vde" />
+  </bpmn:process>
+  <bpmn:error id="Error_0gcnlk5" name="BYX400" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="personal_income_ph3a">
+      <bpmndi:BPMNShape id="BPMNShape_1vb03yj" bpmnElement="Consult_Personal_Income_PH3A">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ahpms" bpmnElement="Proccess_Personal_Income_PH3A">
+        <dc:Bounds x="470" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_148sul4_di" bpmnElement="Event_1ro1vde">
+        <dc:Bounds x="612" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17hsnc6" bpmnElement="Activity_0dvgyv6">
+        <dc:Bounds x="390" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1p5cd9c" bpmnElement="Event_1vqhbp2">
+        <dc:Bounds x="322" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1mgmwnc_di" bpmnElement="Flow_1mgmwnc">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gu790l_di" bpmnElement="Flow_1gu790l">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="470" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18edgfs_di" bpmnElement="Flow_18edgfs">
+        <di:waypoint x="570" y="120" />
+        <di:waypoint x="612" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_185wjf3_di" bpmnElement="Flow_185wjf3">
+        <di:waypoint x="490" y="250" />
+        <di:waypoint x="630" y="250" />
+        <di:waypoint x="630" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08bl9ag_di" bpmnElement="Flow_08bl9ag">
+        <di:waypoint x="340" y="178" />
+        <di:waypoint x="340" y="250" />
+        <di:waypoint x="390" y="250" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

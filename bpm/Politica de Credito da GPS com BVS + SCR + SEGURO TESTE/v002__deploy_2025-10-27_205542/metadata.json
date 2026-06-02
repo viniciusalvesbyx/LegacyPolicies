@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "4cf749d2-b377-11f0-8ba6-722ac3fe8bdf",
+  "process_key": "Process_a93f78ac-f2ff-4c08-83f9-ceee7ec7fe87",
+  "process_name": "Politica de Credito da GPS com BVS + SCR + SEGURO TESTE",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "bpmn-politica-gps (4) (1) (4) (1) (1).bpmn",
+  "deployment_id": "4cf4ffe0-b377-11f0-8ba6-722ac3fe8bdf",
+  "deployment_name": "bpmn-politica-gps",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-27T20:55:42.204+0000",
+  "extracted_at_utc": "2026-06-02T20:09:37+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

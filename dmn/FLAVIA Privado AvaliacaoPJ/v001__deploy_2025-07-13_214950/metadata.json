@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "4d6887a6-6033-11f0-b05e-fe3e571a18f5",
+  "decision_key": "Definitions_AvaliacaoPJ_Happy_FLAVIA",
+  "decision_name": "FLAVIA Privado AvaliacaoPJ",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "diagram-avaliacao-pj (2) (1).dmn",
+  "deployment_id": "4d663db3-6033-11f0-b05e-fe3e571a18f5",
+  "deployment_name": "flavia-diagram-avaliacao-pj",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-13T21:49:50.661+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:54+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

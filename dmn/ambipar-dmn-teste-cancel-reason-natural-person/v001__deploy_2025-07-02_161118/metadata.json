@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "2fc22ebb-575f-11f0-9214-5afd7ffbd380",
+  "decision_key": "ambipar-dmn-teste-cancel-reason-natural-person",
+  "decision_name": "ambipar-dmn-teste-cancel-reason-natural-person",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "ambipar-dmn-teste-cancel-reasons-natural-person.dmn",
+  "deployment_id": "2fbf6f98-575f-11f0-9214-5afd7ffbd380",
+  "deployment_name": "ambipar-dmn-teste-cancel-reasons-natural-person",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-02T16:11:18.305+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:35+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

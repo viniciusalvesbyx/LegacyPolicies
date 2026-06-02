@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "b1eec512-a2de-11f0-8f5c-5a2aa4e4dd1f",
+  "process_key": "Process_36aec002-7ac9-40a5-8fa7-202457253154",
+  "process_name": "Politica Geral para Testes",
+  "tenant_id": "",
+  "version": 3,
+  "version_tag": "",
+  "resource": "politica-de-credito-geral-testes.bpmn",
+  "deployment_id": "b1e96de0-a2de-11f0-8f5c-5a2aa4e4dd1f",
+  "deployment_name": "politica-de-credito-geral-testes",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-06T18:02:59.976+0000",
+  "extracted_at_utc": "2026-06-02T20:09:50+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

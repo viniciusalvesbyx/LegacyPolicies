@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "c68decf4-b32f-11f0-8ba6-722ac3fe8bdf",
+  "decision_key": "Happy_Legal_Person_Company_Type_Decision",
+  "decision_name": "Happy_Legal_Person_Company_Type_Decision",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "happy_legal_person_decision (2) (1) (1) (1) (2).dmn",
+  "deployment_id": "c68bca11-b32f-11f0-8ba6-722ac3fe8bdf",
+  "deployment_name": "happy_legal_person_decision (2) (1) (1) (1) (2)",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-27T12:23:42.435+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:57+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

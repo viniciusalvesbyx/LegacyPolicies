@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "76d6c23f-4209-11f0-8f43-d2a83d48d3cb",
+  "process_key": "Process_1ad5d3ae-e574-4914-86b8-84417bc13f4a",
+  "process_name": "TESTES AUTOMATIZADOS - Receba v1",
+  "tenant_id": "",
+  "version": 6,
+  "version_tag": "1",
+  "resource": "TESTES_AUTOMATICOS_receba_v1 (1).bpmn",
+  "deployment_id": "76d2f1ad-4209-11f0-8f43-d2a83d48d3cb",
+  "deployment_name": "TESTES_AUTOMATICOS_receba_v1",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-06-05T12:34:46.410+0000",
+  "extracted_at_utc": "2026-06-02T20:10:23+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

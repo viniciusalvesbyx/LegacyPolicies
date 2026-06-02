@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_test_ci_pr_2" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="test_ci_pr_2" name="test_ci_pr_2" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_test_ci_pr_2" hitPolicy="FIRST">
+      <input id="InputClause_score" label="Score" biodi:width="150" camunda:inputVariable="score">
+        <inputExpression id="LiteralExpression_score" typeRef="integer">
+          <text>score</text>
+        </inputExpression>
+      </input>
+      <output id="Output_status" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_status_values">
+          <text>"approved","review","denied"</text>
+        </outputValues>
+      </output>
+      <output id="Output_reason" label="Reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_low_score">
+        <inputEntry id="InputEntry_low_score">
+          <text>&lt; 400</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_status_low_score">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="OutputEntry_reason_low_score">
+          <text>"Score below minimum threshold"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_mid_score">
+        <inputEntry id="InputEntry_mid_score">
+          <text>[400..700)</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_status_mid_score">
+          <text>"review"</text>
+        </outputEntry>
+        <outputEntry id="OutputEntry_reason_mid_score">
+          <text>"Manual review required"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_high_score">
+        <inputEntry id="InputEntry_high_score">
+          <text>&gt;= 700</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_status_high_score">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="OutputEntry_reason_high_score">
+          <text>"Score meets approval threshold"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_test_ci_pr_2">
+      <dmndi:DMNShape id="DMNShape_test_ci_pr_2" dmnElementRef="test_ci_pr_2">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_12j13w9" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Definitions_PerfilPF_GPS" name="Definição Perfil PF GPS" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_07kvfev" hitPolicy="FIRST">
+      <input id="InputClause_07brb0m" label="Overdue amount over 14days" camunda:inputVariable="overdue_amount_over_14_days">
+        <inputExpression id="LiteralExpression_1a7crar" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1c1rpww" label="Written off amount" camunda:inputVariable="written_off_amount">
+        <inputExpression id="LiteralExpression_0f656ga" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string" />
+      <output id="OutputClause_06haqnr" label="Reason" name="reason" typeRef="string" />
+      <output id="OutputClause_0em1m76" label="Profile" name="profile" typeRef="string" />
+      <rule id="DecisionRule_1cs2qqr">
+        <inputEntry id="UnaryTests_1gay5t2">
+          <text>&gt;0</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0s65ftj">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1a6iy0k">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0igf4i0">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0596wea">
+          <text>"in_debt"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1df6v1g">
+        <inputEntry id="UnaryTests_13cosyf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02oo6hf">
+          <text>&gt;0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_13ctqta">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_17szs6i">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1helc4k">
+          <text>"in_debt"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0dgaqc9">
+        <inputEntry id="UnaryTests_1arelo3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0iljkni">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_06o7lv2">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0splr3s">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0f2s4hr">
+          <text>"clean"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Definitions_PerfilPF_GPS">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

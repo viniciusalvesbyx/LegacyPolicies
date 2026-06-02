@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Decision_1" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Decision_Taxa" name="BYX Privado Define Taxa" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_0vau4bc" hitPolicy="FIRST">
+      <input id="InputClause_182q72a" label="Score">
+        <inputExpression id="LiteralExpression_1aexjpb" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_1xk05tx" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_1x7zut0">
+          <text>"approved","denied"</text>
+        </outputValues>
+      </output>
+      <output id="Output_1" label="Tax" name="tax" typeRef="double" />
+      <output id="OutputClause_0aat76p" label="Min total number of installments" name="min_total_number_of_installments" typeRef="integer" />
+      <output id="OutputClause_0npijx7" label="Max total number of installments" name="max_total_number_of_installments" typeRef="integer" biodi:width="192" />
+      <output id="OutputClause_16o5w97" label="Max disbursement percent" name="max_disbursement_percent" typeRef="double" />
+      <rule id="DecisionRule_0xv8bat">
+        <inputEntry id="UnaryTests_0ydr600">
+          <text>&lt;= 0.7</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_196qasu">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1i26xzn">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0z3m4ea">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0lk3skm">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1a609sf">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0eqmwk8">
+        <inputEntry id="UnaryTests_1uovp52">
+          <text>&lt;= 0.8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_023akh2">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0k0h4q1">
+          <text>4.869</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1v1029r">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1p3j6ds">
+          <text>24</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0nvliga">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0i3hwiq">
+        <inputEntry id="UnaryTests_0obu6t0">
+          <text>&lt;= 0.9</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_18672u0">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0itmfyc">
+          <text>4.749</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14jhxnj">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qyxg0o">
+          <text>24</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mder6k">
+          <text>65</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0d6auwk">
+        <inputEntry id="UnaryTests_1kdoagx">
+          <text>&lt;= 1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1yyqei4">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1trcl46">
+          <text>4.469</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0dxix0x">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_08smuhq">
+          <text>24</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yyixms">
+          <text>70</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0b6722e">
+        <inputEntry id="UnaryTests_1jswoiw">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1rs1zu1">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0r8bkxj">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ynt1dn">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qwislf">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_031kys1">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_Taxa">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "regra_afastamento:3:4d580762-1ee3-11f1-89c8-3abbc81b68f6",
+  "decision_key": "regra_afastamento",
+  "decision_name": "Regra de Afastamento",
+  "tenant_id": "",
+  "version": 3,
+  "version_tag": "",
+  "resource": "byx_regra_afastamento_20260306 (1) (1).dmn",
+  "deployment_id": "4d51c5cf-1ee3-11f1-89c8-3abbc81b68f6",
+  "deployment_name": "byx_regra_afastamento_20260313",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2026-03-13T13:48:22.877+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:29:04+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

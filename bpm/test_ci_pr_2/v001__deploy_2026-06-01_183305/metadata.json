@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "test_ci_pr_2:1:5467a352-5de8-11f1-9106-9e63f728eda8",
+  "process_key": "test_ci_pr_2",
+  "process_name": "test_ci_pr_2",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "test_ci_pr_2.bpmn",
+  "deployment_id": "546691df-5de8-11f1-9106-9e63f728eda8",
+  "deployment_name": "byx-cd-7fc39d29e348fae530f97c32b7a8c48d08597ba5",
+  "deployment_source": "github-actions-cd-camunda-dev",
+  "deployment_time": "2026-06-01T18:33:05.494+0000",
+  "extracted_at_utc": "2026-06-02T20:09:58+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

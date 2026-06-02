@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "aaf338b5-423d-11f0-8f43-d2a83d48d3cb",
+  "process_key": "Process_df156141-ecd4-4996-8f9d-5e3c9a5efeef",
+  "process_name": "DEV_Consignado_Privado_Happy_BMP",
+  "tenant_id": "",
+  "version": 4,
+  "version_tag": "1",
+  "resource": "DEV_Consignado_Privado_Happy_BMP_Process_df156141-ecd4-4996-8f9d-5e3c9a5efeef.bpmn",
+  "deployment_id": "aaf0a0a3-423d-11f0-8f43-d2a83d48d3cb",
+  "deployment_name": "DEV_Consignado_Privado_Happy_BMP_Process_df156141-ecd4-4996-8f9d-5e3c9a5efeef",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-06-05T18:48:27.679+0000",
+  "extracted_at_utc": "2026-06-02T20:08:05+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

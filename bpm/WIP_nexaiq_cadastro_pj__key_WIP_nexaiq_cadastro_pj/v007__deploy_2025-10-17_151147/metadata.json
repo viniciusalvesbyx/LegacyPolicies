@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "WIP_nexaiq_cadastro_pj:7:996aa9fd-ab6b-11f0-802b-da6cd2a9c0db",
+  "process_key": "WIP_nexaiq_cadastro_pj",
+  "process_name": "WIP_nexaiq_cadastro_pj",
+  "tenant_id": "",
+  "version": 7,
+  "version_tag": "",
+  "resource": "nexaiq.bpmn",
+  "deployment_id": "9969235b-ab6b-11f0-802b-da6cd2a9c0db",
+  "deployment_name": "nexaiq",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-17T15:11:47.211+0000",
+  "extracted_at_utc": "2026-06-02T20:10:35+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

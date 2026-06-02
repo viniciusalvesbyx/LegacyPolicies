@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "f616b405-9ae0-11f0-9f89-aedb72aa1652",
+  "process_key": "Process_13a64b72-76b4-45f7-9b4d-1cca57ec18cb",
+  "process_name": "Politica de Credito da GPS",
+  "tenant_id": "",
+  "version": 17,
+  "version_tag": "",
+  "resource": "bpmn-politica-gps.bpmn",
+  "deployment_id": "f6129553-9ae0-11f0-9f89-aedb72aa1652",
+  "deployment_name": "bpmn-politica-gps",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-09-26T13:59:03.503+0000",
+  "extracted_at_utc": "2026-06-02T20:09:09+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

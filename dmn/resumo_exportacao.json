@@ -1,0 +1,18 @@
+{
+  "kind": "dmn",
+  "label": "DMN",
+  "base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "output_dir": "C:\\Users\\ViniciusAlvesdeSanta\\OneDrive - BYX CAPITAL S A\\Documentos\\Camunda\\Politicas Legado\\dmn",
+  "exclusions_file": "C:\\Users\\ViniciusAlvesdeSanta\\Downloads\\extrator_camunda_bpm\\excluidos_dmn.txt",
+  "exclusions_count": 65,
+  "definitions_found": 511,
+  "groups_found": 98,
+  "groups_skipped_by_exclusion": 73,
+  "versions_saved": 75,
+  "versions_skipped_by_exclusion": 436,
+  "versions_failed": 0,
+  "manifest": "C:\\Users\\ViniciusAlvesdeSanta\\OneDrive - BYX CAPITAL S A\\Documentos\\Camunda\\Politicas Legado\\dmn\\manifesto_exportacao.csv",
+  "details_global": "C:\\Users\\ViniciusAlvesdeSanta\\OneDrive - BYX CAPITAL S A\\Documentos\\Camunda\\Politicas Legado\\dmn\\elementos_todos_os_dmn.csv",
+  "finished_at_utc": "2026-06-02T20:29:07+00:00",
+  "dry_run": false
+}

@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "Process_1dmxon0:7:cdedf6ef-add1-11f0-9d13-c6f50bfce561",
+  "process_key": "Process_1dmxon0",
+  "process_name": "Process_1dmxon0",
+  "tenant_id": "",
+  "version": 7,
+  "version_tag": "",
+  "resource": "consultar_recisão_gps.bpmn",
+  "deployment_id": "cdec493d-add1-11f0-9d13-c6f50bfce561",
+  "deployment_name": "consultar_recisão_gps",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-20T16:28:26.305+0000",
+  "extracted_at_utc": "2026-06-02T20:09:53+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

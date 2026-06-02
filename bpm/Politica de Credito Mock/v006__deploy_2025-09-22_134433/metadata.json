@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "455931f7-97ba-11f0-9ae4-02e69910660b",
+  "process_key": "Process_df4d48d4-ae62-41e0-8c1f-ea3cb9e94c35",
+  "process_name": "Politica de Credito Mock",
+  "tenant_id": "",
+  "version": 6,
+  "version_tag": "",
+  "resource": "politica-de-credito-ideal.bpmn",
+  "deployment_id": "455699e5-97ba-11f0-9ae4-02e69910660b",
+  "deployment_name": "politica-de-credito-ideal",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-09-22T13:44:33.143+0000",
+  "extracted_at_utc": "2026-06-02T20:09:48+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

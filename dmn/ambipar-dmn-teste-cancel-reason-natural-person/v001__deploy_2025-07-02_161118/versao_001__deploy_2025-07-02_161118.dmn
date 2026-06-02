@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="ambipar-dmn-teste-cancel-reason" name="ambipar-dmn-teste-cancel-reason-natural-person" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="ambipar-dmn-teste-cancel-reason-natural-person" name="ambipar-dmn-teste-cancel-reason-natural-person" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_190x0qg" hitPolicy="FIRST">
+      <input id="InputClause_1i355sd" label="Document Number" camunda:inputVariable="document_number">
+        <inputExpression id="LiteralExpression_1f9imv7" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_1abfioo">
+          <text>"approved","denied"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_0379uj3" label="Reason" name="reason" typeRef="string" />
+      <output id="OutputClause_1dolf3n" label="Enum" name="reason_enum" typeRef="string" />
+      <rule id="DecisionRule_0nevftr">
+        <inputEntry id="UnaryTests_1pb5j74">
+          <text>"11349955043"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1eybqdo">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1n2aqjn">
+          <text>"The available consignment margin is insufficient (zero or negative)."</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1oby1ix">
+          <text>"available_consignment_margin_insufficient"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1jyihv1">
+        <inputEntry id="UnaryTests_1hes5oc">
+          <text>"13721280008"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ga9ang">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1eo9aio">
+          <text>"Not eligible for loan"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0nv2l7y">
+          <text>"not_elegible_for_loan"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_04ckj6m">
+        <inputEntry id="UnaryTests_0o1rnrf">
+          <text>"03536184030"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0hsjijb">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gtmnup">
+          <text>"Has contract end date"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1iigp65">
+          <text>"has_contarct_end_date"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0mii8b8">
+        <inputEntry id="UnaryTests_12j8kzn">
+          <text>"99564585031"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_11ul4pb">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_05q867l">
+          <text>"Borrower is in leave of absence alert"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1b45dk2">
+          <text>"borrower_has_leave_of_absence_alert"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_187rms0">
+        <inputEntry id="UnaryTests_15b7hcq">
+          <text>"42644810078"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ijjrjt">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1axcahm">
+          <text>"Borrower is in termination notice"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ihtfab">
+          <text>"borrower_is_in_termination_notice"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ww56fq">
+        <inputEntry id="UnaryTests_0hlm6dm">
+          <text>"04776835096"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0fptl0n">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0c17anb">
+          <text>"PEP restriction: Borrower is PEP"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1lkl66m">
+          <text>"is_pep"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1u0beq0">
+        <inputEntry id="UnaryTests_1g5blwv">
+          <text>"36584662004"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0g7vp7f">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1vjvcqu">
+          <text>"SCR restriction: The borrower has an active consignment loan."</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_17mnz6e">
+          <text>"borrower_has_an_active_consignment_loan"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0vsqsxj">
+        <inputEntry id="UnaryTests_1letvaa">
+          <text>"22248845081"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zsm61g">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0r8okog">
+          <text>"Family CBO restriction: Borrower family CBO is in family cbos blocklist"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_10lrdgg">
+          <text>"cbo_restriction"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0zruyfn">
+        <inputEntry id="UnaryTests_1xn8tha">
+          <text>"68923960039"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_07f2mh4">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13sx86q">
+          <text>"Age restriction: &lt;25y"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1rno3zs">
+          <text>"age_restriction_below_25"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1z0k2r0">
+        <inputEntry id="UnaryTests_04e1jwp">
+          <text>"07064509067"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0r02oqw">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0zb84vx">
+          <text>"Age restriction: &gt;55y"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jcy41y">
+          <text>"age_restriction_abve_55"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1i8ztr9">
+        <inputEntry id="UnaryTests_15mzq90">
+          <text>"26086995028"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1kp47ka">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19at7pc">
+          <text>"Employment duration restriction: &lt;12mos Corporate/Large/Middle"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_05qjoqo">
+          <text>"employement_duration_below_12mos"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1acdiz3">
+        <inputEntry id="UnaryTests_1t57gln">
+          <text>"79493569012"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1r6edbh">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1f8xggy">
+          <text>"Family CBO: Not defined"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_022g6jh">
+          <text>"cbo_not_defined"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0srpo0g">
+        <inputEntry id="UnaryTests_11eaun2">
+          <text>"30059235098"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0cu8iqt">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0sxovza">
+          <text>"Natural person score is insufficient"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1t3qhks">
+          <text>"natural_person_score_insufficient"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1qhrqyf">
+        <inputEntry id="UnaryTests_0580hig">
+          <text>"20457875089"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1mh7xo6">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0d89xxd">
+          <text>"Calculated Installment amount &lt; min installment amount"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0psap1r">
+          <text>"calculated_installment_below_min_installment_amount"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1fqrlmg">
+        <inputEntry id="UnaryTests_0x9ei50">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0myp9xc">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15zm0nu">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0f8fv32">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="ambipar-dmn-teste-cancel-reason-natural-person">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

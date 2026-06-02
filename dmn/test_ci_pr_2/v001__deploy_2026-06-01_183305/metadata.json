@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "test_ci_pr_2:1:54699f24-5de8-11f1-9106-9e63f728eda8",
+  "decision_key": "test_ci_pr_2",
+  "decision_name": "test_ci_pr_2",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "test_ci_pr_2.dmn",
+  "deployment_id": "546691df-5de8-11f1-9106-9e63f728eda8",
+  "deployment_name": "byx-cd-7fc39d29e348fae530f97c32b7a8c48d08597ba5",
+  "deployment_source": "github-actions-cd-camunda-dev",
+  "deployment_time": "2026-06-01T18:33:05.494+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:29:06+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

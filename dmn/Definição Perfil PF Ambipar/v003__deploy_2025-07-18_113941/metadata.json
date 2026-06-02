@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "e5049968-63cb-11f0-a4e7-02f49fd3c111",
+  "decision_key": "Definitions_PerfilPF_Ambipar",
+  "decision_name": "Definição Perfil PF Ambipar",
+  "tenant_id": "",
+  "version": 3,
+  "version_tag": "",
+  "resource": "dmn-defini-perfil-pf-ambipar.dmn",
+  "deployment_id": "e5002c95-63cb-11f0-a4e7-02f49fd3c111",
+  "deployment_name": "dmn-defini-perfil-pf-ambipar",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-18T11:39:41.996+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:51+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

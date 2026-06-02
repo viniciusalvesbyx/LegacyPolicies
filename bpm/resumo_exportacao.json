@@ -1,0 +1,16 @@
+{
+  "base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "output_dir": "C:\\Users\\ViniciusAlvesdeSanta\\OneDrive - BYX CAPITAL S A\\Documentos\\Camunda\\Politicas Legado\\bpm",
+  "exclusions_file": "C:\\Users\\ViniciusAlvesdeSanta\\Downloads\\extrator_camunda_bpm\\excluidos.txt",
+  "exclusions_count": 21,
+  "process_definitions_found": 1628,
+  "flow_groups_found": 50,
+  "flows_skipped_by_exclusion": 20,
+  "versions_saved": 368,
+  "versions_skipped_by_exclusion": 1260,
+  "versions_failed": 0,
+  "manifest": "C:\\Users\\ViniciusAlvesdeSanta\\OneDrive - BYX CAPITAL S A\\Documentos\\Camunda\\Politicas Legado\\bpm\\manifesto_exportacao.csv",
+  "tasks_global": "C:\\Users\\ViniciusAlvesdeSanta\\OneDrive - BYX CAPITAL S A\\Documentos\\Camunda\\Politicas Legado\\bpm\\tasks_todos_os_bpm.csv",
+  "finished_at_utc": "2026-06-02T20:10:37+00:00",
+  "dry_run": false
+}

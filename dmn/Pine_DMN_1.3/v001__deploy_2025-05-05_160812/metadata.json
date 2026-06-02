@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "Pine_DMN_1.3:1:2541e2b3-29cb-11f0-bf41-0e30a9376da7",
+  "decision_key": "Pine_DMN_1.3",
+  "decision_name": "Pine_DMN_1.3",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "pine_DMN1.3 - com null nas variáveis.dmn",
+  "deployment_id": "252b4d70-29cb-11f0-bf41-0e30a9376da7",
+  "deployment_name": "pine_DMN1.3 - com null nas variáveis",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-05-05T16:08:12.703+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:29:01+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

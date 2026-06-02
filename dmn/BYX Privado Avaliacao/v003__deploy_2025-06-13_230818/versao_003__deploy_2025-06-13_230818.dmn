@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_1" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Definitions_AvaliacaoPF" name="BYX Privado Avaliacao" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_190x0qg" hitPolicy="FIRST">
+      <input id="InputClause_0owcu8q" label="Is eligible for loan" camunda:inputVariable="is_eligible_for_loan">
+        <inputExpression id="LiteralExpression_0ylwsi3" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0mndt1f" label="Contract end date" camunda:inputVariable="contract_end_date">
+        <inputExpression id="LiteralExpression_0vr9gyu" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0u57o32" label="Leave of absense" camunda:inputVariable="leave_of_absense">
+        <inputExpression id="LiteralExpression_12mljo6" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_17oh7jy" label="Termination notice" camunda:inputVariable="termination_notice">
+        <inputExpression id="LiteralExpression_1000uol" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="Input_1" label="PEP" camunda:inputVariable="is_pep">
+        <inputExpression id="InputExpression_1" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0fjtddt" label="Family CBO Code" camunda:inputVariable="family_cbo_code">
+        <inputExpression id="LiteralExpression_04vkrog" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_03brxa7" label="Age" camunda:inputVariable="age">
+        <inputExpression id="LiteralExpression_1yji2pa" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1f27mku" label="Type company" camunda:inputVariable="type_company">
+        <inputExpression id="LiteralExpression_1vwr0b1" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0p0h25m" label="Employment duration in mos" camunda:inputVariable="employment_duration_in_months">
+        <inputExpression id="LiteralExpression_0gtckuh" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string">
+        <outputValues id="UnaryTests_1abfioo">
+          <text>"approved","denied"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_0379uj3" label="Reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_1jyihv1">
+        <inputEntry id="UnaryTests_0wlrumt">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18j1rlj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0q3br4z">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0pb81p4">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1l5zyzz">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18d1tpn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vet9kt">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18m3lmc">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0hcv5et">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ga9ang">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1eo9aio">
+          <text>"Not eligible for loan"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_04ckj6m">
+        <inputEntry id="UnaryTests_0v9l5eu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0v8o5bm">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1c5qjkf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0w4ccze">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dy8xtj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07d6tja">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ii410z">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13m3slj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0y9xhrk">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0hsjijb">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gtmnup">
+          <text>"Has contract end date"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0mii8b8">
+        <inputEntry id="UnaryTests_0121vrf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1j3fix6">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00o8308">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19u5u51">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1w5q0he">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05lhm3i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ixu5rb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1k7j50a">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1t1i2dm">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_11ul4pb">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_05q867l">
+          <text>"Borrower is in leave of absence alert"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_187rms0">
+        <inputEntry id="UnaryTests_025f72j">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07eaf0i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1kyq4a0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x2pqgy">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0e1ub8i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1a4ztcl">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1enx75r">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1smqqp9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1gsdd4x">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ijjrjt">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1axcahm">
+          <text>"Borrower is in termination notice"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ww56fq">
+        <inputEntry id="UnaryTests_0vivfdk">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12b97vg">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10wl71j">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0uhluml">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0cyts06">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ide3f7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0qx6eou">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_078h2cm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1shjuxa">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0fptl0n">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0c17anb">
+          <text>"PEP restriction: Borrower is PEP"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0vsqsxj">
+        <inputEntry id="UnaryTests_1gwyr1b">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0jpxzj1">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sr3wd3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nipapa">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sao3em">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jepuzx">
+          <text>["0101", "0102", "0103", "0201", "0202", "0203", "0211", "0212", "0301", "0302", "0303", "0311", "0312", "1111", "1112", "1113", "1114", "1115", "1130", "1141", "1142", "1143", "1144", "2414", "5198", "6122", "8423", "9914"]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1w182qr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1b6q5kf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0r6xd3v">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zsm61g">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0r8okog">
+          <text>"Family CBO restriction: Borrower family CBO is in family cbos blocklist"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0zruyfn">
+        <inputEntry id="UnaryTests_0f93p8p">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_17afndo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1hub3wb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0eglr8p">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0pg46zw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0zbi5ok">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qpc1tw">
+          <text>&lt;= 21</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vsh91h">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1144toj">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_07f2mh4">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13sx86q">
+          <text>"Age restriction: &lt;22y"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1i8ztr9">
+        <inputEntry id="UnaryTests_11on1l4">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0yuavso">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10dbizl">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06ga73i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_195uzwa">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x444jl">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tfx1a3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ovuz1i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ljoxqw">
+          <text>&lt; 6</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1kp47ka">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19at7pc">
+          <text>"Employment duration restriction: &lt;6mos"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0neb4lq">
+        <inputEntry id="UnaryTests_18gu5mw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bmiwx2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1uidyox">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0l7kkk2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1hrstnb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0iwxubf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1o01cmp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bio30x">
+          <text>["Large", "Middle"]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0p22acc">
+          <text>&lt; 12</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0fb14je">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_03q9omz">
+          <text>"Employment duration restriction: &lt;12mos Large/Middle"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0wbugfq">
+        <inputEntry id="UnaryTests_1uz96ie">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0o936mo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rak30i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0jxgn9i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0dceton">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1tmlkgq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1xjdmst">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qivagk">
+          <text>"Small"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1knb91n">
+          <text>&lt; 24</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_074tn7s">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_129dt3j">
+          <text>"Employment duration restriction: &lt;24mos Small"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1cu0ra5">
+        <inputEntry id="UnaryTests_0yr8h0i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0oxzvwj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1auw43o">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ifx891">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_157qjzf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cwj2nf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14l4un3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06zu3i5">
+          <text>"Outhers"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ioitub">
+          <text>&lt; 36</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_064g5bf">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_093qmeb">
+          <text>"Employment duration restriction: &lt;36mos Outhers"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1fqrlmg">
+        <inputEntry id="UnaryTests_09uwqug">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1u7fxbe">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19mul1a">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vv4ahp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_116tn77">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mbt7u0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0hupn5s">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dkogg5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1aajnes">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0myp9xc">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15zm0nu">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Definitions_AvaliacaoPF">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

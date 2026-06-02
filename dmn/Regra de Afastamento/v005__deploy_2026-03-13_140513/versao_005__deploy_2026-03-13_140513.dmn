@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_00ck1q0" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="regra_afastamento" name="Regra de Afastamento" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_181rs1f" hitPolicy="FIRST">
+      <input id="Input_1" label="absenceReasonCode" camunda:inputVariable="absence_reason_code">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>absenceReasonCode</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string" />
+      <output id="OutputClause_0ctti65" label="reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_0zuhv52">
+        <inputEntry id="UnaryTests_0fwgahb">
+          <text>""</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1n82dyt">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15g6vzg">
+          <text>""</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_15b2ald">
+        <inputEntry id="UnaryTests_1bll1gn">
+          <text>"15"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02x7zko">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ldun8m">
+          <text>""</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_09v4xk5">
+        <inputEntry id="UnaryTests_1kqol7v">
+          <text>not("15")</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_106gs6q">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_12lm42f">
+          <text>"Afastamento incompatível"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="regra_afastamento">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

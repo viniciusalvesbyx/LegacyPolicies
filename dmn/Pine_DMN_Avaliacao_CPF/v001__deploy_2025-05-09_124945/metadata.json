@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "Pine_DMN_Avaliacao_CPF:1:15645097-2cd4-11f0-a0f7-0e3fcb7eb86d",
+  "decision_key": "Pine_DMN_Avaliacao_CPF",
+  "decision_name": "Pine_DMN_Avaliacao_CPF",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "pine_DMN1.2 - somente PINE e BYX e CBO.dmn",
+  "deployment_id": "1560ce24-2cd4-11f0-a0f7-0e3fcb7eb86d",
+  "deployment_name": "Pine_DMN_Avaliacao_CPF",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-05-09T12:49:45.155+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:29:03+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

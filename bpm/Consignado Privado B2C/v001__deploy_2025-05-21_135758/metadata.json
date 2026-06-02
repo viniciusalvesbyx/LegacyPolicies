@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "9a004069-364b-11f0-a0f7-0e3fcb7eb86d",
+  "process_key": "Process_f4f1450e-ab40-41a0-8ede-2a4fa8a83ec1",
+  "process_name": "Consignado Privado Leilao",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "Consignado_Privado_Leilao_Process_f4f1450e-ab40-41a0-8ede-2a4fa8a83ec1.bpmn",
+  "deployment_id": "99fd8147-364b-11f0-a0f7-0e3fcb7eb86d",
+  "deployment_name": "Consignado_Privado_Leilao_Process_f4f1450e-ab40-41a0-8ede-2a4fa8a83ec1",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-05-21T13:57:58.243+0000",
+  "extracted_at_utc": "2026-06-02T20:07:59+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

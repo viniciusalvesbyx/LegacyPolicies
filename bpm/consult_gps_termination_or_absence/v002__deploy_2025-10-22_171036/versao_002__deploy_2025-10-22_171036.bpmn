@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_012rqh2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="consult_gps_termination_or_absence" name="consult_gps_termination_or_absence" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:endEvent id="Event_0nffj4b">
+      <bpmn:incoming>Activity_123</bpmn:incoming>
+      <bpmn:incoming>Flow_19a5zzw</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0dcupbx" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_16s3vp1" name="Consult contract termination GPS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestGetApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://portalws.gpssa.com.br/srh_api/api/externo/existe-rescisao?cpf=${document_number}</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{
+    "api-key": "a8916e23-3d9c-4332-8460-b4ee60107d05",
+    "Accept": "application/json"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_termination</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1gu790l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1gu790l" sourceRef="Activity_16s3vp1" targetRef="Proccess_Response" />
+    <bpmn:scriptTask id="Proccess_Response" name="Proccess Contract Termination Response" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1gu790l</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sm7jvf</bpmn:outgoing>
+      <bpmn:script>const response_termination = JSON.parse(execution.getVariable("response_termination"));
+execution.setVariable("has_gps_termination", response_termination.existe_rescisao);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1sm7jvf" sourceRef="Proccess_Response" targetRef="Gateway_1jcipyf" />
+    <bpmn:serviceTask id="Activity_0k6nkgs" name="Consult absence GPS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestGetApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://portalws.gpssa.com.br/srh_api/api/externo/existe-afastamento?cpf=${document_number}</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{
+    "api-key": "a8916e23-3d9c-4332-8460-b4ee60107d05",
+    "Accept": "application/json"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_absence</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07wq4ke</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rw4ol6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Proccess_Absence_Response" name="Proccess Absence Response" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1rw4ol6</bpmn:incoming>
+      <bpmn:outgoing>Flow_10yh6hq</bpmn:outgoing>
+      <bpmn:script>const response_absence = JSON.parse(execution.getVariable("response_absence"));
+execution.setVariable("has_gps_absence", response_absence.existe_afastamento);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_10yh6hq" sourceRef="Proccess_Absence_Response" targetRef="Gateway_0pwpk8o" />
+    <bpmn:sequenceFlow id="Flow_1rw4ol6" sourceRef="Activity_0k6nkgs" targetRef="Proccess_Absence_Response" />
+    <bpmn:task id="Has_Absense" name="Has Absense">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Borrower has an active GPS absence alert",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1c6gwku</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ic2r2g</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0dvgyv6" name="Has Contract Termination">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Borrower has an active GPS contract termintation alert",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11e7gla</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f5reay</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_1jcipyf" default="Flow_11e7gla">
+      <bpmn:incoming>Flow_1sm7jvf</bpmn:incoming>
+      <bpmn:outgoing>Flow_07wq4ke</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11e7gla</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_07wq4ke" sourceRef="Gateway_1jcipyf" targetRef="Activity_0k6nkgs">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${has_gps_termination == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_11e7gla" sourceRef="Gateway_1jcipyf" targetRef="Activity_0dvgyv6" />
+    <bpmn:sequenceFlow id="Flow_0f5reay" sourceRef="Activity_0dvgyv6" targetRef="Gateway_0xz6cet" />
+    <bpmn:exclusiveGateway id="Gateway_0pwpk8o" default="Flow_1c6gwku">
+      <bpmn:incoming>Flow_10yh6hq</bpmn:incoming>
+      <bpmn:outgoing>Activity_123</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1c6gwku</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Activity_123" sourceRef="Gateway_0pwpk8o" targetRef="Event_0nffj4b">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${has_gps_absence == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1c6gwku" sourceRef="Gateway_0pwpk8o" targetRef="Has_Absense" />
+    <bpmn:exclusiveGateway id="Gateway_0xz6cet">
+      <bpmn:incoming>Flow_0f5reay</bpmn:incoming>
+      <bpmn:incoming>Flow_1ic2r2g</bpmn:incoming>
+      <bpmn:outgoing>Flow_19a5zzw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_19a5zzw" sourceRef="Gateway_0xz6cet" targetRef="Event_0nffj4b" />
+    <bpmn:sequenceFlow id="Flow_1ic2r2g" sourceRef="Has_Absense" targetRef="Gateway_0xz6cet" />
+    <bpmn:startEvent id="Event_1l4t88r">
+      <bpmn:outgoing>Flow_0251y0g</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1a9gtz6">
+      <bpmn:incoming>Flow_0mo2ebe</bpmn:incoming>
+      <bpmn:incoming>Flow_0ctm3pa</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ncn555" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_13z23lv" name="Consult contract termination GPS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestGetApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://portalws.gpssa.com.br/srh_api/api/externo/existe-rescisao?cpf=${document_number}</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{
+    "api-key": "a8916e23-3d9c-4332-8460-b4ee60107d05",
+    "Accept": "application/json"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_termination</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0251y0g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qjcvkw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Activity_1fvzz8i" name="Proccess Contract Termination Response" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0qjcvkw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fzd3b1</bpmn:outgoing>
+      <bpmn:script>const response_termination = JSON.parse(execution.getVariable("response_termination"));
+execution.setVariable("has_gps_termination", response_termination.existe_rescisao);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_16f5noo" name="Consult absence GPS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestGetApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://portalws.gpssa.com.br/srh_api/api/externo/existe-afastamento?cpf=${document_number}</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{
+    "api-key": "a8916e23-3d9c-4332-8460-b4ee60107d05",
+    "Accept": "application/json"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_absence</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_145jkm8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Activity_18lds4u" name="Proccess Absence Response" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_145jkm8</bpmn:incoming>
+      <bpmn:outgoing>Flow_08r17az</bpmn:outgoing>
+      <bpmn:script>const response_absence = JSON.parse(execution.getVariable("response_absence"));
+execution.setVariable("has_gps_absence", response_absence.existe_afastamento);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:task id="Activity_0x1m6gj" name="Has Absense">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Borrower has an active GPS absence alert",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1l9zxbz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hqra6g</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_01drzn5" name="Has Contract Termination">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Borrower has an active GPS contract termintation alert",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fzd3b1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i4pipy</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_1n2d8vy" default="Flow_1l9zxbz">
+      <bpmn:incoming>Flow_08r17az</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mo2ebe</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1l9zxbz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1hbm6ov">
+      <bpmn:incoming>Flow_1hqra6g</bpmn:incoming>
+      <bpmn:incoming>Flow_1i4pipy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ctm3pa</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0251y0g" sourceRef="Event_1l4t88r" targetRef="Activity_13z23lv" />
+    <bpmn:sequenceFlow id="Flow_0mo2ebe" sourceRef="Gateway_1n2d8vy" targetRef="Event_1a9gtz6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${has_gps_absence == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ctm3pa" sourceRef="Gateway_1hbm6ov" targetRef="Event_1a9gtz6" />
+    <bpmn:sequenceFlow id="Flow_0qjcvkw" sourceRef="Activity_13z23lv" targetRef="Activity_1fvzz8i" />
+    <bpmn:sequenceFlow id="Flow_0fzd3b1" sourceRef="Activity_1fvzz8i" targetRef="Activity_01drzn5" />
+    <bpmn:sequenceFlow id="Flow_145jkm8" sourceRef="Activity_16f5noo" targetRef="Activity_18lds4u" />
+    <bpmn:sequenceFlow id="Flow_08r17az" sourceRef="Activity_18lds4u" targetRef="Gateway_1n2d8vy" />
+    <bpmn:sequenceFlow id="Flow_1l9zxbz" sourceRef="Gateway_1n2d8vy" targetRef="Activity_0x1m6gj" />
+    <bpmn:sequenceFlow id="Flow_1hqra6g" sourceRef="Activity_0x1m6gj" targetRef="Gateway_1hbm6ov" />
+    <bpmn:sequenceFlow id="Flow_1i4pipy" sourceRef="Activity_01drzn5" targetRef="Gateway_1hbm6ov" />
+  </bpmn:process>
+  <bpmn:error id="Error_0gcnlk5" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="consult_gps_termination_or_absence">
+      <bpmndi:BPMNShape id="BPMNShape_1vb03yj" bpmnElement="Activity_16s3vp1">
+        <dc:Bounds x="310" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ahpms" bpmnElement="Proccess_Response">
+        <dc:Bounds x="460" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_005mexq" bpmnElement="Activity_0k6nkgs">
+        <dc:Bounds x="690" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qje7rg" bpmnElement="Proccess_Absence_Response">
+        <dc:Bounds x="820" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17hsnc6" bpmnElement="Activity_0dvgyv6">
+        <dc:Bounds x="570" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1jcipyf_di" bpmnElement="Gateway_1jcipyf" isMarkerVisible="true">
+        <dc:Bounds x="595" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pwpk8o_di" bpmnElement="Gateway_0pwpk8o" isMarkerVisible="true">
+        <dc:Bounds x="975" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kkvscu" bpmnElement="Has_Absense">
+        <dc:Bounds x="950" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0xz6cet_di" bpmnElement="Gateway_0xz6cet" isMarkerVisible="true">
+        <dc:Bounds x="975" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03o4lli_di" bpmnElement="Event_0nffj4b">
+        <dc:Bounds x="1172" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hdaeyf" bpmnElement="Event_1l4t88r">
+        <dc:Bounds x="152" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0mt3ceh" bpmnElement="Event_1a9gtz6">
+        <dc:Bounds x="1112" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1wyr8xd" bpmnElement="Activity_13z23lv">
+        <dc:Bounds x="250" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17maiq9" bpmnElement="Activity_1fvzz8i">
+        <dc:Bounds x="400" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0x99r4y" bpmnElement="Activity_16f5noo">
+        <dc:Bounds x="630" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ex354f" bpmnElement="Activity_18lds4u">
+        <dc:Bounds x="760" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0pfd7qh" bpmnElement="Activity_0x1m6gj">
+        <dc:Bounds x="890" y="660" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0a6zgil" bpmnElement="Activity_01drzn5">
+        <dc:Bounds x="510" y="660" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dpcrqt" bpmnElement="Gateway_1n2d8vy" isMarkerVisible="true">
+        <dc:Bounds x="915" y="495" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_10nxzet" bpmnElement="Gateway_1hbm6ov" isMarkerVisible="true">
+        <dc:Bounds x="915" y="775" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1gu790l_di" bpmnElement="Flow_1gu790l">
+        <di:waypoint x="410" y="120" />
+        <di:waypoint x="460" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sm7jvf_di" bpmnElement="Flow_1sm7jvf">
+        <di:waypoint x="560" y="120" />
+        <di:waypoint x="595" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07wq4ke_di" bpmnElement="Flow_07wq4ke">
+        <di:waypoint x="645" y="120" />
+        <di:waypoint x="690" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rw4ol6_di" bpmnElement="Flow_1rw4ol6">
+        <di:waypoint x="790" y="120" />
+        <di:waypoint x="820" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10yh6hq_di" bpmnElement="Flow_10yh6hq">
+        <di:waypoint x="920" y="120" />
+        <di:waypoint x="975" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11e7gla_di" bpmnElement="Flow_11e7gla">
+        <di:waypoint x="620" y="145" />
+        <di:waypoint x="620" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f5reay_di" bpmnElement="Flow_0f5reay">
+        <di:waypoint x="620" y="340" />
+        <di:waypoint x="620" y="400" />
+        <di:waypoint x="975" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07e0kie_di" bpmnElement="Activity_123">
+        <di:waypoint x="1025" y="120" />
+        <di:waypoint x="1172" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="995" y="102" width="88" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c6gwku_di" bpmnElement="Flow_1c6gwku">
+        <di:waypoint x="1000" y="145" />
+        <di:waypoint x="1000" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ic2r2g_di" bpmnElement="Flow_1ic2r2g">
+        <di:waypoint x="1000" y="340" />
+        <di:waypoint x="1000" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19a5zzw_di" bpmnElement="Flow_19a5zzw">
+        <di:waypoint x="1025" y="400" />
+        <di:waypoint x="1190" y="400" />
+        <di:waypoint x="1190" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0lfwirw" bpmnElement="Flow_0251y0g">
+        <di:waypoint x="188" y="520" />
+        <di:waypoint x="250" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1ppmeo7" bpmnElement="Flow_0mo2ebe">
+        <di:waypoint x="965" y="520" />
+        <di:waypoint x="1112" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="995" y="102" width="88" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1v2ivu5" bpmnElement="Flow_0ctm3pa">
+        <di:waypoint x="965" y="800" />
+        <di:waypoint x="1130" y="800" />
+        <di:waypoint x="1130" y="538" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0ea9swp" bpmnElement="Flow_0qjcvkw">
+        <di:waypoint x="350" y="520" />
+        <di:waypoint x="400" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1c68o6c" bpmnElement="Flow_0fzd3b1">
+        <di:waypoint x="500" y="520" />
+        <di:waypoint x="560" y="520" />
+        <di:waypoint x="560" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1kqqtih" bpmnElement="Flow_145jkm8">
+        <di:waypoint x="730" y="520" />
+        <di:waypoint x="760" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1l53c6m" bpmnElement="Flow_08r17az">
+        <di:waypoint x="860" y="520" />
+        <di:waypoint x="915" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1ykvzdx" bpmnElement="Flow_1l9zxbz">
+        <di:waypoint x="940" y="545" />
+        <di:waypoint x="940" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0qej9it" bpmnElement="Flow_1hqra6g">
+        <di:waypoint x="940" y="740" />
+        <di:waypoint x="940" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_14ztsbg" bpmnElement="Flow_1i4pipy">
+        <di:waypoint x="560" y="740" />
+        <di:waypoint x="560" y="800" />
+        <di:waypoint x="915" y="800" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

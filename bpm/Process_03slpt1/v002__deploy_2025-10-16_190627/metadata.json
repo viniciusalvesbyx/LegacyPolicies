@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "Process_03slpt1:2:3752c0e9-aac3-11f0-802b-da6cd2a9c0db",
+  "process_key": "Process_03slpt1",
+  "process_name": "Process_03slpt1",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "personal_income_ph3a.bpmn",
+  "deployment_id": "37513a47-aac3-11f0-802b-da6cd2a9c0db",
+  "deployment_name": "personal_income_ph3a",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-16T19:06:27.187+0000",
+  "extracted_at_utc": "2026-06-02T20:09:51+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

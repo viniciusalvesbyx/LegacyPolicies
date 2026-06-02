@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_17cbwo8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.37.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="Process_c9bfacff-4e9c-4988-b450-ab26fb15d5f9" name="Ambipar" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0kh11vw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0kh11vw" sourceRef="StartEvent_1" targetRef="preparar_variaveis" />
+    <bpmn:scriptTask id="Activity_0fg11nx" name="Preparar identification" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1flkf8j</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z7mndg</bpmn:outgoing>
+      <bpmn:script>var identification = {
+  "is_eligible_for_loan": false,
+  "contract_end_date": "",
+  "leave_of_absense": false,
+  "is_pep": false,
+  "age": 35,
+  "family_cbo_code": 1234,
+  "employment_duration_in_months": 12,
+  "fgts_payment_delay_record": false,
+  "company_age_in_months": 3,
+  "score_borrower": 0.7,
+};
+
+
+var jsonString = JSON.stringify(identification); 
+execution.setVariable("decision_metadata_identification", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_04akl5a" name="Preparar decision" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0z7mndg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1eanti6</bpmn:outgoing>
+      <bpmn:script>var identification_raw = execution.getVariable("decision_metadata_identification");
+const identification = JSON.parse(identification_raw);
+
+let result_natural_person_raw = execution.getVariable("result_natural_person");
+let result_natural_person;
+
+if (typeof result_natural_person_raw === "string") {
+  try {
+    result_natural_person = JSON.parse(result_natural_person_raw);
+  } catch (e) {
+    throw new Error("Falha ao fazer parse de result_natural_person: " + e.message);
+  }
+} else {
+  result_natural_person = result_natural_person_raw;
+}
+
+let result_legal_person_raw = execution.getVariable("result_legal_person");
+let result_legal_person;
+
+if (typeof result_legal_person=== "string") {
+  try {
+    result_legal_person = JSON.parse(result_legal_person_raw);
+  } catch (e) {
+    throw new Error("Falha ao fazer parse de result_legal_person: " + e.message);
+  }
+} else {
+  result_legal_person = result_legal_person_raw;
+}
+
+
+var decision = {
+  "identification": identification,
+  "decision": {
+    "natural_person_reason": result_natural_person?.reason,
+    "natural_person_status": result_natural_person?.status,
+    "legal_person_reason": result_legal_person?.reason,
+    "legal_person_status": result_legal_person?.status,
+    "installment_amount": 200.00,
+    "max_amount_percent": 0.65
+  }
+};
+
+var jsonString = JSON.stringify(decision); 
+execution.setVariable("decision_metadata", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0ew5iwy" name="Preparar retorno" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1eanti6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kah6pd</bpmn:outgoing>
+      <bpmn:script>let result_natural_person_raw = execution.getVariable("result_natural_person");
+let result_natural_person;
+
+if (typeof result_natural_person_raw === "string") {
+  try {
+    result_natural_person = JSON.parse(result_natural_person_raw);
+  } catch (e) {
+    throw new Error("Falha ao fazer parse de result_natural_person: " + e.message);
+  }
+} else {
+  result_natural_person = result_natural_person_raw;
+}
+
+let result_legal_person_raw = execution.getVariable("result_legal_person");
+let result_legal_person;
+
+if (typeof result_legal_person_raw === "string") {
+  try {
+    result_legal_person = JSON.parse(result_legal_person_raw);
+  } catch (e) {
+    throw new Error("Falha ao fazer parse de result_legal_person: " + e.message);
+  }
+} else {
+  result_legal_person = result_legal_person_raw;
+}
+
+const natural_person_status = result_natural_person?.status;
+const natural_person_reason = result_natural_person?.reason;
+const legal_person_status = result_legal_person?.status;
+const legal_person_reason = result_legal_person?.reason;
+
+var cancel_reason =  "ERROR";
+var final_status = "ERROR";
+
+if(natural_person_status == "approved" &amp;&amp; legal_person_status == "approved"){
+  final_status =  "approved";
+  cancel_reason = "";
+}else if(natural_person_status == "denied" &amp;&amp; legal_person_status == "denied"){
+  final_status =  "denied";
+  cancel_reason = natural_person_reason + " - " + legal_person_reason;
+}else if(natural_person_status == "denied"){
+  final_status =  "denied";
+  cancel_reason = natural_person_reason;
+}else if(legal_person_status == "denied"){
+  final_status =  "denied";
+  cancel_reason = legal_person_reason;
+}
+
+const document_number = execution.getVariable("document_number");
+
+const credit_terms_conditions_raw = execution.getVariable("credit_terms_conditions");
+const credit_terms_conditions = JSON.parse(credit_terms_conditions_raw);
+
+const decision_metadata_raw = execution.getVariable("decision_metadata");
+const decision_metadata = JSON.parse(decision_metadata_raw);
+
+const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+var jsonData = {
+  "document_number": document_number, 
+  "status": final_status, 
+  "credit_terms_conditions": credit_terms_conditions,
+  "decision_metadata": decision_metadata, 
+  "input_data": input_data,
+  "input_data_resolved": {
+    "employer": {
+      "document_number": "39460271000165",
+      "name": "YPTO",
+      "legal_nature": "2345",
+      "start_date": "2025-08-18"
+    },
+    "borrower": {
+      "gender": "male"
+    },
+    "employee_registration": {
+      "number": "000001",
+      "max_consignment_margin": 0.00,
+      "cbo": {
+        "code": "XPTO",
+        "description": "XXXXXX"
+      },
+      "employment_status": "active",
+      "admission_date": "2025-08-18"
+    }
+  }    
+};
+
+if (final_status == "denied") {
+  jsonData["cancel_reason"] = cancel_reason;
+  jsonData['credit_terms_conditions'] = null;
+}
+
+var jsonString = JSON.stringify(jsonData); 
+execution.setVariable("body_result3", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0z7mndg" sourceRef="Activity_0fg11nx" targetRef="Activity_04akl5a" />
+    <bpmn:sequenceFlow id="Flow_1eanti6" sourceRef="Activity_04akl5a" targetRef="Activity_0ew5iwy" />
+    <bpmn:serviceTask id="Activity_14ylu7y" name="Envia Retorno API" camunda:type="external" camunda:topic="RestPutApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/credit_terms/${credit_terms_key}</camunda:inputParameter>
+          <camunda:inputParameter name="body"> ${body_result3}</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">credit_analysis_path</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kah6pd</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pr18tv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0rb0ham">
+      <bpmn:incoming>Flow_0pr18tv</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ivrdlt" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0pr18tv" sourceRef="Activity_14ylu7y" targetRef="Event_0rb0ham" />
+    <bpmn:sequenceFlow id="Flow_0kah6pd" sourceRef="Activity_0ew5iwy" targetRef="Activity_14ylu7y" />
+    <bpmn:scriptTask id="Activity_07xb35r" name="Preparar CreditTermsConditions" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_16h173n</bpmn:incoming>
+      <bpmn:outgoing>Flow_1flkf8j</bpmn:outgoing>
+      <bpmn:script>const credit_terms_conditions = [{
+    "min_total_number_of_installments": 24,
+    "max_total_number_of_installments": 24,
+    "min_installment_amount": 150,
+    "max_installment_amount": 400.00,
+    "min_disbursement_amount": 3000.00,
+    "max_disbursement_amount": 20000.00, 
+    "interest": {
+      "interest_rate_type": "pre_fixed",
+      "pre_fixed": {
+        "min_monthly_rate": 0.049,
+        "max_monthly_rate": 0.049,
+        "interest_base": 360 
+      }
+    },
+    "taxes": {
+      "has_iof": true,
+    },
+    "fees": [] 
+  }]
+
+const jsonString = JSON.stringify(credit_terms_conditions); 
+execution.setVariable("credit_terms_conditions", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1flkf8j" sourceRef="Activity_07xb35r" targetRef="Activity_0fg11nx" />
+    <bpmn:scriptTask id="preparar_variaveis" name="Preparar variaveis" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0kh11vw</bpmn:incoming>
+      <bpmn:outgoing>Flow_12njajq</bpmn:outgoing>
+      <bpmn:script>const document_number = execution.getVariable("document_number");
+const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_12njajq" sourceRef="preparar_variaveis" targetRef="Activity_1y9t4ml" />
+    <bpmn:businessRuleTask id="Activity_1y9t4ml" name=" DMN Teste com cancel reasons natural person" camunda:resultVariable="result_natural_person" camunda:decisionRef="ambipar-dmn-teste-cancel-reason-natural-person" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_12njajq</bpmn:incoming>
+      <bpmn:outgoing>Flow_00p79rs</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_00p79rs" sourceRef="Activity_1y9t4ml" targetRef="Activity_1ma1sa7" />
+    <bpmn:businessRuleTask id="Activity_1ma1sa7" name=" DMN Teste com cancel reasons legal person" camunda:resultVariable="result_legal_person" camunda:decisionRef="ambipar-dmn-teste-cancel-reason-legal-person" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_00p79rs</bpmn:incoming>
+      <bpmn:outgoing>Flow_16h173n</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_16h173n" sourceRef="Activity_1ma1sa7" targetRef="Activity_07xb35r" />
+  </bpmn:process>
+  <bpmn:message id="Message_2ugivhv" name="aguardar-mensagem" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_c9bfacff-4e9c-4988-b450-ab26fb15d5f9">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0exua4r_di" bpmnElement="Activity_0fg11nx">
+        <dc:Bounds x="890" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lt3i3k_di" bpmnElement="Activity_04akl5a">
+        <dc:Bounds x="1050" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ihxej1_di" bpmnElement="Activity_0ew5iwy">
+        <dc:Bounds x="1210" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0yt8m0i" bpmnElement="Activity_14ylu7y">
+        <dc:Bounds x="1390" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s0mbat_di" bpmnElement="Event_0rb0ham">
+        <dc:Bounds x="1542" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06ehzrf_di" bpmnElement="Activity_07xb35r">
+        <dc:Bounds x="730" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wm9tzk_di" bpmnElement="preparar_variaveis">
+        <dc:Bounds x="250" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0bh8l3p" bpmnElement="Activity_1y9t4ml">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0578gtv" bpmnElement="Activity_1ma1sa7">
+        <dc:Bounds x="570" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0kh11vw_di" bpmnElement="Flow_0kh11vw">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="250" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z7mndg_di" bpmnElement="Flow_0z7mndg">
+        <di:waypoint x="990" y="120" />
+        <di:waypoint x="1050" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eanti6_di" bpmnElement="Flow_1eanti6">
+        <di:waypoint x="1150" y="120" />
+        <di:waypoint x="1210" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pr18tv_di" bpmnElement="Flow_0pr18tv">
+        <di:waypoint x="1490" y="120" />
+        <di:waypoint x="1542" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kah6pd_di" bpmnElement="Flow_0kah6pd">
+        <di:waypoint x="1310" y="120" />
+        <di:waypoint x="1390" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1flkf8j_di" bpmnElement="Flow_1flkf8j">
+        <di:waypoint x="830" y="120" />
+        <di:waypoint x="890" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12njajq_di" bpmnElement="Flow_12njajq">
+        <di:waypoint x="350" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00p79rs_di" bpmnElement="Flow_00p79rs">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="570" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16h173n_di" bpmnElement="Flow_16h173n">
+        <di:waypoint x="670" y="120" />
+        <di:waypoint x="730" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

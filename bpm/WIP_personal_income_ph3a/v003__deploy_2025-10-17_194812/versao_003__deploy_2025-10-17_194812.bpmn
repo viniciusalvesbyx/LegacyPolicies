@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0w9uo2i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="WIP_personal_income_ph3a" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1mgmwnc</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Consult_Personal_Income_PH3A" name="Consult Personal Income PH3A" camunda:asyncAfter="true" camunda:type="external" camunda:topic="PH3ARequestPersonalIncome">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="timeout">30000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_personal_income_ph3A</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="document_number">${document_number}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0gph2j5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gu790l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Proccess_Personal_Income_PH3A" name="Proccess Personal Income PH3A" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1gu790l</bpmn:incoming>
+      <bpmn:outgoing>Flow_1runt6p</bpmn:outgoing>
+      <bpmn:script>const response_personal_income_ph3A = JSON.parse(execution.getVariable("response_personal_income_ph3A"));
+
+personal_income_ph3A = response_personal_income_ph3A.Data.Income.Personal
+
+execution.setVariable("personal_income_ph3A", personal_income_ph3A);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:boundaryEvent id="Event_1vqhbp2" attachedToRef="Consult_Personal_Income_PH3A">
+      <bpmn:outgoing>Flow_0s5gqfq</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1qxgko7" errorRef="Error_0gcnlk5" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1gu790l" sourceRef="Consult_Personal_Income_PH3A" targetRef="Proccess_Personal_Income_PH3A" />
+    <bpmn:sequenceFlow id="Flow_1mgmwnc" sourceRef="StartEvent_1" targetRef="Activity_1kx0520" />
+    <bpmn:scriptTask id="Activity_1kx0520" name="Preparar variaveis" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1mgmwnc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gph2j5</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+execution.setVariable("is_eligible_for_loan", input_data.is_eligible_for_loan);
+execution.setVariable("contract_end_date", !input_data.contract_end_date ? false : true);
+execution.setVariable("leave_of_absense", input_data.leave_of_absense);
+execution.setVariable("termination_notice", input_data.termination_notice);
+execution.setVariable("is_pep", input_data.is_pep);
+execution.setVariable("employment_duration_in_months", input_data.employment_duration_in_months);
+execution.setVariable("company_document_number", input_data.company_document_number);
+execution.setVariable("age", input_data.age);
+execution.setVariable("gender", input_data.gender);
+execution.setVariable("available_consignment_margin", input_data.available_consignment_margin);
+execution.setVariable("remuneration", parseFloat(input_data.base_margin_amount));
+// execution.setVariable("active_or_suspended_loan_count", input_data.active_or_suspended_loan_count);
+
+
+if (input_data &amp;&amp; input_data.cbo &amp;&amp; input_data.cbo.code) {
+  const code = input_data.cbo.code.toString();
+
+  const groupCboCode = code.slice(0, 1);
+  const familyCboCode = code.slice(0, 4);
+
+  execution.setVariable("group_cbo_code", groupCboCode);
+  execution.setVariable("family_cbo_code", familyCboCode);
+}
+if (input_data &amp;&amp; input_data.scr) {
+  execution.setVariable("scr_total_overdue_amount", input_data.scr.total_overdue_amount);
+  execution.setVariable("scr_written_off_amount", input_data.scr.written_off_amount);
+  execution.setVariable("scr_loan_due_amount_within_360d", input_data.scr.loan_due_amount_within_360d);
+  execution.setVariable("scr_total_consignment_loan_overdue_amount", input_data.scr.total_consignment_loan_overdue_amount);
+  execution.setVariable("scr_consignment_loan_written_off_amount", input_data.scr.consignment_loan_written_off_amount);
+  execution.setVariable("scr_consignment_loan_due_amount", input_data.scr.consignment_loan_due_amount);
+  execution.setVariable("scr_total_clean_loan_overdue_amount", input_data.scr.total_clean_loan_overdue_amount);
+  execution.setVariable("scr_clean_loan_written_off_amount", input_data.scr.clean_loan_written_off_amount);
+  execution.setVariable("scr_clean_loan_due_amount", input_data.scr.clean_loan_due_amount);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0gph2j5" sourceRef="Activity_1kx0520" targetRef="Consult_Personal_Income_PH3A" />
+    <bpmn:endEvent id="Event_1ro1vde">
+      <bpmn:incoming>Flow_1runt6p</bpmn:incoming>
+      <bpmn:incoming>Flow_0w5yjk3</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1qs2tmw" />
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_1n0rrvb" name="Proccess Personal Income PH3A" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0s5gqfq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w5yjk3</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("personal_income_ph3A", null);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0s5gqfq" sourceRef="Event_1vqhbp2" targetRef="Activity_1n0rrvb" />
+    <bpmn:sequenceFlow id="Flow_1runt6p" sourceRef="Proccess_Personal_Income_PH3A" targetRef="Event_1ro1vde" />
+    <bpmn:sequenceFlow id="Flow_0w5yjk3" sourceRef="Activity_1n0rrvb" targetRef="Event_1ro1vde" />
+  </bpmn:process>
+  <bpmn:error id="Error_0gcnlk5" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WIP_personal_income_ph3a">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1vb03yj" bpmnElement="Consult_Personal_Income_PH3A">
+        <dc:Bounds x="380" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ahpms" bpmnElement="Proccess_Personal_Income_PH3A">
+        <dc:Bounds x="610" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wm9tzk_di" bpmnElement="Activity_1kx0520">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_148sul4_di" bpmnElement="Event_1ro1vde">
+        <dc:Bounds x="752" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_13ncqj4" bpmnElement="Activity_1n0rrvb">
+        <dc:Bounds x="610" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1p5cd9c" bpmnElement="Event_1vqhbp2">
+        <dc:Bounds x="462" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1gu790l_di" bpmnElement="Flow_1gu790l">
+        <di:waypoint x="480" y="120" />
+        <di:waypoint x="610" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mgmwnc_di" bpmnElement="Flow_1mgmwnc">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gph2j5_di" bpmnElement="Flow_0gph2j5">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="380" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s5gqfq_di" bpmnElement="Flow_0s5gqfq">
+        <di:waypoint x="480" y="178" />
+        <di:waypoint x="480" y="250" />
+        <di:waypoint x="610" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1runt6p_di" bpmnElement="Flow_1runt6p">
+        <di:waypoint x="710" y="120" />
+        <di:waypoint x="752" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w5yjk3_di" bpmnElement="Flow_0w5yjk3">
+        <di:waypoint x="710" y="250" />
+        <di:waypoint x="770" y="250" />
+        <di:waypoint x="770" y="138" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

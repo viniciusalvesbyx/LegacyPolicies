@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "57e2e884-8e7d-11f0-9a5d-a2ae7ce7a917",
+  "process_key": "Process_97a1650f-33c0-456d-9604-cf1a31ed8814",
+  "process_name": "Politica de Credito da Blep - 2025-09-10",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "politica-de-credito-blep.bpmn",
+  "deployment_id": "57e0c5a2-8e7d-11f0-9a5d-a2ae7ce7a917",
+  "deployment_name": "politica-de-credito-blep",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-09-10T19:35:43.902+0000",
+  "extracted_at_utc": "2026-06-02T20:08:59+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

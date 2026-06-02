@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "WIP_personal_income_ph3a:3:3751ae5f-ab92-11f0-802b-da6cd2a9c0db",
+  "process_key": "WIP_personal_income_ph3a",
+  "process_name": "WIP_personal_income_ph3a",
+  "tenant_id": "",
+  "version": 3,
+  "version_tag": "",
+  "resource": "personal_income_ph3a.bpmn",
+  "deployment_id": "374eef3d-ab92-11f0-802b-da6cd2a9c0db",
+  "deployment_name": "personal_income_ph3a",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-17T19:48:12.975+0000",
+  "extracted_at_utc": "2026-06-02T20:10:37+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

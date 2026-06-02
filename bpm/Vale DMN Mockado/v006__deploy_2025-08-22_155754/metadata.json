@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "c3eae0ee-7f70-11f0-80e0-6e204169f09d",
+  "process_key": "Process_20818d81-e84d-4e53-8020-d3cfcf1020bf",
+  "process_name": "Vale DMN Mockado",
+  "tenant_id": "",
+  "version": 6,
+  "version_tag": "",
+  "resource": "teste-ambipar-privado (4) (1).bpmn",
+  "deployment_id": "c3e9815c-7f70-11f0-80e0-6e204169f09d",
+  "deployment_name": "teste-vale-privado-DMNmockado",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-08-22T15:57:54.837+0000",
+  "extracted_at_utc": "2026-06-02T20:10:29+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

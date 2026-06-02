@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "f1ffb5d0-6be7-11f0-905e-7e359cad61ff",
+  "decision_key": "gps-dmn-teste-cancel-reason-legal-person",
+  "decision_name": "gps-dmn-teste-cancel-reason-legal-person",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "gps-dmn-teste-cancel-reasons-legal-person.dmn",
+  "deployment_id": "f1fcf6ad-6be7-11f0-905e-7e359cad61ff",
+  "deployment_name": "gps-dmn-teste-cancel-reasons-legal-person",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-28T19:20:38.998+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:56+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

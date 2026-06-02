@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "bf77f74f-2cd2-11f0-a0f7-0e3fcb7eb86d",
+  "process_key": "Process_3992e0e3-d261-4804-9624-1a94e74fa521",
+  "process_name": "TESTES_AUTOMATICOS_consignado_privado",
+  "tenant_id": "",
+  "version": 6,
+  "version_tag": "1",
+  "resource": "TESTES_AUTOMATIZADOS_consignado_privado.bpmn",
+  "deployment_id": "bf7670ad-2cd2-11f0-a0f7-0e3fcb7eb86d",
+  "deployment_name": "TESTES_AUTOMATIZADOS_consignado_privado",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-05-09T12:40:11.514+0000",
+  "extracted_at_utc": "2026-06-02T20:10:26+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

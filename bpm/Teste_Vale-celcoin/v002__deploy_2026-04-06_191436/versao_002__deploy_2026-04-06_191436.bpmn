@@ -1,0 +1,1790 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0ktcahm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="Process_c9aeeafd-b684-4f2a-94c2-1c56b1975e72" name="Teste_Vale-celcoin" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:serviceTask id="Consulta_Autorizacao_DataPrev" name="Consulta DataPrev - Solicita Autorização" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/dataprev/authorizations</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "document_number": "${document_number}",
+  "flow_configuration_key": "${flow_configuration_key}"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">30000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_authorizer</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">celcoin_proxy_path</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hnap9a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wda1z2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Consulta_Saldo_DataPrev" name="Consulta DataPrev - Consulta Dados do Trabalhador" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/dataprev/balances</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "borrower_document_number": "${document_number}",
+  "flow_configuration_key": "${flow_configuration_key}"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">30000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_saldo</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">celcoin_proxy_path</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11zueax</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p8atfw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0wda1z2" sourceRef="Consulta_Autorizacao_DataPrev" targetRef="Gateway_1c03otq" />
+    <bpmn:serviceTask id="Consult_Consent_DataPrev" name="Consulta DataPrev - Envio Dados Consentimento" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/dataprev/consent_data</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "borrower": {
+    "document_number": "${document_number}"
+  },
+  "credit_terms_key": "${credit_terms_key}",
+  "flow_configuration_key": "${flow_configuration_key}",
+  "authorization": {
+    "dataprev_worker_data": {
+      "session_id": "${dataprev_session_id}"
+    }
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_consent_data</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">30000</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">celcoin_proxy_path</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">false</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ne9uh8</bpmn:incoming>
+      <bpmn:outgoing>Flow_084krlq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="Event_0x5kcd8">
+      <bpmn:outgoing>Flow_0kh11vw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_0zxh1fk" name="Preparar variaveis" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0kh11vw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ml3h4n</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+execution.setVariable("dataprev_session_id", input_data.authorization.dataprev_worker_data.session_id);
+execution.setVariable("scr_session_id", input_data.authorization.scr.session_id);
+execution.setVariable("requester_key", "a76a877c-9c16-4046-ac10-6add664e5f2d");
+execution.setVariable("webhook_url", "/credit-analysis/gps/callback");</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_0kud8qt">
+      <bpmn:incoming>Flow_0zybivr</bpmn:incoming>
+      <bpmn:incoming>Flow_0jv1qhd</bpmn:incoming>
+      <bpmn:outgoing>Flow_114unwm</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="Activity_0fg11nx" name="Preparar identification" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_114unwm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z7mndg</bpmn:outgoing>
+      <bpmn:script>const has_gps_absence = execution.getVariable("has_gps_absence");
+const has_gps_termination = execution.getVariable("has_gps_termination");
+const active_or_suspended_loan_count = execution.getVariable("active_or_suspended_loan_count");
+const written_off_amount = execution.getVariable("written_off_amount");
+const overdue_amount_over_14_days = execution.getVariable("overdue_amount_over_14_days");
+const admission_date_dataprev = execution.getVariable("admission_date_dataprev");
+const admission_date_whitelist = execution.getVariable("admission_date_whitelist");
+const age = execution.getVariable("age");
+const available_consignment_margin = execution.getVariable("available_consignment_margin");
+const birth_date = execution.getVariable("birth_date");
+const company_age_in_months = execution.getVariable("company_age_in_months");
+const contract_end_date = execution.getVariable("contract_end_date");
+const debt_cnt_bvscpc = execution.getVariable("debt_cnt_bvscpc");
+const employer_name = execution.getVariable("employer_name");
+const employment_duration_in_months = execution.getVariable("employment_duration_in_months");
+const is_eligible_for_loan = execution.getVariable("is_eligible_for_loan");
+const is_pep = execution.getVariable("is_pep");
+const leave_of_absense = execution.getVariable("leave_of_absense");
+const monthly_net_salary = execution.getVariable("monthly_net_salary");
+const mother_name = execution.getVariable("mother_name");
+const profile = execution.getVariable("profile");
+const public_tax_debt = execution.getVariable("public_tax_debt");
+const reserved_available_margin = execution.getVariable("reserved_available_margin");
+const score_bv = execution.getVariable("score_bv");
+const total_debt_bvscpc = execution.getVariable("total_debt_bvscpc");
+const unauthorization_reason_code = execution.getVariable("unauthorization_reason_code");
+const unauthorization_reason_description = execution.getVariable("unauthorization_reason_description");
+
+// =====================
+// VARIÁVEIS DO SCORE VALE (OBRIGATÓRIAS)
+// =====================
+const scoreVc = execution.getVariable("scoreVc");
+const eligibility_status = execution.getVariable("eligibility_status");
+const eligibilityAdhocId = execution.getVariable("eligibilityAdhocId");
+const eligibility_provider = execution.getVariable("eligibility_provider");
+const eligibility_created_at = execution.getVariable("eligibility_created_at");
+const eligibility_cpf_hash = execution.getVariable("eligibility_cpf_hash");
+
+let company_data_raw = execution.getVariable("company_data");
+let company_data;
+
+if (typeof company_data_raw === "string") {
+    try {
+        company_data = JSON.parse(company_data_raw);
+    } catch (e) {
+        throw new Error("Falha ao fazer parse de company_data: " + e.message);
+    }
+} else {
+    company_data = company_data_raw;
+}
+
+var identification = {
+    "has_gps_absence": has_gps_absence,
+    "has_gps_termination": has_gps_termination,
+    "admission_date_dataprev": admission_date_dataprev,
+    "admission_date_whitelist": admission_date_whitelist,
+    "age": age,
+    "available_consignment_margin": available_consignment_margin,
+    "birth_date": birth_date,
+    "contract_end_date": contract_end_date,
+    "debt_cnt_bvscpc": debt_cnt_bvscpc,
+    "employer_name": employer_name,
+    "employment_duration_in_months": employment_duration_in_months,
+    "is_eligible_for_loan": is_eligible_for_loan,
+    "is_pep": is_pep,
+    "leave_of_absense": leave_of_absense,
+    "monthly_net_salary": Math.round(monthly_net_salary),
+    "active_or_suspended_loan_count": active_or_suspended_loan_count,
+    "mother_name": mother_name,
+    "profile": profile,
+    "reserved_available_margin": reserved_available_margin,
+    "score_bv": score_bv,
+    "total_debt_bvscpc": total_debt_bvscpc,
+    "unauthorization_reason_code": unauthorization_reason_code,
+    "unauthorization_reason_description": unauthorization_reason_description,
+    "scr_written_off_amount": written_off_amount,
+    "scr_overdue_amount_over_14_days": overdue_amount_over_14_days,
+
+    // === CAMPOS VALE CONSIGNADO (24-03-2026) ===
+    "scoreVc": scoreVc,
+    "eligibility_status": eligibility_status,
+    "eligibilityAdhocId": eligibilityAdhocId,
+    "eligibility_provider": eligibility_provider,
+    "eligibility_created_at": eligibility_created_at,
+    "eligibility_cpf_hash": eligibility_cpf_hash
+};
+
+if (company_data) {
+    identification["company"] = {
+        "document_number": company_data.document_number,
+        "legal_nature": company_data.legal_nature
+    };
+}
+
+var jsonString = JSON.stringify(identification);
+execution.setVariable("decision_metadata_identification", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_04akl5a" name="Preparar decision" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0z7mndg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1eanti6</bpmn:outgoing>
+      <bpmn:script>const parseMaybeJSON = (raw, varName) =&gt; {
+  if (raw == null) return null;
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      throw new Error(`Falha ao fazer parse de ${varName}: ${e.message}`);
+    }
+  }
+  return raw;
+};
+
+
+const result_legal_person = parseMaybeJSON(execution.getVariable("result_legal_person"), "result_legal_person");
+const result_natural_person = parseMaybeJSON(execution.getVariable("result_natural_person"), "result_natural_person");
+
+const identification = JSON.parse(execution.getVariable("decision_metadata_identification"));
+
+const installment_amount = execution.getVariable("installment_amount");
+const max_amount_percent = execution.getVariable("max_amount_percent");
+
+let decision = {
+  "identification": identification,
+  "decision": {
+    "natural_person_reason": result_natural_person?.reason,
+    "natural_person_status": result_natural_person?.status,
+    "legal_person_reason": result_legal_person?.reason,
+    "legal_person_status": result_legal_person?.status,
+    "max_amount_percent": max_amount_percent,
+    "installment_amount": Math.round(installment_amount),
+  }
+};
+
+execution.setVariable("decision_metadata", JSON.stringify(decision));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0ew5iwy" name="Preparar retorno" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_14zierr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kah6pd</bpmn:outgoing>
+      <bpmn:script>// Função auxiliar para parsear variáveis que podem ser string ou objeto
+const parseMaybeJSON = (raw, varName) =&gt; {
+  if (raw == null) return null;
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      throw new Error(`Falha ao fazer parse de ${varName}: ${e.message}`);
+    }
+  }
+  return raw;
+};
+
+const sources = [
+  "result_natural_person",
+  "result_legal_person",
+];
+
+const results = sources.map((name) =&gt; ({
+  name,
+  data: parseMaybeJSON(execution.getVariable(name), name),
+}));
+
+const statuses = results.map(r =&gt; ({
+  name: r.name,
+  status: r.data?.status,
+  reason: r.data?.reason
+}));
+
+let final_status = "ERROR";
+let cancel_reason = "ERROR";
+
+const allApproved = statuses.every(s =&gt; s.status === "approved");
+const deniedOnes = statuses.filter(s =&gt; s.status === "denied");
+
+if (allApproved) {
+  final_status = "approved";
+  cancel_reason = "";
+} else if (deniedOnes.length &gt; 0) {
+  final_status = "denied";
+  cancel_reason = deniedOnes.map(s =&gt; s.reason).filter(Boolean).join(" - ");
+}
+
+const credit_terms_conditions_raw = execution.getVariable("credit_terms_conditions");
+let credit_terms_conditions;
+
+if (credit_terms_conditions_raw != null) {
+  try {
+  credit_terms_conditions = JSON.parse(credit_terms_conditions_raw.toString());
+} catch (e) {
+  throw new Error("Falha ao fazer parse de credit_terms_conditions: " + e.message);
+}
+} else {
+  credit_terms_conditions = credit_terms_conditions_raw;
+}
+
+const decision_metadata = parseMaybeJSON(execution.getVariable("decision_metadata"), "decision_metadata");
+const document_number = execution.getVariable("document_number");
+const input_data_resolved = parseMaybeJSON(execution.getVariable("input_data_resolved"), "input_data_resolved");
+
+
+let jsonData = {
+  "document_number": document_number,
+  "status": final_status,
+  "credit_terms_conditions": credit_terms_conditions,
+  "decision_metadata": decision_metadata,
+  "input_data_resolved": input_data_resolved
+};
+
+if (final_status === "denied") {
+  jsonData["cancel_reason"] = cancel_reason;
+  jsonData["credit_terms_conditions"] = null;
+  delete jsonData['input_data_resolved'];
+}
+
+var Spin = org.camunda.spin.Spin;
+execution.setVariable("body_result", Spin.JSON(JSON.stringify(jsonData)));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_14ylu7y" name="Envia Retorno API" camunda:type="external" camunda:topic="RestPutApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/credit_terms/${credit_terms_key}</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">credit_analysis_path</camunda:inputParameter>
+          <camunda:inputParameter name="body">${body_result}</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">false</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kah6pd</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pr18tv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0rb0ham">
+      <bpmn:incoming>Flow_0pr18tv</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ivrdlt" />
+    </bpmn:endEvent>
+    <bpmn:businessRuleTask id="Activity_1qyqa4p" name="Avaliacao PF" camunda:resultVariable="result_natural_person" camunda:decisionRef="GPS_AvaliacaoPF" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_0kbg21y</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zroxb3</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_07o7ykm" default="Flow_15wsekd">
+      <bpmn:incoming>Flow_0zroxb3</bpmn:incoming>
+      <bpmn:outgoing>Flow_15wsekd</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1hfo1ym</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0z8p2g4">
+      <bpmn:incoming>Flow_15wsekd</bpmn:incoming>
+      <bpmn:incoming>Flow_03hrr9a</bpmn:incoming>
+      <bpmn:outgoing>Flow_05mn858</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1c5wkh4" default="Flow_1olyx2v">
+      <bpmn:incoming>Flow_0gplfmf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rmrq5a</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1olyx2v</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_1d1t7nl" name="Dados CNPJ Lista Permissivel" camunda:type="external" camunda:topic="CNPJConsultAllowList">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="allowlist_name">cnpjs_gps</camunda:inputParameter>
+          <camunda:inputParameter name="allowlist_filename">allowlist_cnpjs_gps.pkl</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_097rism</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cmo6nx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Activity_07xb35r" name="Preparar CreditTermsConditions" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0xr86p4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1flkf8j</bpmn:outgoing>
+      <bpmn:script>VALE_ASSURANT_INSURANCE_KEY = "8fad9ac2-21dc-47b1-9829-3b32fbb60559"
+
+const available_consignment_margin = execution.getVariable("available_consignment_margin");
+const monthly_net_salary = execution.getVariable("monthly_net_salary");
+const age = execution.getVariable("age");
+const employment_duration_in_months = execution.getVariable("employment_duration_in_months");
+
+var credit_terms_conditions = [];
+var cancel_reason = "";
+
+const result_tax_values = execution.getVariable("result_tax_values");
+const max_amount_percent = execution.getVariable("use_margin_percent");
+
+let reserved_available_margin = Math.round((monthly_net_salary * 0.35 * (1 - max_amount_percent))*100)/100;
+let installment_amount = Math.round((available_consignment_margin - reserved_available_margin)*100)/100;
+var min_installment_amount;
+
+result_tax_values.forEach(tax =&gt; {
+  let max_total_number_of_installments = tax.max_total_installments;
+  var final_age = age + tax.max_total_installments / 12;
+  if (final_age &gt; 66) {
+    max_total_number_of_installments = (66 - age)*12
+  }
+  min_installment_amount = tax.min_installment_amount;
+  const conditions = {
+    "min_total_number_of_installments": tax.min_total_installments,
+    "max_total_number_of_installments": max_total_number_of_installments,
+    "min_installment_amount": min_installment_amount,
+    "max_installment_amount": installment_amount ? installment_amount : 0,
+    "min_disbursement_amount": tax.min_disbursement_amount,
+    "max_disbursement_amount": tax.max_disbursement_amount, 
+    "interest": {
+      "interest_rate_type": "pre_fixed",
+      "pre_fixed": {
+        "min_monthly_rate": tax.interest_rate,
+        "max_monthly_rate": tax.interest_rate,
+        "interest_base": 360 
+      }
+    },
+    "taxes": {
+      "has_iof": true,
+    },
+    "fees": []
+  };
+
+  const conditions_insurance = {
+    "min_total_number_of_installments": tax.min_total_installments,
+    "max_total_number_of_installments": max_total_number_of_installments,
+    "min_installment_amount": min_installment_amount,
+    "max_installment_amount": installment_amount ? installment_amount : 0,
+    "min_disbursement_amount": tax.min_disbursement_amount,
+    "max_disbursement_amount": tax.max_disbursement_amount, 
+    "interest": {
+      "interest_rate_type": "pre_fixed",
+      "pre_fixed": {
+        "min_monthly_rate": tax.interest_rate,
+        "max_monthly_rate": tax.interest_rate,
+        "interest_base": 360 
+      }
+    },
+    "taxes": {
+      "has_iof": true,
+    },
+    "fees": [
+        {
+          "type": "insurance_fee",
+          "calculation_type": "percentage",  
+          "value": 0.12,
+          "billing_type": "contract_amortized",
+          "insurance_key": VALE_ASSURANT_INSURANCE_KEY
+        }
+    ]
+  };
+
+  if (installment_amount &gt;= min_installment_amount &amp;&amp; max_total_number_of_installments &gt;= tax.min_total_installments) {
+    credit_terms_conditions.push(conditions);
+    if (employment_duration_in_months &gt;= 12) {
+        credit_terms_conditions.push(conditions_insurance);
+    }
+  } else if (installment_amount &lt; min_installment_amount) {
+    cancel_reason =  "Calculated Installment amount &lt; min installment amount";
+  } else {
+    cancel_reason = "Min total number of installments exceeds max age allowed at contract end.";
+  }
+});
+
+execution.setVariable("max_amount_percent", max_amount_percent)
+execution.setVariable("installment_amount", installment_amount);
+execution.setVariable("min_installment_amount", min_installment_amount);
+execution.setVariable("reserved_available_margin", reserved_available_margin);
+
+
+var result_credit_terms_conditions = {
+    "status": "approved"
+};
+
+if (credit_terms_conditions.length == 0) {
+    result_credit_terms_conditions = {
+        "status": "denied",
+        "reason": cancel_reason
+    };
+}
+
+var Spin = org.camunda.spin.Spin;
+execution.setVariable("credit_terms_conditions", Spin.JSON(JSON.stringify(credit_terms_conditions)));
+
+execution.setVariable("result_credit_terms_conditions", JSON.stringify(result_credit_terms_conditions));
+execution.setVariable("result_credit_terms_conditions_status", result_credit_terms_conditions.status);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:task id="Activity_160rnz8" name="CNPJ bloqueado">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "CNPJ is not on the approved list",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1olyx2v</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hus6po</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_1vlqvhk">
+      <bpmn:incoming>Flow_1qig8yp</bpmn:incoming>
+      <bpmn:incoming>Flow_0aq3lxe</bpmn:incoming>
+      <bpmn:outgoing>Flow_07croky</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Activity_18uxyum" name="Parcela Insuficiente">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">${result_credit_terms_conditions}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hmbcan</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qig8yp</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_06y5x08" default="Flow_1hmbcan">
+      <bpmn:incoming>Flow_1flkf8j</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gwt1zz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1hmbcan</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0kh11vw" sourceRef="Event_0x5kcd8" targetRef="Activity_0zxh1fk" />
+    <bpmn:sequenceFlow id="Flow_07croky" sourceRef="Gateway_1vlqvhk" targetRef="Gateway_0l5t8nn" />
+    <bpmn:sequenceFlow id="Flow_1gwt1zz" sourceRef="Gateway_06y5x08" targetRef="Activity_1kqiqr6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_credit_terms_conditions_status == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_114unwm" sourceRef="Gateway_0kud8qt" targetRef="Activity_0fg11nx" />
+    <bpmn:sequenceFlow id="Flow_05mn858" sourceRef="Gateway_0z8p2g4" targetRef="Gateway_0mm09lo" />
+    <bpmn:sequenceFlow id="Flow_0z7mndg" sourceRef="Activity_0fg11nx" targetRef="Activity_04akl5a" />
+    <bpmn:sequenceFlow id="Flow_1eanti6" sourceRef="Activity_04akl5a" targetRef="Activity_0s5kbll" />
+    <bpmn:sequenceFlow id="Flow_0kah6pd" sourceRef="Activity_0ew5iwy" targetRef="Activity_14ylu7y" />
+    <bpmn:sequenceFlow id="Flow_0pr18tv" sourceRef="Activity_14ylu7y" targetRef="Event_0rb0ham" />
+    <bpmn:sequenceFlow id="Flow_0zroxb3" sourceRef="Activity_1qyqa4p" targetRef="Gateway_07o7ykm" />
+    <bpmn:sequenceFlow id="Flow_15wsekd" sourceRef="Gateway_07o7ykm" targetRef="Gateway_0z8p2g4" />
+    <bpmn:sequenceFlow id="Flow_1hus6po" sourceRef="Activity_160rnz8" targetRef="Gateway_0hcvm5w" />
+    <bpmn:sequenceFlow id="Flow_1rmrq5a" sourceRef="Gateway_1c5wkh4" targetRef="Activity_1qstzby">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${company_blocked == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1olyx2v" sourceRef="Gateway_1c5wkh4" targetRef="Activity_160rnz8" />
+    <bpmn:sequenceFlow id="Flow_1flkf8j" sourceRef="Activity_07xb35r" targetRef="Gateway_06y5x08" />
+    <bpmn:sequenceFlow id="Flow_1qig8yp" sourceRef="Activity_18uxyum" targetRef="Gateway_1vlqvhk" />
+    <bpmn:sequenceFlow id="Flow_1hmbcan" sourceRef="Gateway_06y5x08" targetRef="Activity_18uxyum" />
+    <bpmn:sequenceFlow id="Flow_1p8atfw" sourceRef="Consulta_Saldo_DataPrev" targetRef="Activity_0nq024n" />
+    <bpmn:exclusiveGateway id="Gateway_05tg26b">
+      <bpmn:incoming>Flow_0lykqh8</bpmn:incoming>
+      <bpmn:incoming>Flow_0zlx0a7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aq3lxe</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0aq3lxe" sourceRef="Gateway_05tg26b" targetRef="Gateway_1vlqvhk" />
+    <bpmn:sequenceFlow id="Flow_097rism" sourceRef="Activity_0nq024n" targetRef="Activity_1d1t7nl" />
+    <bpmn:scriptTask id="Activity_0nq024n" name="Extrair Companies Documents" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1p8atfw</bpmn:incoming>
+      <bpmn:outgoing>Flow_097rism</bpmn:outgoing>
+      <bpmn:script>var response_saldo_raw = execution.getVariable("response_saldo");
+const response_saldo = JSON.parse(response_saldo_raw);
+var balances = response_saldo.balances;
+var company_document_numbers = [];
+
+for (var i = 0; i &lt; balances.length; i++) {
+    company_document_numbers.push(balances[i].company_document_number);
+}
+
+execution.setVariable("company_document_numbers", JSON.stringify(company_document_numbers));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1qstzby" name="Prepara variaves DataPrev" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1rmrq5a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kbg21y</bpmn:outgoing>
+      <bpmn:script>function calcula_tempo_em_meses(start_date) {
+    const year = parseInt(start_date.substring(0, 4), 10);
+    const month = parseInt(start_date.substring(5, 7), 10) - 1;
+    const day = parseInt(start_date.substring(8, 10), 10);
+    const today = new Date();
+    const date = new Date(year, month, day);
+    let years = today.getFullYear() - date.getFullYear();
+    let months = today.getMonth() - date.getMonth();
+    let totalYears = years * 12;
+    let totalMonths = totalYears + months;
+    if (today.getDate() &lt; date.getDate()) {
+        totalMonths -= 1;
+    }
+    return [years, totalMonths];
+};
+
+
+const HOLIDAY_ABSENCE_CODE = 15;
+const response_saldo = JSON.parse(execution.getVariable("response_saldo"));
+let balances = response_saldo.balances;
+let company_data = execution.getVariable("company_data");
+let company_document_number = company_data.document_number;
+var company = null;
+for (var i = 0; i &lt; balances.length; i++) {
+  var item = balances[i];
+  if (item.company_document_number == company_document_number) {
+    company = item;
+    break;
+  }
+}
+
+var leave_of_absense = false;
+if(company.meta_data.alerts != undefined) {
+  for (var i = 0; i &lt; company.meta_data.alerts.length; i++) {
+    var item = company.meta_data.alerts[i];
+    if (item.absence_reason_code != undefined &amp;&amp; item.absence_reason_code &gt; 0 &amp;&amp; item.absence_reason_code != HOLIDAY_ABSENCE_CODE) {
+      leave_of_absense = true;
+      break;
+    }
+  }
+}
+
+var admission_date = execution.getVariable("admission_date");
+
+var employment_duration = calcula_tempo_em_meses(admission_date);
+
+var age = calcula_tempo_em_meses(company.meta_data.birth_date);
+
+const unauthorization_reason_code = company?.meta_data?.unauthorization_reason?.code;
+const reasonMap = {
+  1: "Legacy loan registered in eSocial",
+  2: "Legacy loan reported by the financial institution",
+  3: "Compensation amount set to zero",
+  4: "Employment relationship with termination date",
+  5: "No compensation in the last period",
+  6: "Invalid labor regime",
+  7: "Invalid worker category"
+};
+
+let unauthorization_reason_description = null;
+if (unauthorization_reason_code !== undefined &amp;&amp; unauthorization_reason_code !== null) {
+  unauthorization_reason_description = reasonMap[unauthorization_reason_code] || "Unknown reason";
+}
+
+execution.setVariable("age", age[0]);
+execution.setVariable("available_consignment_margin", company.products[0].available_balance);
+execution.setVariable("birth_date", company.meta_data.birth_date);
+execution.setVariable("cbo_code", company.meta_data.job_code.code);
+execution.setVariable("cbo_description", company.meta_data.job_code.description);
+execution.setVariable("company_document_number", company_document_number);
+execution.setVariable("contract_end_date", company.meta_data.termination_date != undefined);
+execution.setVariable("employee_number", company.employee.code);
+execution.setVariable("employer_name", company.employer.name);
+execution.setVariable("employment_duration_in_months", employment_duration[1]);
+execution.setVariable("gender", company.meta_data.gender.code == 1 ? "male" : "female");
+execution.setVariable("is_eligible_for_loan", company.products[0].authorization.details[0].authorized);
+execution.setVariable("is_pep", company.meta_data.politically_exposed_person != undefined &amp;&amp; company.meta_data.politically_exposed_person.code != 0);
+execution.setVariable("leave_of_absense", leave_of_absense);
+execution.setVariable("monthly_net_salary", company.meta_data.base_margin_value);
+execution.setVariable("mother_name", company.meta_data.mother_name);
+execution.setVariable("termination_date", company.meta_data.termination_date);
+execution.setVariable("termination_notice_date", company.meta_data.prior_notice_date);
+execution.setVariable("termination_notice", company.meta_data.prior_notice_date != undefined);
+execution.setVariable("unauthorization_reason_code", unauthorization_reason_code);
+execution.setVariable("unauthorization_reason_description", unauthorization_reason_description);
+execution.setVariable("total_earnings", parseFloat(company.meta_data.total_earnings));
+execution.setVariable("active_or_suspended_loan_count", company.meta_data.amount_loans_assets_suspended);
+let startDate = null;
+if (company &amp;&amp; company.meta_data &amp;&amp; company.meta_data.employer_activity_start_date) {
+  startDate = company.meta_data.employer_activity_start_date;
+} else {
+  // Se não existir, usa a data de hoje em YYYY-MM-DD
+  const today = new Date();
+  startDate = today.toISOString().split("T")[0];
+}
+execution.setVariable("start_date", startDate);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:task id="Activity_17qtc9x" name="Condições não definida">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "${result_tax_values[0].reason}",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0lykqh8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0lykqh8" sourceRef="Activity_17qtc9x" targetRef="Gateway_05tg26b" />
+    <bpmn:task id="Activity_1kqiqr6" name="Aprovação Automatica Empresa">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "status": "approved"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1gwt1zz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zybivr</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:scriptTask id="Activity_1rabns2" name="Transformar CNPJ 8 dígitos" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1cmo6nx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gplfmf</bpmn:outgoing>
+      <bpmn:script>// Função para calcular os dígitos verificadores do CNPJ
+function calculateCnpjCheckDigits(baseNumber, branch = '0001') {
+  baseNumber = baseNumber.toString().padStart(8, '0');
+  branch = branch.toString().padStart(4, '0');
+
+  const cnpjWithoutDigits = baseNumber + branch;
+
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i &lt; weights1.length; i++) {
+    sum += parseInt(cnpjWithoutDigits[i]) * weights1[i];
+  }
+  const remainder1 = sum % 11;
+  const checkDigit1 = remainder1 &lt; 2 ? 0 : 11 - remainder1;
+
+  const cnpjWithFirstDigit = cnpjWithoutDigits + checkDigit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i &lt; weights2.length; i++) {
+    sum += parseInt(cnpjWithFirstDigit[i]) * weights2[i];
+  }
+  const remainder2 = sum % 11;
+  const checkDigit2 = remainder2 &lt; 2 ? 0 : 11 - remainder2;
+
+  const fullCnpj = cnpjWithFirstDigit + checkDigit2;
+  return { numericCnpj: fullCnpj };
+}
+
+// Lógica de transformação da variável no Camunda
+const rawCnpj = execution.getVariable("company_document_number");
+const numericOnly = rawCnpj?.replace(/\D/g, ''); // remove pontos, barras, traços etc.
+
+if (numericOnly &amp;&amp; numericOnly.length === 8) {
+  const { numericCnpj } = calculateCnpjCheckDigits(numericOnly);
+  execution.setVariable("company_document_number", numericCnpj);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0gplfmf" sourceRef="Activity_1rabns2" targetRef="Gateway_1c5wkh4" />
+    <bpmn:sequenceFlow id="Flow_1hfo1ym" sourceRef="Gateway_07o7ykm" targetRef="Activity_0fie2tv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_natural_person.status == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_00tlfxu" default="Flow_1r23rqt">
+      <bpmn:incoming>Flow_0qhiqx2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oov0d1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1r23rqt</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1oov0d1" sourceRef="Gateway_00tlfxu" targetRef="Activity_16s3vp1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${eligibility_status == "FOUND" &amp;&amp; elegivel == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_1w20s2d" name="Elegibilidade Bloqueado">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+ "reason": "CPF não encontrado na política Vale Consignado",
+ "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1r23rqt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nbw358</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1r23rqt" sourceRef="Gateway_00tlfxu" targetRef="Activity_1w20s2d" />
+    <bpmn:exclusiveGateway id="Gateway_0hcvm5w">
+      <bpmn:incoming>Flow_1hus6po</bpmn:incoming>
+      <bpmn:incoming>Flow_1fa8ogn</bpmn:incoming>
+      <bpmn:outgoing>Flow_03hrr9a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_03hrr9a" sourceRef="Gateway_0hcvm5w" targetRef="Gateway_0z8p2g4" />
+    <bpmn:sequenceFlow id="Flow_1nbw358" sourceRef="Activity_1w20s2d" targetRef="Gateway_00tlve1" />
+    <bpmn:sequenceFlow id="Flow_0zybivr" sourceRef="Activity_1kqiqr6" targetRef="Gateway_0kud8qt" />
+    <bpmn:scriptTask id="Activity_0fie2tv" name="Perfil Clean - Sem Dados SCR" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1hfo1ym</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f6fvid</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("total_overdue_amount", parseFloat(0.0));
+execution.setVariable("written_off_amount", parseFloat(0.0));
+execution.setVariable("loan_due_amount_within_360d", parseFloat(0.0));
+execution.setVariable("total_consignment_loan_overdue_amount", parseFloat(0.0));
+execution.setVariable("consignment_loan_due_amount", parseFloat(0.0));
+execution.setVariable("percent_income_360d", parseFloat(0.0));
+execution.setVariable("total_overdue_and_written_amount", parseFloat(0.0));
+execution.setVariable("overdue_amount_up_to_14_days", parseFloat(0.0));
+execution.setVariable("overdue_amount_over_14_days", parseFloat(0.0));
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_10wpy3m" default="Flow_1ufsnec">
+      <bpmn:incoming>Flow_0hesk1a</bpmn:incoming>
+      <bpmn:outgoing>Flow_17elgdv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ufsnec</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Activity_13bct00" name="Erro ao consultar Saldo">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Error consult dataprev balances",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17elgdv</bpmn:incoming>
+      <bpmn:outgoing>Flow_14835a3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:scriptTask id="Activity_0qjak6l" name="Contador" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0npbrgg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hesk1a</bpmn:outgoing>
+      <bpmn:script>var count = execution.getVariable("dataprev_error_count") || 0;
+execution.setVariable("dataprev_error_count", count + 1);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateCatchEvent id="Event_1arcif4" name="2S">
+      <bpmn:incoming>Flow_1ufsnec</bpmn:incoming>
+      <bpmn:outgoing>Flow_05o0ui3</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0pzbhjh">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0hesk1a" sourceRef="Activity_0qjak6l" targetRef="Gateway_10wpy3m" />
+    <bpmn:sequenceFlow id="Flow_17elgdv" sourceRef="Gateway_10wpy3m" targetRef="Activity_13bct00">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dataprev_error_count == 3}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ufsnec" sourceRef="Gateway_10wpy3m" targetRef="Event_1arcif4" />
+    <bpmn:exclusiveGateway id="Gateway_1ts412d">
+      <bpmn:incoming>Flow_14835a3</bpmn:incoming>
+      <bpmn:incoming>Flow_0a5kejo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fa8ogn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1fa8ogn" sourceRef="Gateway_1ts412d" targetRef="Gateway_0hcvm5w" />
+    <bpmn:sequenceFlow id="Flow_14835a3" sourceRef="Activity_13bct00" targetRef="Gateway_1ts412d" />
+    <bpmn:exclusiveGateway id="Gateway_1c03otq">
+      <bpmn:incoming>Flow_0wda1z2</bpmn:incoming>
+      <bpmn:incoming>Flow_05o0ui3</bpmn:incoming>
+      <bpmn:outgoing>Flow_11zueax</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_11zueax" sourceRef="Gateway_1c03otq" targetRef="Consulta_Saldo_DataPrev" />
+    <bpmn:sequenceFlow id="Flow_05o0ui3" sourceRef="Event_1arcif4" targetRef="Gateway_1c03otq" />
+    <bpmn:sequenceFlow id="Flow_0npbrgg" sourceRef="Event_1huf5ik" targetRef="Activity_0qjak6l" />
+    <bpmn:boundaryEvent id="Event_1huf5ik" attachedToRef="Consulta_Saldo_DataPrev">
+      <bpmn:outgoing>Flow_0npbrgg</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1dtn4ve" errorRef="Error_1irgl60" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1h48lr0" attachedToRef="Consulta_Autorizacao_DataPrev">
+      <bpmn:outgoing>Flow_0ntbqz2</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1ga3p1i" errorRef="Error_1irgl60" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:exclusiveGateway id="Gateway_0rjrrg9" default="Flow_0kv3yre">
+      <bpmn:incoming>Flow_0wq5uiv</bpmn:incoming>
+      <bpmn:outgoing>Flow_05uje0l</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0kv3yre</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Activity_1ql2b6u" name="Erro ao consultar Autorização">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Error consult dataprev authorization",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05uje0l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cf87kh</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:scriptTask id="Activity_1qfboc2" name="Contador" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1xbeb48</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wq5uiv</bpmn:outgoing>
+      <bpmn:script>var count = execution.getVariable("dataprev_authorization_error_count") || 0;
+execution.setVariable("dataprev_authorization_error_count", count + 1);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateCatchEvent id="Event_1mn67vu" name="2S">
+      <bpmn:incoming>Flow_0kv3yre</bpmn:incoming>
+      <bpmn:outgoing>Flow_18487jl</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_051ofrf">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="Gateway_0l9e5t4">
+      <bpmn:incoming>Flow_0cf87kh</bpmn:incoming>
+      <bpmn:incoming>Flow_11tnzcn</bpmn:incoming>
+      <bpmn:outgoing>Flow_01mg0vf</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0wq5uiv" sourceRef="Activity_1qfboc2" targetRef="Gateway_0rjrrg9" />
+    <bpmn:sequenceFlow id="Flow_05uje0l" sourceRef="Gateway_0rjrrg9" targetRef="Activity_1ql2b6u">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dataprev_authorization_error_count== 3}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0kv3yre" sourceRef="Gateway_0rjrrg9" targetRef="Event_1mn67vu" />
+    <bpmn:sequenceFlow id="Flow_0cf87kh" sourceRef="Activity_1ql2b6u" targetRef="Gateway_0l9e5t4" />
+    <bpmn:sequenceFlow id="Flow_01mg0vf" sourceRef="Gateway_0l9e5t4" targetRef="Gateway_1ve6rmt" />
+    <bpmn:exclusiveGateway id="Gateway_0r51i32">
+      <bpmn:incoming>Flow_18487jl</bpmn:incoming>
+      <bpmn:incoming>Flow_0zg1ld6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hnap9a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1hnap9a" sourceRef="Gateway_0r51i32" targetRef="Consulta_Autorizacao_DataPrev" />
+    <bpmn:sequenceFlow id="Flow_18487jl" sourceRef="Event_1mn67vu" targetRef="Gateway_0r51i32" />
+    <bpmn:exclusiveGateway id="Gateway_00tlve1">
+      <bpmn:incoming>Flow_1nbw358</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l0iy75</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0l5t8nn">
+      <bpmn:incoming>Flow_07croky</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jv1qhd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0jv1qhd" sourceRef="Gateway_0l5t8nn" targetRef="Gateway_0kud8qt" />
+    <bpmn:scriptTask id="Activity_0z7bj7r" name="Preparar consulta BVS" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1f6fvid</bpmn:incoming>
+      <bpmn:outgoing>Flow_16z5koe</bpmn:outgoing>
+      <bpmn:script>let document_number = execution.getVariable("document_number");
+
+execution.setVariable("body_request_bvs", JSON.stringify({
+  "produto": "SCORE_PF",
+  "documento": document_number,
+  "versao": "v1",
+  "score": {
+    "creditoFraude": [
+      "scrcrdpnmccrpflgbclfbvsv2025"
+    ]
+  }
+}));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_1pmayjd" name="Consulta BVS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BoaVistaPostRequest" camunda:taskPriority="100">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="body">${body_request_bvs}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_bvs</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16z5koe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xybugp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ml3h4n" sourceRef="Activity_0zxh1fk" targetRef="Activity_ConsultaVale" />
+    <bpmn:sequenceFlow id="Flow_1cmo6nx" sourceRef="Activity_1d1t7nl" targetRef="Activity_1rabns2" />
+    <bpmn:boundaryEvent id="Event_1lcqhu6" attachedToRef="Activity_1pmayjd">
+      <bpmn:outgoing>Flow_0i5n96z</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0nyh68h" errorRef="Error_1ezxayc" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:scriptTask id="Activity_1vifjx2" name="Preparar variaveis BVS" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0xybugp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1meyket</bpmn:outgoing>
+      <bpmn:script>const response_bvs = JSON.parse(execution.getVariable("response_bvs"));
+execution.setVariable("score_bv", parseFloat(response_bvs.data.returnScoreCreditAndFraud[0].score));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0xybugp" sourceRef="Activity_1pmayjd" targetRef="Activity_1vifjx2" />
+    <bpmn:sequenceFlow id="Flow_084krlq" sourceRef="Consult_Consent_DataPrev" targetRef="Activity_0ommmtv" />
+    <bpmn:sequenceFlow id="Flow_0i5n96z" sourceRef="Event_1lcqhu6" targetRef="Activity_0ylpq1b" />
+    <bpmn:scriptTask id="Activity_0s5kbll" name="Preparar input_data_resolved" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1eanti6</bpmn:incoming>
+      <bpmn:outgoing>Flow_14zierr</bpmn:outgoing>
+      <bpmn:script>const company_document_number = execution.getVariable("company_document_number");
+const employer_name = execution.getVariable("employer_name");
+const gender = execution.getVariable("gender");
+const employee_number = execution.getVariable("employee_number");
+const monthly_net_salary = execution.getVariable("monthly_net_salary");
+const cbo_code = execution.getVariable("cbo_code");
+const cbo_description = execution.getVariable("cbo_description");
+const is_eligible_for_loan = execution.getVariable("is_eligible_for_loan");
+const admission_date = execution.getVariable("admission_date");
+let start_date = execution.getVariable("start_date");
+
+// Se for null ou undefined, coloca a data de hoje em formato YYYY-MM-DD
+if (!start_date) {
+  const today = new Date();
+  start_date = today.toISOString().split("T")[0];
+}
+
+let input_data_resolved = {
+    "employer": {
+      "document_number": company_document_number,
+      "name": employer_name,
+      "start_date": start_date
+    },
+    "borrower": {
+      "gender": gender
+    },
+    "employee_registration": {
+      "number": employee_number,
+      "max_consignment_margin": Number((monthly_net_salary * 0.35).toFixed(2)),
+      "cbo": {
+        "code": (cbo_code !== undefined &amp;&amp; cbo_code !== null) ? String(cbo_code) : null,
+        "description": cbo_description
+      },
+      "employment_status": is_eligible_for_loan ? "active" : "inactive",
+      "admission_date": admission_date
+    }
+};
+
+execution.setVariable("input_data_resolved", JSON.stringify(input_data_resolved));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_14zierr" sourceRef="Activity_0s5kbll" targetRef="Activity_0ew5iwy" />
+    <bpmn:exclusiveGateway id="Gateway_1uidqqf">
+      <bpmn:incoming>Flow_0ntbqz2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xbeb48</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0djtpy5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0ntbqz2" sourceRef="Event_1h48lr0" targetRef="Gateway_1uidqqf" />
+    <bpmn:sequenceFlow id="Flow_1xbeb48" sourceRef="Gateway_1uidqqf" targetRef="Activity_1qfboc2" />
+    <bpmn:task id="Activity_10lz6oj" name="Cliente não está na base Dataprev">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "CPF not found in dataprev records, or the worker's CPF is not eligible.",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0djtpy5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kqyarw</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_1ve6rmt">
+      <bpmn:incoming>Flow_01mg0vf</bpmn:incoming>
+      <bpmn:incoming>Flow_0kqyarw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a5kejo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0a5kejo" sourceRef="Gateway_1ve6rmt" targetRef="Gateway_1ts412d" />
+    <bpmn:sequenceFlow id="Flow_0kqyarw" sourceRef="Activity_10lz6oj" targetRef="Gateway_1ve6rmt" />
+    <bpmn:sequenceFlow id="Flow_0djtpy5" sourceRef="Gateway_1uidqqf" targetRef="Activity_10lz6oj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${exception.contains("Input should be 'AUTHORIZED' or 'NOT_AUTHORIZED'")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_18q3hzi">
+      <bpmn:incoming>Flow_1ig8qgg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ne9uh8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11pj83a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0ne9uh8" sourceRef="Gateway_18q3hzi" targetRef="Consult_Consent_DataPrev">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${has_gps_absence == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_16s3vp1" name="Consult contract termination GPS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestGetApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://portalws.gpssa.com.br/srh_api/api/externo/existe-rescisao?cpf=${document_number}</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{
+    "api-key": "a8916e23-3d9c-4332-8460-b4ee60107d05",
+    "Accept": "application/json"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_termination</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1oov0d1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nuvh6f</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Proccess_Response" name="Proccess Contract Termination Response" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1nuvh6f</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sm7jvf</bpmn:outgoing>
+      <bpmn:script>const response_termination = JSON.parse(execution.getVariable("response_termination"));
+execution.setVariable("has_gps_termination", response_termination.existe_rescisao);
+
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_0k6nkgs" name="Consult absence GPS" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestGetApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://portalws.gpssa.com.br/srh_api/api/externo/existe-afastamento?cpf=${document_number}</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{
+    "api-key": "a8916e23-3d9c-4332-8460-b4ee60107d05",
+    "Accept": "application/json"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_gps_absence</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07wq4ke</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rw4ol6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Proccess_Absence_Response" name="Proccess Absence Response" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1rw4ol6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ig8qgg</bpmn:outgoing>
+      <bpmn:script>const response_gps_absence= JSON.parse(execution.getVariable("response_gps_absence"));
+
+execution.setVariable("has_gps_absence", response_gps_absence.existe_afastamento);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:task id="Has_Absense" name="Has Absense">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Borrower has an active GPS absence alert",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11pj83a</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ic2r2g</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0dvgyv6" name="Has Contract Termination">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Borrower has an active GPS contract termintation alert",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11e7gla</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f5reay</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_1jcipyf" default="Flow_11e7gla">
+      <bpmn:incoming>Flow_1sm7jvf</bpmn:incoming>
+      <bpmn:outgoing>Flow_07wq4ke</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11e7gla</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0xz6cet">
+      <bpmn:incoming>Flow_1ic2r2g</bpmn:incoming>
+      <bpmn:incoming>Flow_0yytcrd</bpmn:incoming>
+      <bpmn:outgoing>Flow_11tnzcn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1sm7jvf" sourceRef="Proccess_Response" targetRef="Gateway_1jcipyf" />
+    <bpmn:sequenceFlow id="Flow_07wq4ke" sourceRef="Gateway_1jcipyf" targetRef="Activity_0k6nkgs">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${has_gps_termination == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1rw4ol6" sourceRef="Activity_0k6nkgs" targetRef="Proccess_Absence_Response" />
+    <bpmn:sequenceFlow id="Flow_1ic2r2g" sourceRef="Has_Absense" targetRef="Gateway_0xz6cet" />
+    <bpmn:sequenceFlow id="Flow_11e7gla" sourceRef="Gateway_1jcipyf" targetRef="Activity_0dvgyv6" />
+    <bpmn:sequenceFlow id="Flow_0f5reay" sourceRef="Activity_0dvgyv6" targetRef="Gateway_0sixsf9" />
+    <bpmn:sequenceFlow id="Flow_1nuvh6f" sourceRef="Activity_16s3vp1" targetRef="Proccess_Response" />
+    <bpmn:sequenceFlow id="Flow_11tnzcn" sourceRef="Gateway_0xz6cet" targetRef="Gateway_0l9e5t4" />
+    <bpmn:exclusiveGateway id="Gateway_0sixsf9">
+      <bpmn:incoming>Flow_0f5reay</bpmn:incoming>
+      <bpmn:incoming>Flow_0l0iy75</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yytcrd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0l0iy75" sourceRef="Gateway_00tlve1" targetRef="Gateway_0sixsf9" />
+    <bpmn:sequenceFlow id="Flow_0yytcrd" sourceRef="Gateway_0sixsf9" targetRef="Gateway_0xz6cet" />
+    <bpmn:sequenceFlow id="Flow_1ig8qgg" sourceRef="Proccess_Absence_Response" targetRef="Gateway_18q3hzi" />
+    <bpmn:sequenceFlow id="Flow_11pj83a" sourceRef="Gateway_18q3hzi" targetRef="Has_Absense" />
+    <bpmn:exclusiveGateway id="Gateway_0jybvrn">
+      <bpmn:incoming>Flow_15myh41</bpmn:incoming>
+      <bpmn:incoming>Flow_1meyket</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g4pz4i</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Activity_0ylpq1b" name="Consulta BVS NotFoundError">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "",
+  "status": "approved",
+  "score": 0
+}</camunda:outputParameter>
+          <camunda:outputParameter name="score_bv">${0.0}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0i5n96z</bpmn:incoming>
+      <bpmn:outgoing>Flow_15myh41</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_15myh41" sourceRef="Activity_0ylpq1b" targetRef="Gateway_0jybvrn" />
+    <bpmn:sequenceFlow id="Flow_16sibwj" sourceRef="VALE_Politica_De_Grupo" targetRef="Activity_02a2zpq" />
+    <bpmn:businessRuleTask id="Activity_02a2zpq" name="Defini Condições Crédito" camunda:resultVariable="result_tax_values" camunda:decisionRef="VALE_Taxas_TB" camunda:decisionRefTenantId="">
+      <bpmn:incoming>Flow_16sibwj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xr86p4</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0xr86p4" sourceRef="Activity_02a2zpq" targetRef="Activity_07xb35r" />
+    <bpmn:businessRuleTask id="VALE_Politica_De_Grupo" name="Politica De Grupo" camunda:resultVariable="result_condition" camunda:decisionRef="VALE_Politica_De_Grupo" camunda:mapDecisionResult="singleResult">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="table_id">${result_condition.table_id}</camunda:outputParameter>
+          <camunda:outputParameter name="max_total_number_of_installments">${result_condition.max_total_number_of_installments}</camunda:outputParameter>
+          <camunda:outputParameter name="use_margin_percent">${result_condition.use_margin_percent}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g4pz4i</bpmn:incoming>
+      <bpmn:outgoing>Flow_16sibwj</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_0mm09lo">
+      <bpmn:incoming>Flow_05mn858</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zlx0a7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0zlx0a7" sourceRef="Gateway_0mm09lo" targetRef="Gateway_05tg26b" />
+    <bpmn:sequenceFlow id="Flow_0g4pz4i" sourceRef="Gateway_0jybvrn" targetRef="VALE_Politica_De_Grupo" />
+    <bpmn:serviceTask id="Activity_ConsultaVale" name="Consulta Vale Elegibilidade" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://hub-credito-dev.byxcapital.com.br/vale/elegibility</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "cpf": "${document_number}"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_eligibility</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ml3h4n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zi86q0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0zi86q0" sourceRef="Activity_ConsultaVale" targetRef="Activity_1q0qf15" />
+    <bpmn:sequenceFlow id="Flow_1f6fvid" sourceRef="Activity_0fie2tv" targetRef="Activity_0z7bj7r" />
+    <bpmn:sequenceFlow id="Flow_16z5koe" sourceRef="Activity_0z7bj7r" targetRef="Activity_1pmayjd" />
+    <bpmn:sequenceFlow id="Flow_1meyket" sourceRef="Activity_1vifjx2" targetRef="Gateway_0jybvrn" />
+    <bpmn:scriptTask id="Activity_1q0qf15" name="Processa resposta elegibilidade" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0zi86q0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qhiqx2</bpmn:outgoing>
+      <bpmn:script>const response_eligibility= JSON.parse(execution.getVariable("response_eligibility"));
+execution.setVariable("eligibility_status", response_eligibility.status);
+execution.setVariable("scoreVc", response_eligibility.scoreVc);
+execution.setVariable("elegivel", response_eligibility.eligible);
+execution.setVariable("admission_date", response_eligibility.dataAdmissao);
+
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0qhiqx2" sourceRef="Activity_1q0qf15" targetRef="Gateway_00tlfxu" />
+    <bpmn:sequenceFlow id="Flow_0kbg21y" sourceRef="Activity_1qstzby" targetRef="Activity_1qyqa4p" />
+    <bpmn:sequenceFlow id="Flow_0o1x280" sourceRef="Activity_0ommmtv" targetRef="Activity_1qgvith" />
+    <bpmn:receiveTask id="Activity_0ommmtv" name="Aguardar Consentimento Dataprev (Celcoin)" messageRef="Message_00iejmi">
+      <bpmn:incoming>Flow_084krlq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o1x280</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="Flow_0zg1ld6" sourceRef="Activity_1qgvith" targetRef="Gateway_0r51i32" />
+    <bpmn:receiveTask id="Activity_1qgvith" messageRef="Message_09135kv">
+      <bpmn:incoming>Flow_0o1x280</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zg1ld6</bpmn:outgoing>
+    </bpmn:receiveTask>
+  </bpmn:process>
+  <bpmn:error id="Error_0epofsd" name="BYX524" errorCode="BYX524" />
+  <bpmn:error id="Error_18ukwc6" name="CNPJ_CPF_Not_Found" errorCode="BYX400" />
+  <bpmn:message id="Message_09135kv" name="aguardar-mensagem" />
+  <bpmn:error id="Error_1irgl60" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmn:error id="Error_0iofi36" name="NotFoundError" camunda:errorMessage="NotFoundError" />
+  <bpmn:error id="Error_1ezxayc" name="BYX404" />
+  <bpmn:error id="Error_1u6p81e" name="BYX500" camunda:errorMessage="BYX500" />
+  <bpmn:message id="Message_00iejmi" name="celcoin-dataprev-consent" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_c9aeeafd-b684-4f2a-94c2-1c56b1975e72">
+      <bpmndi:BPMNShape id="BPMNShape_1cuvawt" bpmnElement="Consulta_Autorizacao_DataPrev">
+        <dc:Bounds x="2510" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_147kzjo" bpmnElement="Consulta_Saldo_DataPrev">
+        <dc:Bounds x="2820" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0kud8qt_di" bpmnElement="Gateway_0kud8qt" isMarkerVisible="true">
+        <dc:Bounds x="7115" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0exua4r_di" bpmnElement="Activity_0fg11nx">
+        <dc:Bounds x="7270" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lt3i3k_di" bpmnElement="Activity_04akl5a">
+        <dc:Bounds x="7450" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ihxej1_di" bpmnElement="Activity_0ew5iwy">
+        <dc:Bounds x="7810" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0yt8m0i" bpmnElement="Activity_14ylu7y">
+        <dc:Bounds x="8140" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s0mbat_di" bpmnElement="Event_0rb0ham">
+        <dc:Bounds x="8302" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xf1u41" bpmnElement="Activity_1qyqa4p">
+        <dc:Bounds x="3960" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07o7ykm_di" bpmnElement="Gateway_07o7ykm" isMarkerVisible="true">
+        <dc:Bounds x="4125" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0z8p2g4_di" bpmnElement="Gateway_0z8p2g4" isMarkerVisible="true">
+        <dc:Bounds x="4125" y="615" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1c5wkh4_di" bpmnElement="Gateway_1c5wkh4" isMarkerVisible="true">
+        <dc:Bounds x="3585" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t0au1y_di" bpmnElement="Activity_1d1t7nl">
+        <dc:Bounds x="3210" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06ehzrf_di" bpmnElement="Activity_07xb35r">
+        <dc:Bounds x="6610" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kkvscu" bpmnElement="Activity_160rnz8">
+        <dc:Bounds x="3560" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vlqvhk_di" bpmnElement="Gateway_1vlqvhk" isMarkerVisible="true">
+        <dc:Bounds x="6805" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04wc685" bpmnElement="Activity_18uxyum">
+        <dc:Bounds x="6780" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06y5x08_di" bpmnElement="Gateway_06y5x08" isMarkerVisible="true">
+        <dc:Bounds x="6805" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_05tg26b_di" bpmnElement="Gateway_05tg26b" isMarkerVisible="true">
+        <dc:Bounds x="6475" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1a9pn9x_di" bpmnElement="Activity_0nq024n">
+        <dc:Bounds x="3000" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07iqvdv_di" bpmnElement="Activity_1qstzby">
+        <dc:Bounds x="3800" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14libjf" bpmnElement="Activity_17qtc9x">
+        <dc:Bounds x="6450" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kqiqr6_di" bpmnElement="Activity_1kqiqr6">
+        <dc:Bounds x="6940" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0efxef2_di" bpmnElement="Activity_1rabns2">
+        <dc:Bounds x="3410" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0hcvm5w_di" bpmnElement="Gateway_0hcvm5w" isMarkerVisible="true">
+        <dc:Bounds x="3585" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xaq5e0_di" bpmnElement="Activity_0fie2tv">
+        <dc:Bounds x="4300" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_10wpy3m_di" bpmnElement="Gateway_10wpy3m" isMarkerVisible="true">
+        <dc:Bounds x="2715" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_130hf49" bpmnElement="Activity_13bct00">
+        <dc:Bounds x="2690" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cejuuj_di" bpmnElement="Activity_0qjak6l">
+        <dc:Bounds x="2820" y="290" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s1p1z5_di" bpmnElement="Event_1arcif4">
+        <dc:Bounds x="2722" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2695" y="223" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ts412d_di" bpmnElement="Gateway_1ts412d" isMarkerVisible="true">
+        <dc:Bounds x="2715" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1c03otq_di" bpmnElement="Gateway_1c03otq" isMarkerVisible="true">
+        <dc:Bounds x="2715" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0gr7zec" bpmnElement="Gateway_0rjrrg9" isMarkerVisible="true">
+        <dc:Bounds x="2260" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ujg554" bpmnElement="Activity_1ql2b6u">
+        <dc:Bounds x="2235" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rr07f2" bpmnElement="Activity_1qfboc2">
+        <dc:Bounds x="2370" y="290" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0pfi6q4" bpmnElement="Event_1mn67vu">
+        <dc:Bounds x="2267" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2240" y="223" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1cyv4qs" bpmnElement="Gateway_0l9e5t4" isMarkerVisible="true">
+        <dc:Bounds x="2260" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_092cqae" bpmnElement="Gateway_0r51i32" isMarkerVisible="true">
+        <dc:Bounds x="2260" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0l5t8nn_di" bpmnElement="Gateway_0l5t8nn" isMarkerVisible="true">
+        <dc:Bounds x="7115" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0xml9bx" bpmnElement="Activity_0z7bj7r">
+        <dc:Bounds x="4540" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08ebk41" bpmnElement="Activity_1pmayjd">
+        <dc:Bounds x="4880" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ahpms" bpmnElement="Activity_1vifjx2">
+        <dc:Bounds x="5270" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0p3em28" bpmnElement="Activity_0s5kbll">
+        <dc:Bounds x="7630" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uidqqf_di" bpmnElement="Gateway_1uidqqf" isMarkerVisible="true">
+        <dc:Bounds x="2535" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10lz6oj_di" bpmnElement="Activity_10lz6oj">
+        <dc:Bounds x="2510" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ve6rmt_di" bpmnElement="Gateway_1ve6rmt" isMarkerVisible="true">
+        <dc:Bounds x="2535" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jybvrn_di" bpmnElement="Gateway_0jybvrn" isMarkerVisible="true">
+        <dc:Bounds x="5545" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ev81xh" bpmnElement="Activity_0ylpq1b">
+        <dc:Bounds x="5270" y="290" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0j7xwp8" bpmnElement="Activity_02a2zpq">
+        <dc:Bounds x="6005" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1izbkl1_di" bpmnElement="VALE_Politica_De_Grupo">
+        <dc:Bounds x="5790" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0mm09lo_di" bpmnElement="Gateway_0mm09lo" isMarkerVisible="true">
+        <dc:Bounds x="5585" y="615" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0kw1js4" bpmnElement="Event_0x5kcd8">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0lsb6ow" bpmnElement="Activity_0zxh1fk">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00tlfxu_di" bpmnElement="Gateway_00tlfxu" isMarkerVisible="true">
+        <dc:Bounds x="835" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ql6vdi" bpmnElement="Activity_1w20s2d">
+        <dc:Bounds x="810" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00tlve1_di" bpmnElement="Gateway_00tlve1" isMarkerVisible="true">
+        <dc:Bounds x="835" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18q3hzi_di" bpmnElement="Gateway_18q3hzi" isMarkerVisible="true">
+        <dc:Bounds x="1775" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1vb03yj" bpmnElement="Activity_16s3vp1">
+        <dc:Bounds x="960" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0e391i9" bpmnElement="Proccess_Response">
+        <dc:Bounds x="1120" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_005mexq" bpmnElement="Activity_0k6nkgs">
+        <dc:Bounds x="1400" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qje7rg" bpmnElement="Proccess_Absence_Response">
+        <dc:Bounds x="1570" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1jgd7df" bpmnElement="Has_Absense">
+        <dc:Bounds x="1750" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17hsnc6" bpmnElement="Activity_0dvgyv6">
+        <dc:Bounds x="1240" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1jcipyf_di" bpmnElement="Gateway_1jcipyf" isMarkerVisible="true">
+        <dc:Bounds x="1265" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0xz6cet_di" bpmnElement="Gateway_0xz6cet" isMarkerVisible="true">
+        <dc:Bounds x="1775" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0sixsf9_di" bpmnElement="Gateway_0sixsf9" isMarkerVisible="true">
+        <dc:Bounds x="1265" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0skh0lc" bpmnElement="Activity_ConsultaVale">
+        <dc:Bounds x="400" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rwjvgo" bpmnElement="Activity_1q0qf15">
+        <dc:Bounds x="540" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07b3o3w_di" bpmnElement="Consult_Consent_DataPrev">
+        <dc:Bounds x="1850" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11iuf2y_di" bpmnElement="Activity_0ommmtv">
+        <dc:Bounds x="1990" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xdhecg_di" bpmnElement="Activity_1qgvith">
+        <dc:Bounds x="2130" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fphu01_di" bpmnElement="Event_1lcqhu6">
+        <dc:Bounds x="4912" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_150gwuk" bpmnElement="Event_1h48lr0">
+        <dc:Bounds x="2542" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04p6u9q_di" bpmnElement="Event_1huf5ik">
+        <dc:Bounds x="2852" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0wda1z2_di" bpmnElement="Flow_0wda1z2">
+        <di:waypoint x="2610" y="120" />
+        <di:waypoint x="2715" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07croky_di" bpmnElement="Flow_07croky">
+        <di:waypoint x="6855" y="630" />
+        <di:waypoint x="7115" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gwt1zz_di" bpmnElement="Flow_1gwt1zz">
+        <di:waypoint x="6855" y="120" />
+        <di:waypoint x="6940" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_114unwm_di" bpmnElement="Flow_114unwm">
+        <di:waypoint x="7165" y="120" />
+        <di:waypoint x="7270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05mn858_di" bpmnElement="Flow_05mn858">
+        <di:waypoint x="4175" y="640" />
+        <di:waypoint x="5585" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z7mndg_di" bpmnElement="Flow_0z7mndg">
+        <di:waypoint x="7370" y="120" />
+        <di:waypoint x="7450" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eanti6_di" bpmnElement="Flow_1eanti6">
+        <di:waypoint x="7550" y="120" />
+        <di:waypoint x="7630" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kah6pd_di" bpmnElement="Flow_0kah6pd">
+        <di:waypoint x="7910" y="120" />
+        <di:waypoint x="8140" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pr18tv_di" bpmnElement="Flow_0pr18tv">
+        <di:waypoint x="8240" y="120" />
+        <di:waypoint x="8302" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zroxb3_di" bpmnElement="Flow_0zroxb3">
+        <di:waypoint x="4060" y="120" />
+        <di:waypoint x="4125" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15wsekd_di" bpmnElement="Flow_15wsekd">
+        <di:waypoint x="4150" y="145" />
+        <di:waypoint x="4150" y="615" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hus6po_di" bpmnElement="Flow_1hus6po">
+        <di:waypoint x="3610" y="570" />
+        <di:waypoint x="3610" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rmrq5a_di" bpmnElement="Flow_1rmrq5a">
+        <di:waypoint x="3635" y="120" />
+        <di:waypoint x="3800" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1olyx2v_di" bpmnElement="Flow_1olyx2v">
+        <di:waypoint x="3610" y="145" />
+        <di:waypoint x="3610" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1flkf8j_di" bpmnElement="Flow_1flkf8j">
+        <di:waypoint x="6710" y="120" />
+        <di:waypoint x="6805" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qig8yp_di" bpmnElement="Flow_1qig8yp">
+        <di:waypoint x="6830" y="570" />
+        <di:waypoint x="6830" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hmbcan_di" bpmnElement="Flow_1hmbcan">
+        <di:waypoint x="6830" y="145" />
+        <di:waypoint x="6830" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p8atfw_di" bpmnElement="Flow_1p8atfw">
+        <di:waypoint x="2920" y="120" />
+        <di:waypoint x="3000" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aq3lxe_di" bpmnElement="Flow_0aq3lxe">
+        <di:waypoint x="6525" y="630" />
+        <di:waypoint x="6805" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_097rism_di" bpmnElement="Flow_097rism">
+        <di:waypoint x="3100" y="120" />
+        <di:waypoint x="3210" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lykqh8_di" bpmnElement="Flow_0lykqh8">
+        <di:waypoint x="6500" y="570" />
+        <di:waypoint x="6500" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gplfmf_di" bpmnElement="Flow_0gplfmf">
+        <di:waypoint x="3510" y="120" />
+        <di:waypoint x="3585" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hfo1ym_di" bpmnElement="Flow_1hfo1ym">
+        <di:waypoint x="4175" y="120" />
+        <di:waypoint x="4300" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03hrr9a_di" bpmnElement="Flow_03hrr9a">
+        <di:waypoint x="3635" y="630" />
+        <di:waypoint x="3880" y="630" />
+        <di:waypoint x="3880" y="640" />
+        <di:waypoint x="4125" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zybivr_di" bpmnElement="Flow_0zybivr">
+        <di:waypoint x="7040" y="120" />
+        <di:waypoint x="7115" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hesk1a_di" bpmnElement="Flow_0hesk1a">
+        <di:waypoint x="2820" y="330" />
+        <di:waypoint x="2765" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17elgdv_di" bpmnElement="Flow_17elgdv">
+        <di:waypoint x="2740" y="355" />
+        <di:waypoint x="2740" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ufsnec_di" bpmnElement="Flow_1ufsnec">
+        <di:waypoint x="2740" y="305" />
+        <di:waypoint x="2740" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fa8ogn_di" bpmnElement="Flow_1fa8ogn">
+        <di:waypoint x="2765" y="630" />
+        <di:waypoint x="3585" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14835a3_di" bpmnElement="Flow_14835a3">
+        <di:waypoint x="2740" y="570" />
+        <di:waypoint x="2740" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11zueax_di" bpmnElement="Flow_11zueax">
+        <di:waypoint x="2765" y="120" />
+        <di:waypoint x="2820" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05o0ui3_di" bpmnElement="Flow_05o0ui3">
+        <di:waypoint x="2740" y="212" />
+        <di:waypoint x="2740" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0npbrgg_di" bpmnElement="Flow_0npbrgg">
+        <di:waypoint x="2870" y="178" />
+        <di:waypoint x="2870" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0jiobuz" bpmnElement="Flow_0wq5uiv">
+        <di:waypoint x="2370" y="330" />
+        <di:waypoint x="2310" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0q97xjw" bpmnElement="Flow_05uje0l">
+        <di:waypoint x="2285" y="355" />
+        <di:waypoint x="2285" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_02vxrqx" bpmnElement="Flow_0kv3yre">
+        <di:waypoint x="2285" y="305" />
+        <di:waypoint x="2285" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0rrukf7" bpmnElement="Flow_0cf87kh">
+        <di:waypoint x="2285" y="570" />
+        <di:waypoint x="2285" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01mg0vf_di" bpmnElement="Flow_01mg0vf">
+        <di:waypoint x="2310" y="630" />
+        <di:waypoint x="2535" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hnap9a_di" bpmnElement="Flow_1hnap9a">
+        <di:waypoint x="2310" y="120" />
+        <di:waypoint x="2510" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18487jl_di" bpmnElement="Flow_18487jl">
+        <di:waypoint x="2285" y="212" />
+        <di:waypoint x="2285" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jv1qhd_di" bpmnElement="Flow_0jv1qhd">
+        <di:waypoint x="7140" y="605" />
+        <di:waypoint x="7140" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cmo6nx_di" bpmnElement="Flow_1cmo6nx">
+        <di:waypoint x="3310" y="120" />
+        <di:waypoint x="3410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xybugp_di" bpmnElement="Flow_0xybugp">
+        <di:waypoint x="4980" y="120" />
+        <di:waypoint x="5270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_084krlq_di" bpmnElement="Flow_084krlq">
+        <di:waypoint x="1950" y="120" />
+        <di:waypoint x="1990" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i5n96z_di" bpmnElement="Flow_0i5n96z">
+        <di:waypoint x="4930" y="178" />
+        <di:waypoint x="4930" y="330" />
+        <di:waypoint x="5270" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14zierr_di" bpmnElement="Flow_14zierr">
+        <di:waypoint x="7730" y="120" />
+        <di:waypoint x="7810" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ntbqz2_di" bpmnElement="Flow_0ntbqz2">
+        <di:waypoint x="2560" y="178" />
+        <di:waypoint x="2560" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xbeb48_di" bpmnElement="Flow_1xbeb48">
+        <di:waypoint x="2535" y="330" />
+        <di:waypoint x="2470" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a5kejo_di" bpmnElement="Flow_0a5kejo">
+        <di:waypoint x="2585" y="630" />
+        <di:waypoint x="2715" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kqyarw_di" bpmnElement="Flow_0kqyarw">
+        <di:waypoint x="2560" y="570" />
+        <di:waypoint x="2560" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0djtpy5_di" bpmnElement="Flow_0djtpy5">
+        <di:waypoint x="2560" y="355" />
+        <di:waypoint x="2560" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11tnzcn_di" bpmnElement="Flow_11tnzcn">
+        <di:waypoint x="1825" y="630" />
+        <di:waypoint x="2260" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15myh41_di" bpmnElement="Flow_15myh41">
+        <di:waypoint x="5370" y="330" />
+        <di:waypoint x="5570" y="330" />
+        <di:waypoint x="5570" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16sibwj_di" bpmnElement="Flow_16sibwj">
+        <di:waypoint x="5890" y="120" />
+        <di:waypoint x="6005" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xr86p4_di" bpmnElement="Flow_0xr86p4">
+        <di:waypoint x="6105" y="120" />
+        <di:waypoint x="6610" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zlx0a7_di" bpmnElement="Flow_0zlx0a7">
+        <di:waypoint x="5635" y="640" />
+        <di:waypoint x="6055" y="640" />
+        <di:waypoint x="6055" y="630" />
+        <di:waypoint x="6475" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g4pz4i_di" bpmnElement="Flow_0g4pz4i">
+        <di:waypoint x="5595" y="120" />
+        <di:waypoint x="5790" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f6fvid_di" bpmnElement="Flow_1f6fvid">
+        <di:waypoint x="4400" y="120" />
+        <di:waypoint x="4540" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16z5koe_di" bpmnElement="Flow_16z5koe">
+        <di:waypoint x="4640" y="120" />
+        <di:waypoint x="4880" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1meyket_di" bpmnElement="Flow_1meyket">
+        <di:waypoint x="5370" y="120" />
+        <di:waypoint x="5545" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kbg21y_di" bpmnElement="Flow_0kbg21y">
+        <di:waypoint x="3900" y="120" />
+        <di:waypoint x="3960" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ne9uh8_di" bpmnElement="Flow_0ne9uh8">
+        <di:waypoint x="1825" y="120" />
+        <di:waypoint x="1850" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kh11vw_di" bpmnElement="Flow_0kh11vw">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ml3h4n_di" bpmnElement="Flow_0ml3h4n">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="400" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qhiqx2_di" bpmnElement="Flow_0qhiqx2">
+        <di:waypoint x="640" y="120" />
+        <di:waypoint x="835" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oov0d1_di" bpmnElement="Flow_1oov0d1">
+        <di:waypoint x="885" y="120" />
+        <di:waypoint x="960" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r23rqt_di" bpmnElement="Flow_1r23rqt">
+        <di:waypoint x="860" y="145" />
+        <di:waypoint x="860" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nbw358_di" bpmnElement="Flow_1nbw358">
+        <di:waypoint x="860" y="460" />
+        <di:waypoint x="860" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l0iy75_di" bpmnElement="Flow_0l0iy75">
+        <di:waypoint x="885" y="630" />
+        <di:waypoint x="1265" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ig8qgg_di" bpmnElement="Flow_1ig8qgg">
+        <di:waypoint x="1670" y="120" />
+        <di:waypoint x="1775" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11pj83a_di" bpmnElement="Flow_11pj83a">
+        <di:waypoint x="1800" y="145" />
+        <di:waypoint x="1800" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nuvh6f_di" bpmnElement="Flow_1nuvh6f">
+        <di:waypoint x="1060" y="120" />
+        <di:waypoint x="1120" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sm7jvf_di" bpmnElement="Flow_1sm7jvf">
+        <di:waypoint x="1220" y="120" />
+        <di:waypoint x="1265" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07wq4ke_di" bpmnElement="Flow_07wq4ke">
+        <di:waypoint x="1315" y="120" />
+        <di:waypoint x="1400" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rw4ol6_di" bpmnElement="Flow_1rw4ol6">
+        <di:waypoint x="1500" y="120" />
+        <di:waypoint x="1570" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ic2r2g_di" bpmnElement="Flow_1ic2r2g">
+        <di:waypoint x="1800" y="490" />
+        <di:waypoint x="1800" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11e7gla_di" bpmnElement="Flow_11e7gla">
+        <di:waypoint x="1290" y="145" />
+        <di:waypoint x="1290" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f5reay_di" bpmnElement="Flow_0f5reay">
+        <di:waypoint x="1290" y="490" />
+        <di:waypoint x="1290" y="605" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yytcrd_di" bpmnElement="Flow_0yytcrd">
+        <di:waypoint x="1315" y="630" />
+        <di:waypoint x="1775" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zi86q0_di" bpmnElement="Flow_0zi86q0">
+        <di:waypoint x="500" y="120" />
+        <di:waypoint x="540" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o1x280_di" bpmnElement="Flow_0o1x280">
+        <di:waypoint x="2090" y="120" />
+        <di:waypoint x="2130" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zg1ld6_di" bpmnElement="Flow_0zg1ld6">
+        <di:waypoint x="2230" y="120" />
+        <di:waypoint x="2260" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

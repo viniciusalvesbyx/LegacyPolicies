@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_1346vfr" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="HAPPY_Decision_Personal_Income" name="HAPPY_Decision_Personal_Income" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_0r12t6h" hitPolicy="FIRST">
+      <input id="InputClause_0ah9vnq" label="Base Margin Income Ratio" biodi:width="192" camunda:inputVariable="base_margin_income_ratio">
+        <inputExpression id="LiteralExpression_1qns5an" typeRef="double">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string" />
+      <output id="OutputClause_1tx5d2j" label="Reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_0iyp19j">
+        <inputEntry id="UnaryTests_1ia579e">
+          <text>&gt; 1.3</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1lox5w9">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0yrehn9">
+          <text>"Mismatch between consignable base and personal income"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0mb6s0m">
+        <inputEntry id="UnaryTests_0fqh6tn">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_05kfvgd">
+          <text>"Unable to retrieve company information from NexaIQ API"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19cp11s">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="HAPPY_Decision_Personal_Income">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

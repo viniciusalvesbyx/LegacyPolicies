@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "36bf11f6-199c-11f1-b0d1-aefc96e0ee4f",
+  "process_key": "consult_gps_termination_or_absence",
+  "process_name": "consult_gps_termination_or_absence",
+  "tenant_id": "",
+  "version": 10,
+  "version_tag": "",
+  "resource": "consultar_recisão_gps_20260306.bpmn",
+  "deployment_id": "36bd6444-199c-11f1-b0d1-aefc96e0ee4f",
+  "deployment_name": "consultar_recisão_gps_20260306",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2026-03-06T20:36:54.914+0000",
+  "extracted_at_utc": "2026-06-02T20:08:03+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

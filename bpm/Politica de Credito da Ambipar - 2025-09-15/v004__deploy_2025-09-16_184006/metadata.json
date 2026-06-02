@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "90df909f-932c-11f0-903c-52432e834fe4",
+  "process_key": "Process_ce6f2823-9e32-438b-9616-3dcf9d41f9df",
+  "process_name": "Politica de Credito da Ambipar - 2025-09-15",
+  "tenant_id": "",
+  "version": 4,
+  "version_tag": "",
+  "resource": "politica-de-credito-ambipar.bpmn",
+  "deployment_id": "90dd46ad-932c-11f0-903c-52432e834fe4",
+  "deployment_name": "politica-de-credito-ambipar",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-09-16T18:40:06.669+0000",
+  "extracted_at_utc": "2026-06-02T20:08:54+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

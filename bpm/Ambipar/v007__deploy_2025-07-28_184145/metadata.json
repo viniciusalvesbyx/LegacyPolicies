@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "835f7f44-6be2-11f0-905e-7e359cad61ff",
+  "process_key": "Process_c9bfacff-4e9c-4988-b450-ab26fb15d5f9",
+  "process_name": "Ambipar",
+  "tenant_id": "",
+  "version": 7,
+  "version_tag": "",
+  "resource": "teste-ambipar-privado.bpmn",
+  "deployment_id": "835daa82-6be2-11f0-905e-7e359cad61ff",
+  "deployment_name": "teste-ambipar-privado",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-07-28T18:41:45.919+0000",
+  "extracted_at_utc": "2026-06-02T20:07:57+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

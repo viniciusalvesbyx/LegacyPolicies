@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_08hdnju" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="Process_1ad5d3ae-e574-4914-86b8-84417bc13f4a" name="TESTES AUTOMATIZADOS - Receba v1" isExecutable="true" camunda:versionTag="1" camunda:historyTimeToLive="3">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1f05nh2</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1f05nh2" sourceRef="StartEvent_1" targetRef="Activity_096yp1e" />
+    <bpmn:scriptTask id="Activity_0ufxuuv" name="Calcular due_date_rule" scriptFormat="JavaScript">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1demmre</bpmn:incoming>
+      <bpmn:outgoing>Flow_1doz13d</bpmn:outgoing>
+      <bpmn:script>const MINIMUM_WAGE = 1518.00;
+
+const input_data_raw = execution.getVariable("input_data");
+
+const input_data = JSON.parse(input_data_raw); 
+
+const benefit = input_data.benefit
+
+const benefit_number = benefit.benefit_number;
+const declared_gross_benefit_amount = benefit.declared_gross_benefit_amount;
+var due_date_rule = benefit.due_date_rule;
+
+execution.setVariable("input_data_raw", input_data_raw);
+
+var benefit_number_penultimate_digit = benefit_number.slice(-2, -1);
+
+var dueDateRuleUpToOneSalary = {
+  "1":"reverse_fifth_business_day", 
+  "2":"reverse_fourth_business_day", 
+  "3":"reverse_third_business_day", 
+  "4":"reverse_second_business_day", 
+  "5":"reverse_first_business_day", 
+  "6":"first_business_day", 
+  "7":"second_business_day", 
+  "8":"third_business_day", 
+  "9":"fourth_business_day", 
+  "0":"fifth_business_day", 
+}
+
+var dueDateRuleGreaterThanOneSalary = {
+  "1":"first_business_day", 
+  "2":"second_business_day", 
+  "3":"third_business_day", 
+  "4":"fourth_business_day", 
+  "5":"fifth_business_day", 
+  "6":"first_business_day", 
+  "7":"second_business_day", 
+  "8":"third_business_day", 
+  "9":"fourth_business_day", 
+  "0":"fifth_business_day", 
+}
+
+
+if (!due_date_rule &amp;&amp; declared_gross_benefit_amount &gt; MINIMUM_WAGE) {
+  due_date_rule = dueDateRuleGreaterThanOneSalary[benefit_number_penultimate_digit];
+}else if(!due_date_rule &amp;&amp; declared_gross_benefit_amount &lt;= MINIMUM_WAGE){
+  due_date_rule = dueDateRuleUpToOneSalary[benefit_number_penultimate_digit];
+} 
+
+
+jsonData = {
+  "benefit_number": benefit_number,
+  "declared_gross_benefit_amount": declared_gross_benefit_amount,
+  "due_date_rule": due_date_rule,
+}
+
+var jsonString = JSON.stringify(jsonData);
+execution.setVariable("due_date_rule", due_date_rule);
+execution.setVariable("body_result3", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_01idln1" name="Envia Retorno API" camunda:type="external" camunda:topic="RestPutApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://credit-analysis-dev.byxcapital.com.br/credit_terms/${credit_terms_key}</camunda:inputParameter>
+          <camunda:inputParameter name="body"> ${body_result3}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ybs77m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mnb7m7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1o1vozt">
+      <bpmn:incoming>Flow_1mnb7m7</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_05q9qyp" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1mnb7m7" sourceRef="Activity_01idln1" targetRef="Event_1o1vozt" />
+    <bpmn:businessRuleTask id="Activity_19i79sc" name="Elegibilidade" camunda:resultVariable="result" camunda:decisionRef="TESTES_AUTOMATIZADOS_DMN_Receba_1.1" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_043v3d9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q5ct4i</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0q5ct4i" sourceRef="Activity_19i79sc" targetRef="Activity_0txqtt3" />
+    <bpmn:exclusiveGateway id="Gateway_0d1r1q1">
+      <bpmn:incoming>Flow_036f5iv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1demmre</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18c6u92</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1demmre" sourceRef="Gateway_0d1r1q1" targetRef="Activity_0ufxuuv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result.status != "denied"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1doz13d" sourceRef="Activity_0ufxuuv" targetRef="Activity_0quwz05" />
+    <bpmn:scriptTask id="Activity_1iji3j0" name="Preparar retorno" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_18c6u92</bpmn:incoming>
+      <bpmn:outgoing>Flow_00u3uro</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const result = execution.getVariable("result");
+const input_data = JSON.parse(input_data_raw); 
+
+const due_date_rule = execution.getVariable("due_date_rule");
+const commitment_ratio_percentage = execution.getVariable("commitment_ratio_percentage");
+const concurrent_debts_amount = execution.getVariable("concurrent_debts_amount");
+const max_first_installment_grace_period = execution.getVariable("max_first_installment_grace_period");
+const min_first_installment_grace_period = execution.getVariable("min_first_installment_grace_period");
+
+const status = result.status;
+const reason = result.reason;
+
+MONTHLY_RATE = 0.23;
+TOTAL_NUMBER_OF_INSTALLMENTS = 12;
+MIN_INSTALLMENT_AMOUNT = 140.0;
+
+var identification = { }
+
+var decision = {
+    "reason": reason
+}
+
+let credit_terms_conditions = null
+
+
+var jsonData = {
+  "document_number": document_number, 
+  "status": status, 
+  "credit_terms_conditions": credit_terms_conditions,
+  "decision_metadata": {
+      "identification": identification,
+      "decision": decision,
+  }, 
+  "input_data": input_data,
+  "input_data_resolved":{}
+};
+
+if (status == "denied"){
+    jsonData["cancel_reason"] = reason
+}
+
+var jsonString = JSON.stringify(jsonData); 
+execution.setVariable("body_result3", jsonString);
+    </bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_18c6u92" sourceRef="Gateway_0d1r1q1" targetRef="Activity_1iji3j0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result.status == "denied"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0l70ff1">
+      <bpmn:incoming>Flow_1cvghl1</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0kut40u" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_00u3uro" sourceRef="Activity_1iji3j0" targetRef="Activity_00xigkf" />
+    <bpmn:sequenceFlow id="Flow_043v3d9" sourceRef="Activity_096yp1e" targetRef="Activity_19i79sc" />
+    <bpmn:scriptTask id="Activity_096yp1e" name="Preparar variáveis" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1f05nh2</bpmn:incoming>
+      <bpmn:outgoing>Flow_043v3d9</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+const benefit = input_data.benefit;
+
+execution.setVariable("benefit_status", benefit.benefit_status);
+execution.setVariable("benefit_code", benefit.benefit_code);
+execution.setVariable("benefit_number", benefit.benefit_number);
+execution.setVariable("declared_gross_benefit_amount", benefit.declared_gross_benefit_amount);
+execution.setVariable("mandatory_discount", benefit.mandatory_discount);
+execution.setVariable("payment_state", benefit.payment_state);
+execution.setVariable("months_to_benefit_termination", benefit.months_to_benefit_termination);
+execution.setVariable("has_legal_representative", benefit.legal_representative?.has_legal_representative);
+execution.setVariable("bank_code", benefit.bank_account?.bank_code);
+execution.setVariable("due_date_rule", benefit.due_date_rule);
+execution.setVariable("age", benefit.age);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_036f5iv" sourceRef="Activity_0txqtt3" targetRef="Gateway_0d1r1q1" />
+    <bpmn:scriptTask id="Activity_0txqtt3" name="Logar result.status" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0q5ct4i</bpmn:incoming>
+      <bpmn:outgoing>Flow_036f5iv</bpmn:outgoing>
+      <bpmn:script>var result = execution.getVariable("result");
+execution.setVariable("debug_result_status", result ? result.status : "undefined");
+execution.setVariable("debug_result_reason", result ? result.reason : "undefined");
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0quwz05" name="Calcular valor líquido e parcela máxima" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1doz13d</bpmn:incoming>
+      <bpmn:outgoing>Flow_0onrtcr</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw); 
+
+const benefit = input_data.benefit;
+
+const declared_gross_benefit_amount = benefit.declared_gross_benefit_amount;     
+const mandatory_discount = benefit.mandatory_discount;
+const benefit_code = benefit.benefit_code;
+const commitment_ratio_percentage = input_data.commitment_ratio_percentage ? input_data.commitment_ratio_percentage : 0.4;
+const concurrent_debts_amount = input_data.concurrent_debts_amount ? input_data.concurrent_debts_amount : 0;
+const min_first_installment_grace_period = input_data.min_first_installment_grace_period ? input_data.min_first_installment_grace_period : 32;
+const max_first_installment_grace_period =  70;
+
+let max_commitment_percentage
+
+if ([87,88].includes(benefit_code)){
+  max_commitment_percentage = 0.35;
+} 
+else if ([1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 
+  32, 33, 34, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 
+  54, 55, 57, 58, 59, 60, 72, 78, 81, 82, 83, 84, 89, 92, 93, 96].includes(benefit_code)){
+  max_commitment_percentage = 0.45;
+}
+else if ([9, 10, 13, 14, 15, 16, 17, 18, 29, 31, 35, 36, 39, 56, 61, 62, 63, 64, 65, 66, 
+  67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 79, 80, 85, 86, 90, 91, 94, 95, 97, 98, 99].includes(benefit_code)){
+  max_commitment_percentage = 0.0;
+}
+
+const declared_net_benefit_amount = declared_gross_benefit_amount - mandatory_discount
+const calculated_net_benefit_value = declared_net_benefit_amount - (declared_net_benefit_amount * max_commitment_percentage);
+
+let max_intallment_amount = (calculated_net_benefit_value * commitment_ratio_percentage) - concurrent_debts_amount;
+
+execution.setVariable("max_commitment_percentage", max_commitment_percentage);
+execution.setVariable("declared_net_benefit_amount", declared_net_benefit_amount);
+execution.setVariable("calculated_net_benefit_value", calculated_net_benefit_value);
+execution.setVariable("max_intallment_amount", max_intallment_amount);
+execution.setVariable("commitment_ratio_percentage", commitment_ratio_percentage);
+execution.setVariable("concurrent_debts_amount", concurrent_debts_amount);
+execution.setVariable("min_first_installment_grace_period", min_first_installment_grace_period);
+execution.setVariable("max_first_installment_grace_period", max_first_installment_grace_period);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0naczzn" name="Preparar retorno" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0onrtcr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ybs77m</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const result = execution.getVariable("result");
+const input_data = JSON.parse(input_data_raw); 
+
+const due_date_rule = execution.getVariable("due_date_rule");
+const calculated_net_benefit_value = execution.getVariable("calculated_net_benefit_value");
+const commitment_ratio_percentage = execution.getVariable("commitment_ratio_percentage");
+const concurrent_debts_amount = execution.getVariable("concurrent_debts_amount");
+const max_commitment_percentage = execution.getVariable("max_commitment_percentage");
+const max_intallment_amount = execution.getVariable("max_intallment_amount");
+const max_first_installment_grace_period = execution.getVariable("max_first_installment_grace_period");
+const min_first_installment_grace_period = execution.getVariable("min_first_installment_grace_period");
+
+const benefit_code = execution.getVariable("benefit_code");
+const benefit_number = execution.getVariable("benefit_number");
+let status = result.status;
+
+MONTHLY_RATE = 0.23;
+TOTAL_NUMBER_OF_INSTALLMENTS = 12;
+MIN_INSTALLMENT_AMOUNT = 140.0;
+MAX_INSTALLMENT_AMOUNT = 738.0;
+
+var identification = { }
+
+var decision = {
+  "due_date_rule": due_date_rule,
+  "declared_net_benefit_amount": declared_net_benefit_amount, 
+  "max_commitment_percentage": max_commitment_percentage,
+  "calculated_net_benefit_value": calculated_net_benefit_value,
+  "max_installment_amount": max_intallment_amount &lt; MAX_INSTALLMENT_AMOUNT ? max_intallment_amount : MAX_INSTALLMENT_AMOUNT,
+  "commitment_ratio_percentage": commitment_ratio_percentage,
+  "concurrent_debts_amount": concurrent_debts_amount,
+  "min_first_installment_grace_period": min_first_installment_grace_period,
+  "max_first_installment_grace_period": max_first_installment_grace_period
+}
+
+
+let credit_terms_conditions = null
+let cancel_reason = null
+
+if (max_intallment_amount &gt;= MIN_INSTALLMENT_AMOUNT){
+  credit_terms_conditions = [{
+    "min_total_number_of_installments": TOTAL_NUMBER_OF_INSTALLMENTS,
+    "max_total_number_of_installments": TOTAL_NUMBER_OF_INSTALLMENTS,
+    "min_installment_amount": MIN_INSTALLMENT_AMOUNT,
+    "max_installment_amount": max_intallment_amount &lt; MAX_INSTALLMENT_AMOUNT ? max_intallment_amount : MAX_INSTALLMENT_AMOUNT,
+    "min_disbursement_amount": 500.0, 
+    "max_disbursement_amount": 3000.0,
+    "interest": {
+      "interest_rate_type": "pre_fixed",
+      "pre_fixed": {
+        "min_monthly_rate": MONTHLY_RATE,
+        "max_monthly_rate": MONTHLY_RATE,
+        "interest_base": 360 
+      }
+    },
+    "taxes": {
+      "has_iof": true,
+    },
+    "fees": [
+        { 
+       "type": "tac", 
+       "calculation_type": "absolute_value", 
+       "value": 50.0,
+       "billing_type": "contract_included"
+       }
+    ] // FALTA SEGURO
+  }]
+} else {
+  status = "denied"
+  cancel_reason = "Max installment restriction: &lt; " + MIN_INSTALLMENT_AMOUNT
+  decision["reason"] = cancel_reason
+}
+
+
+var jsonData = {
+  "document_number": document_number, 
+  "status": status, 
+  "credit_terms_conditions": credit_terms_conditions,
+  "decision_metadata": {
+      "identification": identification,
+      "decision": decision,
+  }, 
+  "input_data": input_data,
+  "cancel_reason": cancel_reason,
+  "input_data_resolved":{
+    "benefit": { 
+      "benefit_number": benefit_number,
+      "benefit_code": benefit_code
+      }
+  }
+};
+
+var jsonString = JSON.stringify(jsonData); 
+execution.setVariable("body_result3", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0onrtcr" sourceRef="Activity_0quwz05" targetRef="Activity_0naczzn" />
+    <bpmn:sequenceFlow id="Flow_0ybs77m" sourceRef="Activity_0naczzn" targetRef="Activity_01idln1" />
+    <bpmn:serviceTask id="Activity_00xigkf" name="Envia Retorno API" camunda:type="external" camunda:topic="RestPutApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://credit-analysis-dev.byxcapital.com.br/credit_terms/${credit_terms_key}</camunda:inputParameter>
+          <camunda:inputParameter name="body"> ${body_result3}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00u3uro</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cvghl1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1cvghl1" sourceRef="Activity_00xigkf" targetRef="Event_0l70ff1" />
+  </bpmn:process>
+  <bpmn:message id="Message_1ff8qhg" name="aguardar-mensagem" />
+  <bpmn:message id="Message_377ctea" name="result-manual-analysis" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1ad5d3ae-e574-4914-86b8-84417bc13f4a">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s0nufy_di" bpmnElement="Activity_0ufxuuv">
+        <dc:Bounds x="650" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1o25tay" bpmnElement="Activity_01idln1">
+        <dc:Bounds x="1030" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ttru1m" bpmnElement="Event_1o1vozt">
+        <dc:Bounds x="1182" y="322" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1t41tor" bpmnElement="Activity_19i79sc">
+        <dc:Bounds x="400" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0sglgw4" bpmnElement="Gateway_0d1r1q1" isMarkerVisible="true">
+        <dc:Bounds x="675" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wawc2q" bpmnElement="Activity_1iji3j0">
+        <dc:Bounds x="760" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ixxour" bpmnElement="Event_0l70ff1">
+        <dc:Bounds x="1042" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_003nzqt_di" bpmnElement="Activity_096yp1e">
+        <dc:Bounds x="250" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gk5438_di" bpmnElement="Activity_0txqtt3">
+        <dc:Bounds x="540" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y3uwbc" bpmnElement="Activity_0quwz05">
+        <dc:Bounds x="790" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dyyyfb" bpmnElement="Activity_0naczzn">
+        <dc:Bounds x="910" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_15rs9yr" bpmnElement="Activity_00xigkf">
+        <dc:Bounds x="910" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1f05nh2_di" bpmnElement="Flow_1f05nh2">
+        <di:waypoint x="188" y="190" />
+        <di:waypoint x="250" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mnb7m7_di" bpmnElement="Flow_1mnb7m7">
+        <di:waypoint x="1130" y="340" />
+        <di:waypoint x="1182" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q5ct4i_di" bpmnElement="Flow_0q5ct4i">
+        <di:waypoint x="500" y="190" />
+        <di:waypoint x="540" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1demmre_di" bpmnElement="Flow_1demmre">
+        <di:waypoint x="700" y="215" />
+        <di:waypoint x="700" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1doz13d_di" bpmnElement="Flow_1doz13d">
+        <di:waypoint x="750" y="340" />
+        <di:waypoint x="790" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18c6u92_di" bpmnElement="Flow_18c6u92">
+        <di:waypoint x="700" y="165" />
+        <di:waypoint x="700" y="120" />
+        <di:waypoint x="760" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00u3uro_di" bpmnElement="Flow_00u3uro">
+        <di:waypoint x="860" y="120" />
+        <di:waypoint x="910" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_043v3d9_di" bpmnElement="Flow_043v3d9">
+        <di:waypoint x="350" y="190" />
+        <di:waypoint x="400" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_036f5iv_di" bpmnElement="Flow_036f5iv">
+        <di:waypoint x="640" y="190" />
+        <di:waypoint x="675" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0onrtcr_di" bpmnElement="Flow_0onrtcr">
+        <di:waypoint x="890" y="340" />
+        <di:waypoint x="910" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ybs77m_di" bpmnElement="Flow_0ybs77m">
+        <di:waypoint x="1010" y="340" />
+        <di:waypoint x="1030" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cvghl1_di" bpmnElement="Flow_1cvghl1">
+        <di:waypoint x="1010" y="120" />
+        <di:waypoint x="1042" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

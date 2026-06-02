@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "982bca85-21fb-11f0-bf41-0e30a9376da7",
+  "decision_key": "TESTES_AUTOMATICOS_DMN1.1.1",
+  "decision_name": "Pine_DMN_1.1.1",
+  "tenant_id": "",
+  "version": 2,
+  "version_tag": "",
+  "resource": "TESTES_AUTOMATIZADOS_pine_DMN1.1.1 - somente PINE e BYX e Amigoz_recuperado.dmn",
+  "deployment_id": "9826e882-21fb-11f0-bf41-0e30a9376da7",
+  "deployment_name": "TESTES_AUTOMATIZADOS_pine_DMN1.1.1 - somente PINE e BYX e Amigoz_recuperado",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-04-25T17:34:52.109+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:29:00+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

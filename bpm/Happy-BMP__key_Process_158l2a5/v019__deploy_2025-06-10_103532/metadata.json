@@ -1,0 +1,15 @@
+{
+  "process_definition_id": "Process_158l2a5:19:a2f18ff5-45e6-11f0-b788-8ef09ff04c37",
+  "process_key": "Process_158l2a5",
+  "process_name": "Happy-BMP",
+  "tenant_id": "",
+  "version": 19,
+  "version_tag": "",
+  "resource": "bpmn-byx-privado.bpmn",
+  "deployment_id": "a2efbb33-45e6-11f0-b788-8ef09ff04c37",
+  "deployment_name": "bpmn-byx-privado",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-06-10T10:35:32.684+0000",
+  "extracted_at_utc": "2026-06-02T20:08:43+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest"
+}

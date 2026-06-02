@@ -1,0 +1,1202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Pine_DMN" name="Pine_DMN" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <decision id="Pine_DMN_1.3" name="Pine_DMN_1.3" camunda:historyTimeToLive="3">
+    <decisionTable id="DecisionTable_0uxoljn" hitPolicy="FIRST">
+      <input id="InputClause_0lzwwr3" label="Cnpj Blocked" camunda:inputVariable="cnpj_blocked">
+        <inputExpression id="LiteralExpression_0zqnugr" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="Input_1" label="Is eligible for Loan" biodi:width="192" camunda:inputVariable="is_eligible_for_loan">
+        <inputExpression id="InputExpression_1" typeRef="boolean" expressionLanguage="feel">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0otwskt" label="Contract end date" camunda:inputVariable="contract_end_date">
+        <inputExpression id="LiteralExpression_0vjb7lk" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_060wso3" label="Leave of absense" camunda:inputVariable="leave_of_absense">
+        <inputExpression id="LiteralExpression_0quo7sz" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0y9mmb8" label="Termination notice" camunda:inputVariable="termination_notice">
+        <inputExpression id="LiteralExpression_05dmst2" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1mixt6s" label="Is PEP" camunda:inputVariable="is_pep">
+        <inputExpression id="LiteralExpression_1qbowx7" typeRef="boolean">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_04ekry3" label="Family CBO Code" camunda:inputVariable="family_cbo_code">
+        <inputExpression id="LiteralExpression_19mwjgj" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0qg9oox" label="Gender" camunda:inputVariable="gender">
+        <inputExpression id="LiteralExpression_129b30o" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0ek90p5" label="Age" camunda:inputVariable="age">
+        <inputExpression id="LiteralExpression_0y3egap" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0qc9h72" label="Employment duration in mos" camunda:inputVariable="employment_duration_in_months">
+        <inputExpression id="LiteralExpression_1fi5tjo" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="status" typeRef="string" biodi:width="192">
+        <outputValues id="UnaryTests_0o1kbnb">
+          <text>"approved","denied"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_0exy5vg" label="Reason" name="reason" typeRef="string" biodi:width="192" />
+      <output id="OutputClause_01fkpo8" label="Interest Rate" name="interest_rate" typeRef="double" />
+      <output id="OutputClause_1reu7br" label="Min Total Number of Installments" name="min_total_number_of_installments" typeRef="integer" />
+      <output id="OutputClause_13labvm" label="Max Total Number of Installments" name="max_total_number_of_installments" typeRef="integer" />
+      <output id="OutputClause_1e9v9c6" label="Min Disbursement Amount" name="min_disbursement_amount" typeRef="double" />
+      <output id="OutputClause_0pbarqt" label="Max Disbursement Amount" name="max_disbursement_amount" typeRef="double" />
+      <rule id="DecisionRule_0xa00kd">
+        <description>Faixa 0</description>
+        <inputEntry id="UnaryTests_0eptl0a">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sm1eot">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02qzdyq">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vw9ks8">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08d03e3">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1u1ozfs">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cltbey">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19l2ov0">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13j0zsk">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06bwxnv">
+          <text>null</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1spxmr5">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15gwao3">
+          <text>"No information available to make a decision: all input variables are null"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_071ec3m">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_09rc6xu">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1vzghaq">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0yzgh29">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0khqgcf">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0rujzn2">
+        <inputEntry id="UnaryTests_1n8epnh">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cibpdm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_028ccrm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18b9ytm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1g9qveo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0gxyzhs">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0096kmb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10tc7fq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qgys8l">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0os4ejo">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0wjvqfq">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0vndw0w">
+          <text>"Company document number not eligible due to blocklist policy"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1wa3r89">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_077nzar">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14cbdz0">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yf510o">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kt5czd">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_03sx5yb">
+        <description>Faixa 1</description>
+        <inputEntry id="UnaryTests_0h44thy">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1tg6d77">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1n729av">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0j060ws">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0a47vtv">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ch4u96">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0gsx229">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_140rscp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rlgmd9">
+          <text></text>
+        </inputEntry>
+        <outputEntry>
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0s5jxsh">
+          <text>"Not eligible for loan"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0988324">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rxeqyq">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1goaiw8">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ikcp4w">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1hqub2r">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0na8dk1">
+        <description>Faixa 2</description>
+        <inputEntry id="UnaryTests_1jgmm32">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1e3vzk0">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1j3t76g">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0hqq4p9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tex418">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0t7krfr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0o7h1m9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1c52q4k">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1t5vpbq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05wx1hu">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_01owaa8">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1noa3ez">
+          <text>"Has contract end date"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1v11ofv">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0g31csd">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0psf50n">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0esdf7n">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jgvtnc">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1ij6zyo">
+        <description>Faixa 3</description>
+        <inputEntry id="UnaryTests_0jakxmz">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ivfsev">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ajg8wf">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0a4oieo">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rxfh45">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06cx20j">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bewna4">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0cizcxz">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rm864a">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1biu8yo">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ysh4vj">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jetre3">
+          <text>"Borrower is in leave of absence alert"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0tjsqir">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1rqxnfn">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ox2sda">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0pnodsj">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0tcr4pc">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_03tzoqs">
+        <description>Faixa 4</description>
+        <inputEntry id="UnaryTests_0biej53">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0f66vcw">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0g2feix">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1eser0r">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ekx3ca">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ql1lyf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_068srnt">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1wks8lh">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tvpbgi">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1p3qq7t">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0cevpdv">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gnh7g0">
+          <text>"Borrower is in termination notice"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yozebv">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1r1gnvn">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0aq1e5b">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0wo4e16">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1whh3yv">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_088gnxx">
+        <description>Faixa 5</description>
+        <inputEntry id="UnaryTests_0r7yna9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_014imnj">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1tdkyb1">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_17bng79">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0pojya0">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ieaml4">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nvo4jf">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sdloj5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ayc6xd">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sho60v">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_17ja7eh">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_06azspw">
+          <text>"PEP restriction: Borrower is PEP"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ir5986">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rvr1zc">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13eqgp1">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qwpw5s">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gbmnjd">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0lesao7">
+        <description>Faixa 5</description>
+        <inputEntry id="UnaryTests_18enjm0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rubjor">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1epi30c">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1pf56ou">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0iruu51">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1by3vjg">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_093066t">
+          <text>["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1av2zt7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0avz8xi">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05t81yc">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0kqrani">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1xo4muz">
+          <text>"Family CBO restriction: Borrower family CBO is in family cbos blocklist"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0twnrua">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_11s8wjt">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0n73ta0">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rzw6yb">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0fgwi1k">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1l58463">
+        <description>Faixa 6</description>
+        <inputEntry id="UnaryTests_04qwbiw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0msrfiz">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bmdxn8">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0upxbr5">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0zq2cd2">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vzmi60">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0qgognv">
+          <text>not(["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"])</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0cfeag9">
+          <text>"male", "female"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ds1mix">
+          <text>&lt;21</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ntdsmx">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1dt1m0f">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1p0npjd">
+          <text>"Age restriction: &lt;21y"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1x279on">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14oa606">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1fe82d9">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0vlrt2e">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_12z4t1c">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1siwqxb">
+        <description>Faixa 7</description>
+        <inputEntry id="UnaryTests_0d00nyf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1n8qyla">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1fuljz5">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0i1za9c">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0hqmcjb">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1nrn3c1">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19fljnj">
+          <text>not(["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"])</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mj5u9e">
+          <text>"female"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0hmvfx7">
+          <text>&gt;59</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_059s547">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0mb7stf">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_08w83mw">
+          <text>"Age restriction: Female &gt;59y"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1af5oqm">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1varffo">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1wtvjsc">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mg523v">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kfb8rh">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1xd5mqs">
+        <description>Faixa 8</description>
+        <inputEntry id="UnaryTests_12i2fjf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sr2jo8">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1yrkq0l">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16pbht7">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0x3duhd">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0uu4ttc">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02qncyz">
+          <text>not(["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"])</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03g3efi">
+          <text>"male"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1tvdy1p">
+          <text>&gt;64</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jpv2tx">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1y3ezfz">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1g86oih">
+          <text>"Age restriction: Male &gt;64y"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1gnssku">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0im8bck">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1609hf5">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1rk2lii">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jgr1a2">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0vmf5yq">
+        <description>Faixa 9</description>
+        <inputEntry id="UnaryTests_16fi2bh">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10x8oq5">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05m9rys">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vj15tg">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qfagi8">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_008k7yv">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0u4d1ro">
+          <text>not(["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"])</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kazhhv">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0291vkq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0y74xas">
+          <text>&lt;12</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0o8ink1">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1xx2hd0">
+          <text>"Employment duration restriction: &lt;12mos"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_03xtike">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1617q3b">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ps4p51">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_181rbju">
+          <text>null</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1i1c6mg">
+          <text>null</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1ed5y27">
+        <description>Faixa 10</description>
+        <inputEntry id="UnaryTests_13x8xcc">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kgbo8g">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vv0gmq">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_050i811">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_043cmnb">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1d427k4">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12h7lo4">
+          <text>not(["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"])</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0x48nkz">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0608kiw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1xibhoc">
+          <text>&lt;=36</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0k4sq3g">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1t167lt">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04hjy36">
+          <text>0.049</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1gcpq9i">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_178564x">
+          <text>18</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kgsgws">
+          <text>500.00</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1fpcg2s">
+          <text>8000.00</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1umz283">
+        <description>Faixa 11</description>
+        <inputEntry id="UnaryTests_0r1i4bs">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0mn9azq">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_04p6g82">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1q7hpb1">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06sxh8t">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18nkc4x">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sn8fld">
+          <text>not(["3761", "3762", "3763", "3764",  "4222", "4223",  "5121", "5131", "5162", "5167", "5168", "5169",  "5191", "5198", "5241", "5242", "5243"])</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1fe8q66">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_15gyrn5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1r65tty">
+          <text>&gt;36</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0wjhhf6">
+          <text>"approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1dodjnr">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1nm6nt1">
+          <text>0.049</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0argyuh">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_18jl7p9">
+          <text>24</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ml5i73">
+          <text>500.00</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jln4n8">
+          <text>10000.00</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1vbysau">
+        <description>Faixa 12</description>
+        <inputEntry id="UnaryTests_05i29s2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_15d28jq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0n92ccp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1agwv1n">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0u3ejy2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00zaft0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1u1qqbn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00062re">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1uwy31y">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1xc9myn">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_07pbc64">
+          <text>"denied"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yv3i8n">
+          <text>"No matching rule"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1b2amc6">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15bhln5">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0yxzwgo">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01trydr">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0uutrae">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0vrripa">
+        <inputEntry id="UnaryTests_0kzdng7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07vjxta">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xo3vnf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16ux8up">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03ws6r6">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_187arol">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0p9yt9b">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08jyj5l">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09e3dz3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06ftuu6">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_01vj8ee">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0n9ulct">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0i67lg6">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02in15l">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jcia2o">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0uq0s7d">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_17hw9xx">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0usf19v">
+        <inputEntry id="UnaryTests_14ktkoc">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_116xmtt">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ip0mgr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12mxu24">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06d66ye">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0cn4kap">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0e7wbmp">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ms1svw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10n7hd6">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1q3o3hb">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_08i5qbi">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rv3qkv">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1on47wk">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1bb5rou">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0c76t5u">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1fqduu3">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ul44pi">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_127i9r1">
+        <inputEntry id="UnaryTests_1mko190">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01df7kl">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0x6e5kb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1suwdko">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0izove0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08y9if9">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0a89doe">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0u2rfg3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0w97cio">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qf1jph">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1cz5hrl">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_042dczv">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_18afw86">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1hz0krd">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0bwjdac">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1bkdmoc">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0tlttg0">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0y5po65">
+        <inputEntry id="UnaryTests_1nwnc9i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_021e8hw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1pzy9ui">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0on8a5k">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1v702ny">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05v3z3a">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08zka7g">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0of17tu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tfyx1k">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12c2xy3">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_09hocxl">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0rdlg4z">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0m8juak">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qslj3q">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01oq7th">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ozkc74">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_10bs0jk">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0t8kb40">
+        <inputEntry id="UnaryTests_1v6axmx">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18jirhq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1i23id4">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dd0c9p">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16zmpko">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1iolpc2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sh5ct3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00zhxsf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0m9jzev">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0njgtx7">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10v7edu">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0tzuboe">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0321fbs">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02xpkf3">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14wne01">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1dutk0e">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yjzoh3">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1tv5zf2">
+        <inputEntry id="UnaryTests_1miusop">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sw5sxy">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1knnqb0">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1glegql">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1um0o66">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14l5jal">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vjcwn8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xmgmas">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1khprvf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qa7tst">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1xss57j">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1uaw7zi">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1odlhw5">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15n9sju">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yf6kio">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ub3gob">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0dhbdl9">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Pine_DMN_1.3">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,1662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_08hdnju" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="Process_f4f1450e-ab40-41a0-8ede-2a4fa8a83ec1" name="Consignado Privado Leilao" isExecutable="true" camunda:historyTimeToLive="3">
+    <bpmn:businessRuleTask id="Avaliacao_CPF_DMN1" name="Avaliação InputData" camunda:resultVariable="result_natural_person" camunda:decisionRef="Pine_DMN_InputData" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_1d1s9bh</bpmn:incoming>
+      <bpmn:outgoing>Flow_1chduov</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:scriptTask id="Activity_0zu84yy" name="Preparar variáveis para DMN1.1 ou 1.2" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1hb159b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uqngz8</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+execution.setVariable("is_eligible_for_loan", input_data.is_eligible_for_loan);
+execution.setVariable("contract_end_date", !input_data.contract_end_date ? false : true);
+execution.setVariable("leave_of_absense", input_data.leave_of_absense);
+execution.setVariable("termination_notice", input_data.termination_notice);
+execution.setVariable("is_pep", input_data.is_pep);
+execution.setVariable("employment_duration_in_months", input_data.employment_duration_in_months);
+execution.setVariable("company_document_number", input_data.company_document_number);
+execution.setVariable("age", input_data.age);
+execution.setVariable("gender", input_data.gender);
+
+
+if (input_data &amp;&amp; input_data.cbo &amp;&amp; input_data.cbo.code) {
+  const code = input_data.cbo.code.toString();
+
+  const groupCboCode = code.slice(0, 1);
+  const familyCboCode = code.slice(0, 4);
+
+  execution.setVariable("group_cbo_code", groupCboCode);
+  execution.setVariable("family_cbo_code", familyCboCode);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1chduov" sourceRef="Avaliacao_CPF_DMN1" targetRef="Gateway_0105f2o" />
+    <bpmn:sequenceFlow id="Flow_1uqngz8" sourceRef="Activity_0zu84yy" targetRef="Activity_0ycm3x2" />
+    <bpmn:startEvent id="Event_15pza2w">
+      <bpmn:outgoing>Flow_1hb159b</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1hb159b" sourceRef="Event_15pza2w" targetRef="Activity_0zu84yy" />
+    <bpmn:serviceTask id="Task_ValidateCnpj" name="Avaliar CNPJ blocklist" camunda:type="external" camunda:topic="CNPJValidate">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1si8pot</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u8wgg2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Consultar_DXON_LocalizadorPjSituacaoCadastral" name="Consultar BYXDATA LocalizadorPjSituacaoCadastral" camunda:asyncAfter="true" camunda:type="external" camunda:topic="SoapPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">http://diretrixon.com/diretrixws/recupera.asmx</camunda:inputParameter>
+          <camunda:inputParameter name="soap_action">http://diretrixon.com/WebServices/LocalizadorPjSituacaoCadastral</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">localizador_pj_situacao_cadastral_result</camunda:inputParameter>
+          <camunda:inputParameter name="body">
+            <camunda:script scriptFormat="JavaScript">var cnpjRaw = execution.getVariable("company_document_number") || "";
+
+function formatCNPJ(cnpj) {
+  return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+}
+
+var formattedCNPJ = formatCNPJ(cnpjRaw);
+
+var soapBody =
+'&lt;?xml version="1.0" encoding="utf-8"?&gt;' +
+  '&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+  'xmlns:xsd="http://www.w3.org/2001/XMLSchema" ' +
+  'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;' +
+  '&lt;soap:Header&gt;' +
+    '&lt;Login xmlns="http://diretrixon.com/WebServices"&gt;' +
+      '&lt;Usuario&gt;APIconsigPrivado&lt;/Usuario&gt;' +
+      '&lt;Senha&gt;xT3Zt3D@0nbYXx&lt;/Senha&gt;' +
+      '&lt;Cliente&gt;ByxCapital&lt;/Cliente&gt;' +
+    '&lt;/Login&gt;' +
+  '&lt;/soap:Header&gt;' +
+  '&lt;soap:Body&gt;' +
+    '&lt;LocalizadorPjSituacaoCadastral xmlns="http://diretrixon.com/WebServices"&gt;' +
+      '&lt;cnpj&gt;' + formattedCNPJ + '&lt;/cnpj&gt;' +
+      '&lt;idProduto&gt;7&lt;/idProduto&gt;' +
+    '&lt;/LocalizadorPjSituacaoCadastral&gt;' +
+  '&lt;/soap:Body&gt;' +
+'&lt;/soap:Envelope&gt;';
+
+soapBody;</camunda:script>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="mock_mode">${false}</camunda:inputParameter>
+          <camunda:inputParameter name="response_json_path">soap:Envelope.soap:Body.LocalizadorPjSituacaoCadastralResponse.LocalizadorPjSituacaoCadastralResult</camunda:inputParameter>
+          <camunda:inputParameter name="method">LocalizadorPjSituacaoCadastral</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_090l1dn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zvgx4q</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0105f2o" default="Flow_1ni7ly0">
+      <bpmn:incoming>Flow_1chduov</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i6f6eu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ni7ly0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0i6f6eu" sourceRef="Gateway_0105f2o" targetRef="Activity_19st0i2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_natural_person.status == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ni7ly0" name="Reprovado Avaliação CPF" sourceRef="Gateway_0105f2o" targetRef="Gateway_0mabhnv" />
+    <bpmn:sequenceFlow id="Flow_1u8wgg2" sourceRef="Task_ValidateCnpj" targetRef="Gateway_0szayaf" />
+    <bpmn:exclusiveGateway id="Gateway_0szayaf" default="Flow_1tax62w">
+      <bpmn:incoming>Flow_1u8wgg2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tax62w</bpmn:outgoing>
+      <bpmn:outgoing>Flow_12ysxuv</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1tax62w" name="Reprovado por blocklist" sourceRef="Gateway_0szayaf" targetRef="Activity_1ycawf2" />
+    <bpmn:sequenceFlow id="Flow_12ysxuv" sourceRef="Gateway_0szayaf" targetRef="Gateway_0r3gnes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${cnpj_blocked == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Consultar_DXON_LocalizadorPj" name="Consultar BYXDATA LocalizadorPj" camunda:asyncAfter="true" camunda:type="external" camunda:topic="SoapPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">http://diretrixon.com/diretrixws/recupera.asmx</camunda:inputParameter>
+          <camunda:inputParameter name="soap_action">http://diretrixon.com/WebServices/LocalizadorPj</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">localizador_pj_result</camunda:inputParameter>
+          <camunda:inputParameter name="body">
+            <camunda:script scriptFormat="JavaScript">var cnpjRaw = execution.getVariable("company_document_number") || "";
+
+function formatCNPJ(cnpj) {
+  return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+}
+
+var formattedCNPJ = formatCNPJ(cnpjRaw);
+
+var soapBody =
+'&lt;?xml version="1.0" encoding="utf-8"?&gt;' +
+'&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+'xmlns:xsd="http://www.w3.org/2001/XMLSchema" ' +
+'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;' +
+  '&lt;soap:Header&gt;' +
+    '&lt;Login xmlns="http://diretrixon.com/WebServices"&gt;' +
+      '&lt;Usuario&gt;APIconsigPrivado&lt;/Usuario&gt;' +
+      '&lt;Senha&gt;xT3Zt3D@0nbYXx&lt;/Senha&gt;' +
+      '&lt;Cliente&gt;ByxCapital&lt;/Cliente&gt;' +
+    '&lt;/Login&gt;' +
+  '&lt;/soap:Header&gt;' +
+  '&lt;soap:Body&gt;' +
+    '&lt;LocalizadorPj xmlns="http://diretrixon.com/WebServices"&gt;' +
+      '&lt;cnpj&gt;' + formattedCNPJ + '&lt;/cnpj&gt;' +
+      '&lt;idProduto&gt;7&lt;/idProduto&gt;' +
+    '&lt;/LocalizadorPj&gt;' +
+  '&lt;/soap:Body&gt;' +
+'&lt;/soap:Envelope&gt;';
+
+soapBody;</camunda:script>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="mock_mode">${false}</camunda:inputParameter>
+          <camunda:inputParameter name="response_json_path">soap:Envelope.soap:Body.LocalizadorPjResponse.LocalizadorPjResult</camunda:inputParameter>
+          <camunda:inputParameter name="method">LocalizadorPj</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ud3zuo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1igdg57</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Processar_variaveis_LocalizadorPjResult" name="Processar variáveis LocalizadorPjResult" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_11s1eg8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lspe41</bpmn:outgoing>
+      <bpmn:script>var content = execution.getVariable("localizador_pj_result");
+
+if (!content) {
+  throw new Error("Variável localizador_pj_result não encontrada");
+}
+
+const company_content = JSON.parse(content);
+
+var company_age_in_years = company_content.company_age_in_years;
+var cnae_code = company_content.cnae?.code;
+var legal_nature = company_content.legal_nature?.code;
+
+execution.setVariable("company_age_in_years", company_age_in_years || null);
+execution.setVariable("cnae_code", cnae_code || null);
+execution.setVariable("legal_nature_code", legal_nature || null);
+
+// LocalizadorPjSituacaoCadastral
+var localizador_pj_situacao_cadastral_result = execution.getVariable("localizador_pj_situacao_cadastral_result");
+
+if (!localizador_pj_situacao_cadastral_result) {
+  throw new Error("Variável localizador_pj_situacao_cadastral_result não encontrada");
+}
+
+const localizador_pj_situacao_cadastral_result_parsed = JSON.parse(localizador_pj_situacao_cadastral_result);
+
+var company_document_number_status = localizador_pj_situacao_cadastral_result_parsed.company_document_number_status
+
+execution.setVariable("company_document_number_status", company_document_number_status || null);
+
+// LocalizadorPjSocioDemografico
+var response_quantidade_funcionarios_result = execution.getVariable("response_quantidade_funcionarios");
+
+if (!response_quantidade_funcionarios_result) {
+  throw new Error("Variável response_quantidade_funcionarios_result não encontrada");
+}
+
+const response_quantidade_funcionarios_result_parsed = JSON.parse(response_quantidade_funcionarios_result);
+var number_of_employees = response_quantidade_funcionarios_result_parsed.retornoGrupo.qtdeFuncionarios;
+
+execution.setVariable("number_of_employees", number_of_employees || null);
+
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:businessRuleTask id="Activity_1nyvobw" name="Avaliação Empresa" camunda:resultVariable="result_legal_person" camunda:decisionRef="Pine_DMN_Avaliacao_Empresa" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_1lspe41</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ck179z</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0ck179z" sourceRef="Activity_1nyvobw" targetRef="Gateway_1h336lu" />
+    <bpmn:exclusiveGateway id="Gateway_1h336lu" default="Flow_1hcq0i6">
+      <bpmn:incoming>Flow_0ck179z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hcq0i6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_139deon</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1hcq0i6" name="Reprovado avaliação CNPJ" sourceRef="Gateway_1h336lu" targetRef="Gateway_1sq2bn6" />
+    <bpmn:sequenceFlow id="Flow_139deon" sourceRef="Gateway_1h336lu" targetRef="Gateway_0s9dg0b">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_legal_person.status  == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Consulta_Rest_DXON_AfastamentoMedico" name="Consulta Rest BYXDATA AfastamentoMedico" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://diretrixon.com/diretrixrest/api/Recupera/AfastamentoMedico</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "parametros": {
+    "cpf": "${document_number}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "APIconsigPrivado",
+    "password": "xT3Zt3D@0nbYXx",
+    "client": "ByxCapital",
+    "grant_type": "password",
+    "path": "https://diretrixon.com/diretrixrest/api/token"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">30000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_Rest_DXON_AfastamentoMedico</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_afastamento</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01lj9r9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wzhfwr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Consulta_Rest_DXON_DividaFgts" name="Consulta Rest BYXDATA DividaFgts" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://diretrixon.com/diretrixrest/api/Recupera/DividaFgts</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "parametros": {
+    "documento": "${company_document_number}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "APIconsigPrivado",
+    "password": "xT3Zt3D@0nbYXx",
+    "client": "ByxCapital",
+    "grant_type": "password",
+    "path": "https://diretrixon.com/diretrixrest/api/token"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_Rest_DXON_DividaFgts</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_divida_fgts</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ktu2mg</bpmn:incoming>
+      <bpmn:outgoing>Flow_05z5zy7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_006cbx7" attachedToRef="Consulta_Rest_DXON_DividaFgts">
+      <bpmn:outgoing>Flow_0mv6d69</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1uk2wd0" errorRef="Error_18ukwc6" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0mv6d69" sourceRef="Event_006cbx7" targetRef="Activity_01uytq9" />
+    <bpmn:task id="Activity_01uytq9" name="CPF/CNPJ não localizado">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="response_divida_fgts">{
+  "fgts": []
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mv6d69</bpmn:incoming>
+      <bpmn:outgoing>Flow_03l42hx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:serviceTask id="Consulta_Rest_DXON_DividaAtiva" name="Consulta Rest BYXDATA DividaAtiva" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://diretrixon.com/diretrixrest/api/Recupera/DividaAtiva</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "parametros": {
+    "documento": "${company_document_number}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "APIconsigPrivado",
+    "password": "xT3Zt3D@0nbYXx",
+    "client": "ByxCapital",
+    "grant_type": "password",
+    "path": "https://diretrixon.com/diretrixrest/api/token"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_Rest_DXON_DividaAtiva</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_divida_ativa</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09bd5qh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ngdfga</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_15yhz1f" attachedToRef="Consulta_Rest_DXON_DividaAtiva">
+      <bpmn:outgoing>Flow_0w76uxn</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0osyuir" errorRef="Error_18ukwc6" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0ngdfga" sourceRef="Consulta_Rest_DXON_DividaAtiva" targetRef="Gateway_0t9yt9g" />
+    <bpmn:task id="Activity_0pfw0vn" name="CPF/CNPJ não localizado">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="response_divida_ativa">{
+  "dividaAtiva": []
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0w76uxn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g0o304</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0w76uxn" sourceRef="Event_15yhz1f" targetRef="Activity_0pfw0vn" />
+    <bpmn:serviceTask id="Activity_0srcgyk" name="Consulta Rest BYXDATA DividaPrevidenciaria" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://diretrixon.com/diretrixrest/api/Recupera/DividaPrevidenciaria</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "parametros": {
+    "documento": "${company_document_number}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "APIconsigPrivado",
+    "password": "xT3Zt3D@0nbYXx",
+    "client": "ByxCapital",
+    "grant_type": "password",
+    "path": "https://diretrixon.com/diretrixrest/api/token"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_Rest_DXON_DividaPrevidenciaria</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_divida_previdenciaria</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0upu4gu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r6o1q3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0kjbz2l" attachedToRef="Activity_0srcgyk">
+      <bpmn:outgoing>Flow_04kl3da</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1phai57" errorRef="Error_18ukwc6" />
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Activity_0ppt5sk" name="CPF/CNPJ não localizado">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="response_divida_previdenciaria">{
+  "dividaPrevidenciaria": []
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_04kl3da</bpmn:incoming>
+      <bpmn:outgoing>Flow_0un1t0w</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_04kl3da" sourceRef="Event_0kjbz2l" targetRef="Activity_0ppt5sk" />
+    <bpmn:sequenceFlow id="Flow_0un1t0w" sourceRef="Activity_0ppt5sk" targetRef="Gateway_16ckh8j" />
+    <bpmn:scriptTask id="Activity_0sndu5s" name="Processar variáveis para DMN3" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_100qgod</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z00zam</bpmn:outgoing>
+      <bpmn:script>// DÍVIDA FGTS
+var response_divida_fgts_raw = execution.getVariable("response_divida_fgts");
+const response_divida_fgts = JSON.parse(response_divida_fgts_raw);
+
+const fgtsList = response_divida_fgts?.fgts || [];
+var hasFgtsDebt = Array.isArray(fgtsList) &amp;&amp; fgtsList.length &gt; 0;
+
+execution.setVariable("fgts_payment_delay_record", hasFgtsDebt);
+
+// DÍVIDA ATIVA
+var response_divida_ativa_raw = execution.getVariable("response_divida_ativa");
+const response_divida_ativa = JSON.parse(response_divida_ativa_raw);
+
+const dividaAtivaList = response_divida_ativa?.dividaAtiva || [];
+var hasPublicDebt = Array.isArray(dividaAtivaList) &amp;&amp; dividaAtivaList.length &gt; 0;
+
+execution.setVariable("public_tax_debt", hasPublicDebt);
+
+// DÍVIDA PREVIDENCIÁRIA
+const response_divida_previdenciaria_raw = execution.getVariable("response_divida_previdenciaria");
+const response_divida_previdenciaria = JSON.parse(response_divida_previdenciaria_raw);
+
+const previdenciariaList = response_divida_previdenciaria?.dividaPrevidenciaria || [];
+var hasSocialSecurityDebt = Array.isArray(previdenciariaList) &amp;&amp; previdenciariaList.length &gt; 0;
+
+execution.setVariable("social_security_active_debt", hasSocialSecurityDebt);
+
+
+
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0r6o1q3" sourceRef="Activity_0srcgyk" targetRef="Gateway_16ckh8j" />
+    <bpmn:sequenceFlow id="Flow_0z00zam" sourceRef="Activity_0sndu5s" targetRef="Activity_1m0lgt5" />
+    <bpmn:businessRuleTask id="Activity_1m0lgt5" name="Avaliação CNPJ DMN3" camunda:resultVariable="result_legal_person" camunda:decisionRef="Pine_DMN_Avaliacao_Divida" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_0z00zam</bpmn:incoming>
+      <bpmn:outgoing>Flow_0d4tt2y</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0d4tt2y" sourceRef="Activity_1m0lgt5" targetRef="Gateway_0c91075" />
+    <bpmn:exclusiveGateway id="Gateway_16ckh8j">
+      <bpmn:incoming>Flow_0r6o1q3</bpmn:incoming>
+      <bpmn:incoming>Flow_0un1t0w</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bl17ph</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0t9yt9g">
+      <bpmn:incoming>Flow_0ngdfga</bpmn:incoming>
+      <bpmn:incoming>Flow_0g0o304</bpmn:incoming>
+      <bpmn:outgoing>Flow_0017xxx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0g0o304" sourceRef="Activity_0pfw0vn" targetRef="Gateway_0t9yt9g" />
+    <bpmn:boundaryEvent id="Event_1soizz2" attachedToRef="Consulta_Rest_DXON_DividaFgts">
+      <bpmn:outgoing>Flow_19bg0gt</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1941ev5" errorRef="Error_0epofsd" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0r7k3xx" attachedToRef="Consulta_Rest_DXON_DividaAtiva">
+      <bpmn:outgoing>Flow_19wml90</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0agz8rx" errorRef="Error_0epofsd" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0wr2hcc" attachedToRef="Activity_0srcgyk">
+      <bpmn:outgoing>Flow_1lfthj3</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1o9z58x" errorRef="Error_0epofsd" />
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Activity_08wejw7" name="Timeout BYXDATA DividaPrevidenciaria">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consulta_Rest_DXON_DividaPrevidenciaria",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lfthj3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iitmq1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="Gateway_0r3gnes">
+      <bpmn:incoming>Flow_12ysxuv</bpmn:incoming>
+      <bpmn:outgoing>Flow_090l1dn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ud3zuo</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0issq4b</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_0xlwu0e">
+      <bpmn:incoming>Flow_1igdg57</bpmn:incoming>
+      <bpmn:incoming>Flow_0zvgx4q</bpmn:incoming>
+      <bpmn:incoming>Flow_0fgcae2</bpmn:incoming>
+      <bpmn:outgoing>Flow_11s1eg8</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_11s1eg8" sourceRef="Gateway_0xlwu0e" targetRef="Processar_variaveis_LocalizadorPjResult" />
+    <bpmn:sequenceFlow id="Flow_090l1dn" sourceRef="Gateway_0r3gnes" targetRef="Consultar_DXON_LocalizadorPjSituacaoCadastral" />
+    <bpmn:sequenceFlow id="Flow_0zvgx4q" sourceRef="Consultar_DXON_LocalizadorPjSituacaoCadastral" targetRef="Gateway_0xlwu0e" />
+    <bpmn:sequenceFlow id="Flow_1lspe41" sourceRef="Processar_variaveis_LocalizadorPjResult" targetRef="Activity_1nyvobw" />
+    <bpmn:sequenceFlow id="Flow_1ktu2mg" sourceRef="Gateway_0s9dg0b" targetRef="Consulta_Rest_DXON_DividaFgts" />
+    <bpmn:parallelGateway id="Gateway_0s9dg0b">
+      <bpmn:incoming>Flow_139deon</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ktu2mg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0jay4pq</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_07u59k4">
+      <bpmn:incoming>Flow_05z5zy7</bpmn:incoming>
+      <bpmn:incoming>Flow_03l42hx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r2xzlz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_05z5zy7" sourceRef="Consulta_Rest_DXON_DividaFgts" targetRef="Gateway_07u59k4" />
+    <bpmn:sequenceFlow id="Flow_03l42hx" sourceRef="Activity_01uytq9" targetRef="Gateway_07u59k4" />
+    <bpmn:parallelGateway id="Gateway_1cml3us">
+      <bpmn:incoming>Flow_0jay4pq</bpmn:incoming>
+      <bpmn:outgoing>Flow_09bd5qh</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0upu4gu</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_09bd5qh" sourceRef="Gateway_1cml3us" targetRef="Consulta_Rest_DXON_DividaAtiva" />
+    <bpmn:sequenceFlow id="Flow_0upu4gu" sourceRef="Gateway_1cml3us" targetRef="Activity_0srcgyk" />
+    <bpmn:sequenceFlow id="Flow_0jay4pq" sourceRef="Gateway_0s9dg0b" targetRef="Gateway_1cml3us" />
+    <bpmn:sequenceFlow id="Flow_1r2xzlz" sourceRef="Gateway_07u59k4" targetRef="Gateway_1tytztg" />
+    <bpmn:sequenceFlow id="Flow_0017xxx" sourceRef="Gateway_0t9yt9g" targetRef="Gateway_0d78apr" />
+    <bpmn:parallelGateway id="Gateway_0d78apr">
+      <bpmn:incoming>Flow_0017xxx</bpmn:incoming>
+      <bpmn:incoming>Flow_0bl17ph</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ozgy46</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0bl17ph" sourceRef="Gateway_16ckh8j" targetRef="Gateway_0d78apr" />
+    <bpmn:sequenceFlow id="Flow_0ozgy46" sourceRef="Gateway_0d78apr" targetRef="Gateway_1tytztg" />
+    <bpmn:parallelGateway id="Gateway_1tytztg">
+      <bpmn:incoming>Flow_0ozgy46</bpmn:incoming>
+      <bpmn:incoming>Flow_1r2xzlz</bpmn:incoming>
+      <bpmn:outgoing>Flow_100qgod</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_100qgod" sourceRef="Gateway_1tytztg" targetRef="Activity_0sndu5s" />
+    <bpmn:exclusiveGateway id="Gateway_12xq6j2">
+      <bpmn:incoming>Flow_16xx80v</bpmn:incoming>
+      <bpmn:incoming>Flow_1kjpzge</bpmn:incoming>
+      <bpmn:incoming>Flow_0l6diic</bpmn:incoming>
+      <bpmn:incoming>Flow_0oxbsdk</bpmn:incoming>
+      <bpmn:incoming>Flow_173kbxz</bpmn:incoming>
+      <bpmn:incoming>Flow_0jtj52r</bpmn:incoming>
+      <bpmn:incoming>Flow_0r715zp</bpmn:incoming>
+      <bpmn:incoming>Flow_0v6b5eg</bpmn:incoming>
+      <bpmn:incoming>Flow_0iitmq1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vg373c</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1ud3zuo" sourceRef="Gateway_0r3gnes" targetRef="Consultar_DXON_LocalizadorPj" />
+    <bpmn:sequenceFlow id="Flow_1igdg57" sourceRef="Consultar_DXON_LocalizadorPj" targetRef="Gateway_0xlwu0e" />
+    <bpmn:task id="Activity_1fe2ij2" name="Timeout BYXDATA DividaAtiva">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consulta_Rest_DXON_DividaAtiva",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19wml90</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v6b5eg</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_07apqks" name="Timeout BYXDATA DividaFgts">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consulta_Rest_DXON_DividaFgts",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19bg0gt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r715zp</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0t17uoy" name="Timeout BYXDATA AfastamentoMedico">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consulta_Rest_DXON_AfastamentoMedico",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_03qwjed</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l6diic</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:boundaryEvent id="Event_08vqpf6" attachedToRef="Consulta_Rest_DXON_AfastamentoMedico">
+      <bpmn:outgoing>Flow_03qwjed</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0pxau2i" errorRef="Error_0epofsd" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_03qwjed" sourceRef="Event_08vqpf6" targetRef="Activity_0t17uoy" />
+    <bpmn:sequenceFlow id="Flow_19bg0gt" sourceRef="Event_1soizz2" targetRef="Activity_07apqks" />
+    <bpmn:sequenceFlow id="Flow_19wml90" sourceRef="Event_0r7k3xx" targetRef="Activity_1fe2ij2" />
+    <bpmn:sequenceFlow id="Flow_1lfthj3" sourceRef="Event_0wr2hcc" targetRef="Activity_08wejw7" />
+    <bpmn:boundaryEvent id="Event_06otwa8" attachedToRef="Activity_05lj02o">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_063incy</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0tvpt8l" errorRef="Error_0epofsd" camunda:errorMessageVariable="error_legal_person" />
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Activity_0z76ps8" name="Timeout BYXDATA LocalizadorPjPerfilSociodemografico">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consultar_DXON_LocalizadorPjPerfilSociodemografico",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_063incy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jtj52r</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_1ahp5v5" name="Timeout BYXDATA Consultar_DXON_LocalizadorPj">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consultar_DXON_LocalizadorPj",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bwv8wd</bpmn:incoming>
+      <bpmn:outgoing>Flow_173kbxz</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_08aqra4" name="Timeout BYXDATA Consultar_DXON_LocalizadorPjSituacaoCadastral">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "Timeout in process Consultar_DXON_LocalizadorPjSituacaoCadastral",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0b34j2f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0oxbsdk</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_063incy" sourceRef="Event_06otwa8" targetRef="Activity_0z76ps8" />
+    <bpmn:sequenceFlow id="Flow_0bwv8wd" sourceRef="Event_0763s0t" targetRef="Activity_1ahp5v5" />
+    <bpmn:sequenceFlow id="Flow_0b34j2f" sourceRef="Event_0shtqel" targetRef="Activity_08aqra4" />
+    <bpmn:boundaryEvent id="Event_0763s0t" attachedToRef="Consultar_DXON_LocalizadorPj">
+      <bpmn:outgoing>Flow_0bwv8wd</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_06y0amn" errorRef="Error_0epofsd" camunda:errorMessageVariable="error_legal_person" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0shtqel" attachedToRef="Consultar_DXON_LocalizadorPjSituacaoCadastral">
+      <bpmn:outgoing>Flow_0b34j2f</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_11go92m" errorRef="Error_0epofsd" camunda:errorMessageVariable="error_legal_person" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1d1s9bh" sourceRef="Activity_1rabns2" targetRef="Avaliacao_CPF_DMN1" />
+    <bpmn:scriptTask id="Activity_1rabns2" name="Transformar CNPJ 8 dígitos" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0uwvht7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1d1s9bh</bpmn:outgoing>
+      <bpmn:script>// Função para calcular os dígitos verificadores do CNPJ
+function calculateCnpjCheckDigits(baseNumber, branch = '0001') {
+  baseNumber = baseNumber.toString().padStart(8, '0');
+  branch = branch.toString().padStart(4, '0');
+
+  const cnpjWithoutDigits = baseNumber + branch;
+
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i &lt; weights1.length; i++) {
+    sum += parseInt(cnpjWithoutDigits[i]) * weights1[i];
+  }
+  const remainder1 = sum % 11;
+  const checkDigit1 = remainder1 &lt; 2 ? 0 : 11 - remainder1;
+
+  const cnpjWithFirstDigit = cnpjWithoutDigits + checkDigit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i &lt; weights2.length; i++) {
+    sum += parseInt(cnpjWithFirstDigit[i]) * weights2[i];
+  }
+  const remainder2 = sum % 11;
+  const checkDigit2 = remainder2 &lt; 2 ? 0 : 11 - remainder2;
+
+  const fullCnpj = cnpjWithFirstDigit + checkDigit2;
+  return { numericCnpj: fullCnpj };
+}
+
+// Lógica de transformação da variável no Camunda
+const rawCnpj = execution.getVariable("company_document_number");
+const numericOnly = rawCnpj?.replace(/\D/g, ''); // remove pontos, barras, traços etc.
+
+if (numericOnly &amp;&amp; numericOnly.length === 8) {
+  const { numericCnpj } = calculateCnpjCheckDigits(numericOnly);
+  execution.setVariable("company_document_number", numericCnpj);
+}
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0ycm3x2" name="Calculo de parcela máxima" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1uqngz8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uwvht7</bpmn:outgoing>
+      <bpmn:script>MARGEM_RATIO = 0.7
+const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+let available_consignment_margin = input_data.available_consignment_margin ? input_data.available_consignment_margin : 0
+
+let installment_amount = available_consignment_margin * MARGEM_RATIO;
+execution.setVariable("available_consignment_margin", available_consignment_margin);
+execution.setVariable("installment_amount", installment_amount);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0uwvht7" sourceRef="Activity_0ycm3x2" targetRef="Activity_1rabns2" />
+    <bpmn:exclusiveGateway id="Gateway_0uir55h">
+      <bpmn:incoming>Flow_1qgy4zo</bpmn:incoming>
+      <bpmn:incoming>Flow_0d2tavv</bpmn:incoming>
+      <bpmn:outgoing>Flow_15jvi6e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_15jvi6e" sourceRef="Gateway_0uir55h" targetRef="Gateway_1sq2bn6" />
+    <bpmn:exclusiveGateway id="Gateway_1sq2bn6">
+      <bpmn:incoming>Flow_15jvi6e</bpmn:incoming>
+      <bpmn:incoming>Flow_1hcq0i6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yy3vil</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1yy3vil" sourceRef="Gateway_1sq2bn6" targetRef="Gateway_151vyyc" />
+    <bpmn:sequenceFlow id="Flow_0v6ergl" sourceRef="Activity_19st0i2" targetRef="Activity_07xb35r" />
+    <bpmn:scriptTask id="Activity_19st0i2" name="Calculate MaxTotalNumberOfInstallments" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0i6f6eu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v6ergl</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+const result_natural_person = execution.getVariable("result_natural_person");
+
+const age = input_data.age;
+const gender = input_data.gender;
+const min_total_number_of_installments = result_natural_person.min_total_number_of_installments;
+let max_total_number_of_installments = result_natural_person.max_total_number_of_installments;
+
+var final_age = age + max_total_number_of_installments/12
+
+if (gender == "female" &amp;&amp; final_age &gt; 59){
+  max_total_number_of_installments = (59 - age)*12
+}
+else if (gender == "male" &amp;&amp; final_age &gt; 64){
+  max_total_number_of_installments = (64 - age)*12
+}
+
+execution.setVariable("max_total_number_of_installments", max_total_number_of_installments );
+execution.setVariable("min_total_number_of_installments", min_total_number_of_installments );</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_0mabhnv">
+      <bpmn:incoming>Flow_1ni7ly0</bpmn:incoming>
+      <bpmn:incoming>Flow_0rsk3mz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qgy4zo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1wzhfwr" sourceRef="Consulta_Rest_DXON_AfastamentoMedico" targetRef="Activity_1ncaobu" />
+    <bpmn:sequenceFlow id="Flow_1jxjl82" sourceRef="Activity_1ncaobu" targetRef="Activity_0j51bnl" />
+    <bpmn:sequenceFlow id="Flow_16xx80v" sourceRef="Activity_0j51bnl" targetRef="Gateway_12xq6j2" />
+    <bpmn:scriptTask id="Activity_1ncaobu" name="Processar variáveis para DMN4" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1wzhfwr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jxjl82</bpmn:outgoing>
+      <bpmn:script>var afastamento_raw = execution.getVariable("response_afastamento");
+const afastamento = JSON.parse(afastamento_raw);
+
+var afastamentoQuantidade = afastamento?.afastamento?.quantidade ?? 85;
+
+// Agora definindo como inteiro diretamente:
+execution.setVariable("social_security_sick_leave_recurrence", afastamentoQuantidade);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:businessRuleTask id="Activity_0j51bnl" name="Avaliação CPF DMN4" camunda:resultVariable="result_natural_person" camunda:decisionRef="Pine_DMN_Avaliacao_CPF_Empresa" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_1jxjl82</bpmn:incoming>
+      <bpmn:outgoing>Flow_16xx80v</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_1ig5og9">
+      <bpmn:incoming>Flow_0ltqfdt</bpmn:incoming>
+      <bpmn:incoming>Flow_0bjnrrp</bpmn:incoming>
+      <bpmn:outgoing>Flow_01lj9r9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_01lj9r9" sourceRef="Gateway_1ig5og9" targetRef="Consulta_Rest_DXON_AfastamentoMedico" />
+    <bpmn:scriptTask id="Activity_0fg11nx" name="Preparar identification" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1vg373c</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z7mndg</bpmn:outgoing>
+      <bpmn:script>const afastamento_raw = execution.getVariable("response_afastamento");
+const afastamento = JSON.parse(afastamento_raw);
+
+const response_divida_fgts_raw = execution.getVariable("response_divida_fgts");
+const response_divida_fgts = JSON.parse(response_divida_fgts_raw);
+
+const response_divida_ativa_raw = execution.getVariable("response_divida_ativa");
+const response_divida_ativa = JSON.parse(response_divida_ativa_raw);
+
+const response_divida_previdenciaria_raw = execution.getVariable("response_divida_previdenciaria");
+const response_divida_previdenciaria = JSON.parse(response_divida_previdenciaria_raw);
+
+const content = execution.getVariable("localizador_pj_result");
+const company_content = JSON.parse(content);
+
+const localizador_pj_situacao_cadastral_result = execution.getVariable("localizador_pj_situacao_cadastral_result");
+const localizador_pj_situacao_cadastral_result_parsed = JSON.parse(localizador_pj_situacao_cadastral_result);
+
+const localizador_pj_perfil_sociodemografico_result = execution.getVariable("localizador_pj_perfil_sociodemografico_result"); 
+const localizador_pj_perfil_sociodemografico_result_parsed = JSON.parse(localizador_pj_perfil_sociodemografico_result); 
+
+const social_security_sick_leave_recurrence = execution.getVariable("social_security_sick_leave_recurrence");
+const fgts_payment_delay_record = execution.getVariable("fgts_payment_delay_record");
+const public_tax_debt = execution.getVariable("public_tax_debt");
+const social_security_active_debt = execution.getVariable("social_security_active_debt");
+
+const group_cbo_code = execution.getVariable("group_cbo_code");
+const family_cbo_code = execution.getVariable("family_cbo_code");
+
+var identification = {
+  "social_security_sick_leave_raw_data": afastamento, 
+  "response_divida_fgts": response_divida_fgts?.fgts?.length,
+  "response_divida_ativa": response_divida_ativa?.dividaAtiva?.length,
+  "response_divida_previdenciaria": response_divida_previdenciaria?.dividaPrevidenciaria?.length,
+  "social_security_sick_leave_recurrence": social_security_sick_leave_recurrence,
+  "fgts_payment_delay_record": fgts_payment_delay_record,
+  "public_tax_debt": public_tax_debt,
+  "social_security_active_debt": social_security_active_debt,
+  "group_cbo_code": group_cbo_code,
+  "family_cbo_code": family_cbo_code
+}
+
+Object.assign(identification, company_content);
+Object.assign(identification, localizador_pj_situacao_cadastral_result_parsed);
+Object.assign(identification, localizador_pj_perfil_sociodemografico_result_parsed);
+
+var jsonString = JSON.stringify(identification); 
+execution.setVariable("decision_metadata_identification", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_04akl5a" name="Preparar decision" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0z7mndg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1eanti6</bpmn:outgoing>
+      <bpmn:script>var identification_raw = execution.getVariable("decision_metadata_identification");
+const identification = JSON.parse(identification_raw);
+
+const result_natural_person = execution.getVariable("result_natural_person");
+let result_legal_person_raw = execution.getVariable("result_legal_person");
+let result_legal_person;
+
+if (typeof result_legal_person_raw === "string") {
+  try {
+    result_legal_person = JSON.parse(result_legal_person_raw);
+  } catch (e) {
+    throw new Error("Falha ao fazer parse de result_legal_person: " + e.message);
+  }
+} else {
+  result_legal_person = result_legal_person_raw;
+}
+
+const natural_person_status = result_natural_person.status;
+const natural_person_reason = result_natural_person.reason;
+const legal_person_status = result_legal_person?.status;
+const legal_person_reason = result_legal_person?.reason;
+const installment_amount = execution.getVariable("installment_amount");
+
+const cnpj_blocked = execution.getVariable("cnpj_blocked");
+
+var decision = {
+  "identification": identification,
+  "decision": {
+    "cnpj_blocked": cnpj_blocked,
+    "natural_person_reason": natural_person_reason,
+    "natural_person_status": natural_person_status,
+    "legal_person_reason": legal_person_reason,
+    "legal_person_status": legal_person_status,
+    "installment_amount": installment_amount 
+  }
+};
+
+var jsonString = JSON.stringify(decision); 
+execution.setVariable("decision_metadata", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0ew5iwy" name="Preparar retorno" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1eanti6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1un137d</bpmn:outgoing>
+      <bpmn:script>const result_natural_person = execution.getVariable("result_natural_person");
+let result_legal_person_raw = execution.getVariable("result_legal_person");
+let result_legal_person;
+
+if (typeof result_legal_person_raw === "string") {
+  try {
+    result_legal_person = JSON.parse(result_legal_person_raw);
+  } catch (e) {
+    throw new Error("Falha ao fazer parse de result_legal_person: " + e.message);
+  }
+} else {
+  result_legal_person = result_legal_person_raw;
+}
+
+const natural_person_status = result_natural_person.status;
+const natural_person_reason = result_natural_person.reason;
+const legal_person_status = result_legal_person?.status;
+const legal_person_reason = result_legal_person?.reason;
+
+var cancel_reason =  "ERROR";
+var final_status = "ERROR";
+
+if(natural_person_status == "approved" &amp;&amp; legal_person_status == "approved"){
+  final_status =  "approved";
+  cancel_reason = "";
+}else if(natural_person_status == "denied" &amp;&amp; legal_person_status == "denied"){
+  final_status =  "denied";
+  cancel_reason = natural_person_reason + " - " + legal_person_reason;
+}else if(natural_person_status == "denied"){
+  final_status =  "denied";
+  cancel_reason = natural_person_reason;
+}else if(legal_person_status == "denied"){
+  final_status =  "denied";
+  cancel_reason = legal_person_reason;
+}
+
+const document_number = execution.getVariable("document_number");
+
+const credit_terms_conditions_raw = execution.getVariable("credit_terms_conditions");
+const credit_terms_conditions = JSON.parse(credit_terms_conditions_raw);
+
+const decision_metadata_raw = execution.getVariable("decision_metadata");
+const decision_metadata = JSON.parse(decision_metadata_raw);
+
+const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+var jsonData = {
+  "document_number": document_number, 
+  "status": final_status, 
+  "credit_terms_conditions": credit_terms_conditions,
+  "decision_metadata": decision_metadata, 
+  "input_data": input_data,
+};
+
+if (final_status == "denied") {
+  jsonData["cancel_reason"] = cancel_reason;
+  jsonData['credit_terms_conditions'] = null;
+}
+
+var jsonString = JSON.stringify(jsonData); 
+execution.setVariable("body_result3", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_14ylu7y" name="Envia Retorno API" camunda:type="external" camunda:topic="RestPutApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://credit-analysis-dev.byxcapital.com.br/credit_terms/${credit_terms_key}</camunda:inputParameter>
+          <camunda:inputParameter name="body"> ${body_result3}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1un137d</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pr18tv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1un137d" sourceRef="Activity_0ew5iwy" targetRef="Activity_14ylu7y" />
+    <bpmn:endEvent id="Event_0rb0ham">
+      <bpmn:incoming>Flow_0pr18tv</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ivrdlt" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0pr18tv" sourceRef="Activity_14ylu7y" targetRef="Event_0rb0ham" />
+    <bpmn:sequenceFlow id="Flow_0z7mndg" sourceRef="Activity_0fg11nx" targetRef="Activity_04akl5a" />
+    <bpmn:sequenceFlow id="Flow_1eanti6" sourceRef="Activity_04akl5a" targetRef="Activity_0ew5iwy" />
+    <bpmn:sequenceFlow id="Flow_1vg373c" sourceRef="Gateway_12xq6j2" targetRef="Activity_0fg11nx" />
+    <bpmn:businessRuleTask id="Activity_0b1l63o" name="Avaliação Idade" camunda:resultVariable="result_natural_person" camunda:decisionRef="Pine_DMN_Avaliacao_Idade" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_1xqtz3y</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q05o8t</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_1s7miu0" default="Flow_0rsk3mz">
+      <bpmn:incoming>Flow_0q05o8t</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rsk3mz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0zpc58o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0rsk3mz" name="Reprovado Avaliação Idade" sourceRef="Gateway_1s7miu0" targetRef="Gateway_0mabhnv" />
+    <bpmn:sequenceFlow id="Flow_0q05o8t" sourceRef="Activity_0b1l63o" targetRef="Gateway_1s7miu0" />
+    <bpmn:sequenceFlow id="Flow_0zpc58o" sourceRef="Gateway_1s7miu0" targetRef="Activity_1jt2zbs">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_natural_person.status == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:businessRuleTask id="Activity_1jt2zbs" name="Liberação avaliação do CNPJ" camunda:resultVariable="result_legal_person" camunda:decisionRef="Pine_DMN_Liberacao_CNPJ" camunda:mapDecisionResult="singleResult">
+      <bpmn:incoming>Flow_0zpc58o</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zmkt2s</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_0gprm3u" default="Flow_1si8pot">
+      <bpmn:incoming>Flow_0zmkt2s</bpmn:incoming>
+      <bpmn:outgoing>Flow_1si8pot</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ltqfdt</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0zmkt2s" sourceRef="Activity_1jt2zbs" targetRef="Gateway_0gprm3u" />
+    <bpmn:sequenceFlow id="Flow_1si8pot" sourceRef="Gateway_0gprm3u" targetRef="Task_ValidateCnpj" />
+    <bpmn:sequenceFlow id="Flow_1qgy4zo" sourceRef="Gateway_0mabhnv" targetRef="Gateway_0uir55h" />
+    <bpmn:sequenceFlow id="Flow_0ltqfdt" name="Liberado de avaliação CNPJ" sourceRef="Gateway_0gprm3u" targetRef="Gateway_1ig5og9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_legal_person.status == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_0c91075" default="Flow_0t99u9d">
+      <bpmn:incoming>Flow_0d4tt2y</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bjnrrp</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0t99u9d</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0bjnrrp" sourceRef="Gateway_0c91075" targetRef="Gateway_1ig5og9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${result_legal_person.status  == "approved"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_151vyyc">
+      <bpmn:incoming>Flow_1yy3vil</bpmn:incoming>
+      <bpmn:incoming>Flow_0t99u9d</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kjpzge</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1kjpzge" sourceRef="Gateway_151vyyc" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_0t99u9d" name="Reprovado avaliação CNPJ" sourceRef="Gateway_0c91075" targetRef="Gateway_151vyyc" />
+    <bpmn:scriptTask id="Activity_07xb35r" name="Preparar CreditTermsConditions" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0v6ergl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xqtz3y</bpmn:outgoing>
+      <bpmn:script>const result_natural_person = execution.getVariable("result_natural_person");
+const min_total_number_of_installments = execution.getVariable("min_total_number_of_installments");
+const max_total_number_of_installments = execution.getVariable("max_total_number_of_installments");
+const installment_amount = execution.getVariable("installment_amount");
+
+const min_disbursement_amount = result_natural_person.min_disbursement_amount;
+const max_disbursement_amount = result_natural_person.max_disbursement_amount;
+const interest_rate = result_natural_person.interest_rate;
+
+const credit_terms_conditions = [{
+    "min_total_number_of_installments": min_total_number_of_installments,
+    "max_total_number_of_installments": max_total_number_of_installments,
+    "min_installment_amount": installment_amount ? installment_amount : 0,
+    "max_installment_amount": installment_amount ? installment_amount : 0,
+    "min_disbursement_amount": min_disbursement_amount,
+    "max_disbursement_amount": max_disbursement_amount, 
+    "interest": {
+      "interest_rate_type": "pre_fixed",
+      "pre_fixed": {
+        "min_monthly_rate": interest_rate,
+        "max_monthly_rate": interest_rate,
+        "interest_base": 360 
+      }
+    },
+    "taxes": {
+      "has_iof": true,
+    },
+    "fees": [] 
+  }]
+
+const jsonString = JSON.stringify(credit_terms_conditions); 
+execution.setVariable("credit_terms_conditions", jsonString);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1xqtz3y" sourceRef="Activity_07xb35r" targetRef="Activity_0b1l63o" />
+    <bpmn:sequenceFlow id="Flow_0iitmq1" sourceRef="Activity_08wejw7" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_0v6b5eg" sourceRef="Activity_1fe2ij2" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_0r715zp" sourceRef="Activity_07apqks" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_0jtj52r" sourceRef="Activity_0z76ps8" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_173kbxz" sourceRef="Activity_1ahp5v5" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_0oxbsdk" sourceRef="Activity_08aqra4" targetRef="Gateway_12xq6j2" />
+    <bpmn:sequenceFlow id="Flow_0l6diic" sourceRef="Activity_0t17uoy" targetRef="Gateway_12xq6j2" />
+    <bpmn:task id="Activity_1ycawf2" name="CNPJ bloqueado">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_legal_person">{
+  "reason": "CNPJ Blocklist restriction",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1tax62w</bpmn:incoming>
+      <bpmn:outgoing>Flow_0d2tavv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0d2tavv" sourceRef="Activity_1ycawf2" targetRef="Gateway_0uir55h" />
+    <bpmn:serviceTask id="Activity_05lj02o" name="Consulta Rest BYXDATA Qtd de funcionarios" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://diretrixon.com/diretrixrest/api/Recupera/ConsultaQtdeFuncionariosGrupo</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "parametros": {
+    "cnpj": "${company_document_number}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "APIconsigPrivado",
+    "password": "xT3Zt3D@0nbYXx",
+    "client": "ByxCapital",
+    "grant_type": "password",
+    "path": "https://diretrixon.com/diretrixrest/api/token"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_Rest_DXON_QtdFuncionarios</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_quantidade_funcionarios</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0issq4b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fgcae2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fgcae2" sourceRef="Activity_05lj02o" targetRef="Gateway_0xlwu0e" />
+    <bpmn:sequenceFlow id="Flow_0issq4b" sourceRef="Gateway_0r3gnes" targetRef="Activity_05lj02o" />
+  </bpmn:process>
+  <bpmn:message id="Message_1ff8qhg" name="aguardar-mensagem" />
+  <bpmn:message id="Message_377ctea" name="result-manual-analysis" />
+  <bpmn:error id="Error_0epofsd" name="BYX524" errorCode="BYX524" />
+  <bpmn:error id="Error_18ukwc6" name="CNPJ_CPF_Not_Found" errorCode="BYX400" />
+  <bpmn:signal id="Signal_29769li" name="TimeoutError" />
+  <bpmn:signal id="Signal_3otjhbv" name="TimeoutDividaPrevidenciaria" />
+  <bpmn:signal id="Signal_32e7u4i" name="TimeoutAfastamentoMedico" />
+  <bpmn:signal id="Signal_26jk51q" name="TimeoutDividaFgts" />
+  <bpmn:signal id="Signal_05vb742" name="TimeoutDividaAtiva" />
+  <bpmn:error id="Error_0ll2zs9" name="BYX400" errorCode="BYX400" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_f4f1450e-ab40-41a0-8ede-2a4fa8a83ec1">
+      <bpmndi:BPMNShape id="BPMNShape_1w7t1jh" bpmnElement="Avaliacao_CPF_DMN1">
+        <dc:Bounds x="980" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1amrr5p_di" bpmnElement="Activity_0zu84yy">
+        <dc:Bounds x="260" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15pza2w_di" bpmnElement="Event_15pza2w">
+        <dc:Bounds x="152" y="1252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0eqbptj" bpmnElement="Task_ValidateCnpj">
+        <dc:Bounds x="2280" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0un9d70" bpmnElement="Consultar_DXON_LocalizadorPjSituacaoCadastral">
+        <dc:Bounds x="2740" y="1340" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0105f2o_di" bpmnElement="Gateway_0105f2o" isMarkerVisible="true">
+        <dc:Bounds x="1155" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0plyok9" bpmnElement="Gateway_0szayaf" isMarkerVisible="true">
+        <dc:Bounds x="2455" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sgkl3e" bpmnElement="Consultar_DXON_LocalizadorPj">
+        <dc:Bounds x="2740" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1htnfmw" bpmnElement="Processar_variaveis_LocalizadorPjResult">
+        <dc:Bounds x="3090" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1soqjdp" bpmnElement="Activity_1nyvobw">
+        <dc:Bounds x="3290" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1whvigv" bpmnElement="Gateway_1h336lu" isMarkerVisible="true">
+        <dc:Bounds x="3515" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i3wuch_di" bpmnElement="Consulta_Rest_DXON_AfastamentoMedico">
+        <dc:Bounds x="5710" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19bptxw" bpmnElement="Consulta_Rest_DXON_DividaFgts">
+        <dc:Bounds x="4310" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17kbqs4_di" bpmnElement="Activity_01uytq9">
+        <dc:Bounds x="4460" y="1250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ahw5q6" bpmnElement="Consulta_Rest_DXON_DividaAtiva">
+        <dc:Bounds x="4310" y="1410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0oh6zgv" bpmnElement="Activity_0pfw0vn">
+        <dc:Bounds x="4470" y="1550" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19833ij" bpmnElement="Activity_0srcgyk">
+        <dc:Bounds x="4310" y="1700" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_006q3kf" bpmnElement="Activity_0ppt5sk">
+        <dc:Bounds x="4460" y="1830" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hcmx27" bpmnElement="Activity_0sndu5s">
+        <dc:Bounds x="5130" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hdfwv3" bpmnElement="Activity_1m0lgt5">
+        <dc:Bounds x="5290" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_16ckh8j_di" bpmnElement="Gateway_16ckh8j" isMarkerVisible="true">
+        <dc:Bounds x="4575" y="1715" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0t9yt9g_di" bpmnElement="Gateway_0t9yt9g" isMarkerVisible="true">
+        <dc:Bounds x="4575" y="1425" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0co3mlb" bpmnElement="Activity_08wejw7">
+        <dc:Bounds x="5280" y="740" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14u7p8z_di" bpmnElement="Gateway_0r3gnes">
+        <dc:Bounds x="2585" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cgkql0_di" bpmnElement="Gateway_0xlwu0e">
+        <dc:Bounds x="2935" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0iebosc_di" bpmnElement="Gateway_0s9dg0b">
+        <dc:Bounds x="3995" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07u59k4_di" bpmnElement="Gateway_07u59k4" isMarkerVisible="true">
+        <dc:Bounds x="4575" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1q6f3sc_di" bpmnElement="Gateway_1cml3us">
+        <dc:Bounds x="4115" y="1425" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_141x2ha_di" bpmnElement="Gateway_0d78apr">
+        <dc:Bounds x="4815" y="1425" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_066m36v_di" bpmnElement="Gateway_1tytztg">
+        <dc:Bounds x="5005" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12xq6j2_di" bpmnElement="Gateway_12xq6j2" isMarkerVisible="true">
+        <dc:Bounds x="6315" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wnqyyf" bpmnElement="Activity_1fe2ij2">
+        <dc:Bounds x="5280" y="620" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07apqks_di" bpmnElement="Activity_07apqks">
+        <dc:Bounds x="5280" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t17uoy_di" bpmnElement="Activity_0t17uoy">
+        <dc:Bounds x="5900" y="880" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08y1jpo" bpmnElement="Activity_0z76ps8">
+        <dc:Bounds x="5280" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rpjeqx" bpmnElement="Activity_1ahp5v5">
+        <dc:Bounds x="5280" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_088sbtt" bpmnElement="Activity_08aqra4">
+        <dc:Bounds x="5280" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0efxef2_di" bpmnElement="Activity_1rabns2">
+        <dc:Bounds x="580" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0f79cf7" bpmnElement="Activity_0ycm3x2">
+        <dc:Bounds x="420" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0uir55h_di" bpmnElement="Gateway_0uir55h" isMarkerVisible="true">
+        <dc:Bounds x="2455" y="2135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1sq2bn6_di" bpmnElement="Gateway_1sq2bn6" isMarkerVisible="true">
+        <dc:Bounds x="3515" y="2135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1g3q0qg_di" bpmnElement="Activity_19st0i2">
+        <dc:Bounds x="1300" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0mabhnv_di" bpmnElement="Gateway_0mabhnv" isMarkerVisible="true">
+        <dc:Bounds x="1705" y="2135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lu3ef4_di" bpmnElement="Activity_1ncaobu">
+        <dc:Bounds x="5910" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lpbpps_di" bpmnElement="Activity_0j51bnl">
+        <dc:Bounds x="6090" y="1230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ig5og9_di" bpmnElement="Gateway_1ig5og9" isMarkerVisible="true">
+        <dc:Bounds x="5605" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0exua4r_di" bpmnElement="Activity_0fg11nx">
+        <dc:Bounds x="6460" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lt3i3k_di" bpmnElement="Activity_04akl5a">
+        <dc:Bounds x="6640" y="1230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ihxej1_di" bpmnElement="Activity_0ew5iwy">
+        <dc:Bounds x="6820" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0yt8m0i" bpmnElement="Activity_14ylu7y">
+        <dc:Bounds x="7190" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s0mbat_di" bpmnElement="Event_0rb0ham">
+        <dc:Bounds x="7362" y="1252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h3z8x2_di" bpmnElement="Activity_0b1l63o">
+        <dc:Bounds x="1690" y="1230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1s7miu0_di" bpmnElement="Gateway_1s7miu0" isMarkerVisible="true">
+        <dc:Bounds x="1835" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0isceke_di" bpmnElement="Activity_1jt2zbs">
+        <dc:Bounds x="1950" y="1230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0gprm3u_di" bpmnElement="Gateway_0gprm3u" isMarkerVisible="true">
+        <dc:Bounds x="2085" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0c91075_di" bpmnElement="Gateway_0c91075" isMarkerVisible="true">
+        <dc:Bounds x="5455" y="1245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_151vyyc_di" bpmnElement="Gateway_151vyyc" isMarkerVisible="true">
+        <dc:Bounds x="5455" y="2135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06ehzrf_di" bpmnElement="Activity_07xb35r">
+        <dc:Bounds x="1490" y="1230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1q9wmne" bpmnElement="Activity_1ycawf2">
+        <dc:Bounds x="2430" y="1500" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1dkotpg" bpmnElement="Activity_05lj02o">
+        <dc:Bounds x="2740" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_000dno0_di" bpmnElement="Event_0shtqel">
+        <dc:Bounds x="2822" y="1322" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pb6xv5_di" bpmnElement="Event_0763s0t">
+        <dc:Bounds x="2822" y="1212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0paintr_di" bpmnElement="Event_06otwa8">
+        <dc:Bounds x="2822" y="1092" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gwn3g2_di" bpmnElement="Event_08vqpf6">
+        <dc:Bounds x="5792" y="1212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_16yrcjx" bpmnElement="Event_0wr2hcc">
+        <dc:Bounds x="4392" y="1682" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xpv5m9" bpmnElement="Event_0r7k3xx">
+        <dc:Bounds x="4392" y="1392" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_10fn1ta" bpmnElement="Event_1soizz2">
+        <dc:Bounds x="4392" y="1092" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lzm01w" bpmnElement="Event_0kjbz2l">
+        <dc:Bounds x="4392" y="1762" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08di9gd" bpmnElement="Event_15yhz1f">
+        <dc:Bounds x="4392" y="1472" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fpe14b_di" bpmnElement="Event_006cbx7">
+        <dc:Bounds x="4392" y="1172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1chduov_di" bpmnElement="Flow_1chduov">
+        <di:waypoint x="1080" y="1270" />
+        <di:waypoint x="1155" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uqngz8_di" bpmnElement="Flow_1uqngz8">
+        <di:waypoint x="360" y="1270" />
+        <di:waypoint x="420" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hb159b_di" bpmnElement="Flow_1hb159b">
+        <di:waypoint x="188" y="1270" />
+        <di:waypoint x="260" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i6f6eu_di" bpmnElement="Flow_0i6f6eu">
+        <di:waypoint x="1205" y="1270" />
+        <di:waypoint x="1300" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ni7ly0_di" bpmnElement="Flow_1ni7ly0">
+        <di:waypoint x="1180" y="1295" />
+        <di:waypoint x="1180" y="2160" />
+        <di:waypoint x="1705" y="2160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1343" y="1390" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u8wgg2_di" bpmnElement="Flow_1u8wgg2">
+        <di:waypoint x="2380" y="1270" />
+        <di:waypoint x="2455" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tax62w_di" bpmnElement="Flow_1tax62w">
+        <di:waypoint x="2480" y="1295" />
+        <di:waypoint x="2480" y="1500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2483" y="1372" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12ysxuv_di" bpmnElement="Flow_12ysxuv">
+        <di:waypoint x="2505" y="1270" />
+        <di:waypoint x="2585" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ck179z_di" bpmnElement="Flow_0ck179z">
+        <di:waypoint x="3390" y="1270" />
+        <di:waypoint x="3515" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hcq0i6_di" bpmnElement="Flow_1hcq0i6">
+        <di:waypoint x="3540" y="1295" />
+        <di:waypoint x="3540" y="2135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3560" y="1346" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_139deon_di" bpmnElement="Flow_139deon">
+        <di:waypoint x="3565" y="1270" />
+        <di:waypoint x="3995" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mv6d69_di" bpmnElement="Flow_0mv6d69">
+        <di:waypoint x="4410" y="1208" />
+        <di:waypoint x="4410" y="1290" />
+        <di:waypoint x="4460" y="1290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ngdfga_di" bpmnElement="Flow_0ngdfga">
+        <di:waypoint x="4410" y="1450" />
+        <di:waypoint x="4575" y="1450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w76uxn_di" bpmnElement="Flow_0w76uxn">
+        <di:waypoint x="4410" y="1508" />
+        <di:waypoint x="4410" y="1590" />
+        <di:waypoint x="4470" y="1590" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04kl3da_di" bpmnElement="Flow_04kl3da">
+        <di:waypoint x="4410" y="1798" />
+        <di:waypoint x="4410" y="1870" />
+        <di:waypoint x="4460" y="1870" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0un1t0w_di" bpmnElement="Flow_0un1t0w">
+        <di:waypoint x="4560" y="1870" />
+        <di:waypoint x="4600" y="1870" />
+        <di:waypoint x="4600" y="1765" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r6o1q3_di" bpmnElement="Flow_0r6o1q3">
+        <di:waypoint x="4410" y="1740" />
+        <di:waypoint x="4575" y="1740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z00zam_di" bpmnElement="Flow_0z00zam">
+        <di:waypoint x="5230" y="1270" />
+        <di:waypoint x="5290" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0d4tt2y_di" bpmnElement="Flow_0d4tt2y">
+        <di:waypoint x="5390" y="1270" />
+        <di:waypoint x="5455" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g0o304_di" bpmnElement="Flow_0g0o304">
+        <di:waypoint x="4570" y="1590" />
+        <di:waypoint x="4600" y="1590" />
+        <di:waypoint x="4600" y="1475" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11s1eg8_di" bpmnElement="Flow_11s1eg8">
+        <di:waypoint x="2985" y="1270" />
+        <di:waypoint x="3090" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_090l1dn_di" bpmnElement="Flow_090l1dn">
+        <di:waypoint x="2610" y="1295" />
+        <di:waypoint x="2610" y="1380" />
+        <di:waypoint x="2740" y="1380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zvgx4q_di" bpmnElement="Flow_0zvgx4q">
+        <di:waypoint x="2840" y="1380" />
+        <di:waypoint x="2960" y="1380" />
+        <di:waypoint x="2960" y="1295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lspe41_di" bpmnElement="Flow_1lspe41">
+        <di:waypoint x="3190" y="1270" />
+        <di:waypoint x="3290" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ktu2mg_di" bpmnElement="Flow_1ktu2mg">
+        <di:waypoint x="4020" y="1245" />
+        <di:waypoint x="4020" y="1150" />
+        <di:waypoint x="4310" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05z5zy7_di" bpmnElement="Flow_05z5zy7">
+        <di:waypoint x="4410" y="1150" />
+        <di:waypoint x="4575" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03l42hx_di" bpmnElement="Flow_03l42hx">
+        <di:waypoint x="4560" y="1290" />
+        <di:waypoint x="4600" y="1290" />
+        <di:waypoint x="4600" y="1175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09bd5qh_di" bpmnElement="Flow_09bd5qh">
+        <di:waypoint x="4165" y="1450" />
+        <di:waypoint x="4310" y="1450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0upu4gu_di" bpmnElement="Flow_0upu4gu">
+        <di:waypoint x="4140" y="1475" />
+        <di:waypoint x="4140" y="1740" />
+        <di:waypoint x="4310" y="1740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jay4pq_di" bpmnElement="Flow_0jay4pq">
+        <di:waypoint x="4020" y="1295" />
+        <di:waypoint x="4020" y="1450" />
+        <di:waypoint x="4115" y="1450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r2xzlz_di" bpmnElement="Flow_1r2xzlz">
+        <di:waypoint x="4625" y="1150" />
+        <di:waypoint x="5030" y="1150" />
+        <di:waypoint x="5030" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0017xxx_di" bpmnElement="Flow_0017xxx">
+        <di:waypoint x="4625" y="1450" />
+        <di:waypoint x="4815" y="1450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bl17ph_di" bpmnElement="Flow_0bl17ph">
+        <di:waypoint x="4625" y="1740" />
+        <di:waypoint x="4840" y="1740" />
+        <di:waypoint x="4840" y="1475" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ozgy46_di" bpmnElement="Flow_0ozgy46">
+        <di:waypoint x="4865" y="1450" />
+        <di:waypoint x="5030" y="1450" />
+        <di:waypoint x="5030" y="1295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_100qgod_di" bpmnElement="Flow_100qgod">
+        <di:waypoint x="5055" y="1270" />
+        <di:waypoint x="5130" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ud3zuo_di" bpmnElement="Flow_1ud3zuo">
+        <di:waypoint x="2635" y="1270" />
+        <di:waypoint x="2740" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1igdg57_di" bpmnElement="Flow_1igdg57">
+        <di:waypoint x="2840" y="1270" />
+        <di:waypoint x="2935" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03qwjed_di" bpmnElement="Flow_03qwjed">
+        <di:waypoint x="5810" y="1212" />
+        <di:waypoint x="5810" y="920" />
+        <di:waypoint x="5900" y="920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19bg0gt_di" bpmnElement="Flow_19bg0gt">
+        <di:waypoint x="4410" y="1092" />
+        <di:waypoint x="4410" y="520" />
+        <di:waypoint x="5280" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19wml90_di" bpmnElement="Flow_19wml90">
+        <di:waypoint x="4410" y="1392" />
+        <di:waypoint x="4410" y="1360" />
+        <di:waypoint x="4920" y="1360" />
+        <di:waypoint x="4920" y="660" />
+        <di:waypoint x="5280" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lfthj3_di" bpmnElement="Flow_1lfthj3">
+        <di:waypoint x="4410" y="1682" />
+        <di:waypoint x="4410" y="1660" />
+        <di:waypoint x="4970" y="1660" />
+        <di:waypoint x="4970" y="780" />
+        <di:waypoint x="5280" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_063incy_di" bpmnElement="Flow_063incy">
+        <di:waypoint x="2840" y="1092" />
+        <di:waypoint x="2840" y="120" />
+        <di:waypoint x="5280" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bwv8wd_di" bpmnElement="Flow_0bwv8wd">
+        <di:waypoint x="2858" y="1230" />
+        <di:waypoint x="2880" y="1230" />
+        <di:waypoint x="2880" y="230" />
+        <di:waypoint x="5280" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b34j2f_di" bpmnElement="Flow_0b34j2f">
+        <di:waypoint x="2858" y="1340" />
+        <di:waypoint x="2910" y="1340" />
+        <di:waypoint x="2910" y="340" />
+        <di:waypoint x="5280" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1d1s9bh_di" bpmnElement="Flow_1d1s9bh">
+        <di:waypoint x="680" y="1270" />
+        <di:waypoint x="980" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uwvht7_di" bpmnElement="Flow_0uwvht7">
+        <di:waypoint x="520" y="1270" />
+        <di:waypoint x="580" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15jvi6e_di" bpmnElement="Flow_15jvi6e">
+        <di:waypoint x="2505" y="2160" />
+        <di:waypoint x="3515" y="2160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yy3vil_di" bpmnElement="Flow_1yy3vil">
+        <di:waypoint x="3565" y="2160" />
+        <di:waypoint x="5455" y="2160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v6ergl_di" bpmnElement="Flow_0v6ergl">
+        <di:waypoint x="1400" y="1270" />
+        <di:waypoint x="1490" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wzhfwr_di" bpmnElement="Flow_1wzhfwr">
+        <di:waypoint x="5810" y="1270" />
+        <di:waypoint x="5910" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jxjl82_di" bpmnElement="Flow_1jxjl82">
+        <di:waypoint x="6010" y="1270" />
+        <di:waypoint x="6090" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16xx80v_di" bpmnElement="Flow_16xx80v">
+        <di:waypoint x="6190" y="1270" />
+        <di:waypoint x="6315" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01lj9r9_di" bpmnElement="Flow_01lj9r9">
+        <di:waypoint x="5655" y="1270" />
+        <di:waypoint x="5710" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1un137d_di" bpmnElement="Flow_1un137d">
+        <di:waypoint x="6920" y="1270" />
+        <di:waypoint x="7190" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pr18tv_di" bpmnElement="Flow_0pr18tv">
+        <di:waypoint x="7290" y="1270" />
+        <di:waypoint x="7362" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z7mndg_di" bpmnElement="Flow_0z7mndg">
+        <di:waypoint x="6560" y="1270" />
+        <di:waypoint x="6640" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eanti6_di" bpmnElement="Flow_1eanti6">
+        <di:waypoint x="6740" y="1270" />
+        <di:waypoint x="6820" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vg373c_di" bpmnElement="Flow_1vg373c">
+        <di:waypoint x="6365" y="1270" />
+        <di:waypoint x="6460" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rsk3mz_di" bpmnElement="Flow_0rsk3mz">
+        <di:waypoint x="1860" y="1295" />
+        <di:waypoint x="1860" y="2160" />
+        <di:waypoint x="1755" y="2160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1811" y="1394" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q05o8t_di" bpmnElement="Flow_0q05o8t">
+        <di:waypoint x="1790" y="1270" />
+        <di:waypoint x="1835" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zpc58o_di" bpmnElement="Flow_0zpc58o">
+        <di:waypoint x="1885" y="1270" />
+        <di:waypoint x="1950" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zmkt2s_di" bpmnElement="Flow_0zmkt2s">
+        <di:waypoint x="2050" y="1270" />
+        <di:waypoint x="2085" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1si8pot_di" bpmnElement="Flow_1si8pot">
+        <di:waypoint x="2135" y="1270" />
+        <di:waypoint x="2280" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qgy4zo_di" bpmnElement="Flow_1qgy4zo">
+        <di:waypoint x="1755" y="2160" />
+        <di:waypoint x="2455" y="2160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ltqfdt_di" bpmnElement="Flow_0ltqfdt">
+        <di:waypoint x="2110" y="1295" />
+        <di:waypoint x="2110" y="1990" />
+        <di:waypoint x="5630" y="1990" />
+        <di:waypoint x="5630" y="1295" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2120" y="1390" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bjnrrp_di" bpmnElement="Flow_0bjnrrp">
+        <di:waypoint x="5505" y="1270" />
+        <di:waypoint x="5605" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kjpzge_di" bpmnElement="Flow_1kjpzge">
+        <di:waypoint x="5505" y="2160" />
+        <di:waypoint x="6340" y="2160" />
+        <di:waypoint x="6340" y="1295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t99u9d_di" bpmnElement="Flow_0t99u9d">
+        <di:waypoint x="5480" y="1295" />
+        <di:waypoint x="5480" y="2135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5490" y="1346" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xqtz3y_di" bpmnElement="Flow_1xqtz3y">
+        <di:waypoint x="1590" y="1270" />
+        <di:waypoint x="1690" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iitmq1_di" bpmnElement="Flow_0iitmq1">
+        <di:waypoint x="5380" y="780" />
+        <di:waypoint x="6340" y="780" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v6b5eg_di" bpmnElement="Flow_0v6b5eg">
+        <di:waypoint x="5380" y="660" />
+        <di:waypoint x="6340" y="660" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r715zp_di" bpmnElement="Flow_0r715zp">
+        <di:waypoint x="5380" y="520" />
+        <di:waypoint x="6340" y="520" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jtj52r_di" bpmnElement="Flow_0jtj52r">
+        <di:waypoint x="5380" y="120" />
+        <di:waypoint x="6340" y="120" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_173kbxz_di" bpmnElement="Flow_173kbxz">
+        <di:waypoint x="5380" y="230" />
+        <di:waypoint x="6340" y="230" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oxbsdk_di" bpmnElement="Flow_0oxbsdk">
+        <di:waypoint x="5380" y="340" />
+        <di:waypoint x="6340" y="340" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l6diic_di" bpmnElement="Flow_0l6diic">
+        <di:waypoint x="6000" y="920" />
+        <di:waypoint x="6340" y="920" />
+        <di:waypoint x="6340" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0d2tavv_di" bpmnElement="Flow_0d2tavv">
+        <di:waypoint x="2480" y="1580" />
+        <di:waypoint x="2480" y="2135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fgcae2_di" bpmnElement="Flow_0fgcae2">
+        <di:waypoint x="2840" y="1150" />
+        <di:waypoint x="2960" y="1150" />
+        <di:waypoint x="2960" y="1245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0issq4b_di" bpmnElement="Flow_0issq4b">
+        <di:waypoint x="2610" y="1245" />
+        <di:waypoint x="2610" y="1150" />
+        <di:waypoint x="2740" y="1150" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

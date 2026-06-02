@@ -1,0 +1,20 @@
+{
+  "kind": "dmn",
+  "decision_definition_id": "628eff61-ab99-11f0-802b-da6cd2a9c0db",
+  "decision_key": "HAPPY_Decision_Personal_Income",
+  "decision_name": "HAPPY_Decision_Personal_Income",
+  "tenant_id": "",
+  "version": 1,
+  "version_tag": "",
+  "resource": "happy_decision_personal_income.dmn",
+  "deployment_id": "628c8e5e-ab99-11f0-802b-da6cd2a9c0db",
+  "deployment_name": "happy_decision_personal_income",
+  "deployment_source": "Camunda Modeler",
+  "deployment_time": "2025-10-17T20:39:32.009+0000",
+  "deployment_lookup_warning": "",
+  "extracted_at_utc": "2026-06-02T20:28:57+00:00",
+  "camunda_base_url": "https://camunda-dev.byxcapital.com.br/engine-rest",
+  "decision_requirements_definition_id": "",
+  "decision_requirements_definition_key": "",
+  "decision_requirements_definition_name": ""
+}

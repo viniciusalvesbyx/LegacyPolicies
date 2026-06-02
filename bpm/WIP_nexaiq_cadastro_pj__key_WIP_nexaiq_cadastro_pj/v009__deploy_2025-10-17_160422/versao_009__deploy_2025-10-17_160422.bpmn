@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0w9uo2i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="WIP_nexaiq_cadastro_pj" name="WIP_nexaiq_cadastro_pj" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1mgmwnc</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Proccess_NEXAIQ_Cadastro_PJ" name="Proccess NEXAIQ Cadastro PJ" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1vmvd8k</bpmn:incoming>
+      <bpmn:outgoing>Flow_08xyb7e</bpmn:outgoing>
+      <bpmn:script>function formatDateBRtoISO(dateStr) {
+  if (!dateStr || !dateStr.includes("/")) return null;
+
+  const [day, month, year] = dateStr.split("/");
+  const iso = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  
+  return iso;
+}
+
+const response_cadastro_pj = JSON.parse(execution.getVariable("response_cadastro_pj"));
+
+const total_number_of_employees = response_cadastro_pj.response.informacoes_pj.quantidade_funcionarios ? response_cadastro_pj.response.informacoes_pj.quantidade_funcionarios : "Information not available";
+const company_document_number_completed= response_cadastro_pj.response.dados_cadastrais_pj.cnpj_basico ? response_cadastro_pj.response.dados_cadastrais_pj.cnpj_basico : "Information not available";
+const legal_name= response_cadastro_pj.response.dados_cadastrais_pj.razao_social ? response_cadastro_pj.response.dados_cadastrais_pj.razao_social : "Information not available";
+const share_capital= response_cadastro_pj.response.dados_cadastrais_pj.capital_social ? response_cadastro_pj.response.dados_cadastrais_pj.capital_social : "Information not available";
+const registration_status= response_cadastro_pj.response.dados_cadastrais_pj.situacao_cadastral ? response_cadastro_pj.response.dados_cadastrais_pj.situacao_cadastral : "Information not available";
+const registration_status_reason= response_cadastro_pj.response.dados_cadastrais_pj.motivo_situacao_cadastral ? response_cadastro_pj.response.dados_cadastrais_pj.motivo_situacao_cadastral : "Information not available";
+const email= response_cadastro_pj.response.dados_cadastrais_pj.email ? response_cadastro_pj.response.dados_cadastrais_pj.email : "Information not available";
+const special_status= response_cadastro_pj.response.dados_cadastrais_pj.situacao_especial ? response_cadastro_pj.response.dados_cadastrais_pj.situacao_especial : "Information not available";
+
+const cnae_raw = response_cadastro_pj.response.dados_cadastrais_pj.cnae_principal;
+
+const [code, description] = cnae_raw ? cnae_raw.split(" - ") : ["Information not available", "Information not available"];
+
+const cnae = {
+  code: code.trim(),
+  description: description.trim(),
+};
+
+const legal_nature = {
+  description: response_cadastro_pj.response.dados_cadastrais_pj.natureza_juridica ? response_cadastro_pj.response.dados_cadastrais_pj.natureza_juridica : "Information not available",
+};
+
+const company_start_date_raw = response_cadastro_pj.response.dados_cadastrais_pj.data_inicio_atividade ? response_cadastro_pj.response.dados_cadastrais_pj.data_inicio_atividade : "Information not available";
+
+const company_start_date = formatDateBRtoISO(company_start_date_raw);
+const company_size = response_cadastro_pj.response.informacoes_pj.porte_empresa ? response_cadastro_pj.response.informacoes_pj.porte_empresa : response_cadastro_pj.response.dados_cadastrais_pj.porte_empresa;
+const turnover_rate = response_cadastro_pj.response.informacoes_pj.indice_turnover ? response_cadastro_pj.response.informacoes_pj.indice_turnover : "Information not available";
+const annual_revenue = response_cadastro_pj.response.informacoes_pj.faturamento ? response_cadastro_pj.response.informacoes_pj.faturamento : "Information not available";
+const default_risk = response_cadastro_pj.response.informacoes_pj.risco_default ? response_cadastro_pj.response.informacoes_pj.risco_default : "Information not available";
+
+execution.setVariable("total_number_of_employees", total_number_of_employees);
+execution.setVariable("company_document_number_completed", company_document_number_completed);
+execution.setVariable("legal_name", legal_name);
+execution.setVariable("legal_nature", legal_nature);
+execution.setVariable("share_capital", share_capital);  
+execution.setVariable("registration_status", registration_status);
+execution.setVariable("registration_status_reason", registration_status_reason);
+execution.setVariable("company_start_date", company_start_date);
+execution.setVariable("email", email);
+execution.setVariable("special_status", special_status);
+execution.setVariable("cnae", cnae);
+execution.setVariable("company_size", company_size);
+execution.setVariable("turnover_rate", turnover_rate);
+execution.setVariable("annual_revenue", annual_revenue);
+execution.setVariable("default_risk", default_risk);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1mgmwnc" sourceRef="StartEvent_1" targetRef="Activity_1kx0520" />
+    <bpmn:scriptTask id="Activity_1kx0520" name="Preparar variaveis" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1mgmwnc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gph2j5</bpmn:outgoing>
+      <bpmn:script>const input_data_raw = execution.getVariable("input_data");
+const input_data = JSON.parse(input_data_raw);
+
+execution.setVariable("is_eligible_for_loan", input_data.is_eligible_for_loan);
+execution.setVariable("contract_end_date", !input_data.contract_end_date ? false : true);
+execution.setVariable("leave_of_absense", input_data.leave_of_absense);
+execution.setVariable("termination_notice", input_data.termination_notice);
+execution.setVariable("is_pep", input_data.is_pep);
+execution.setVariable("employment_duration_in_months", input_data.employment_duration_in_months);
+execution.setVariable("company_document_number", input_data.company_document_number);
+execution.setVariable("age", input_data.age);
+execution.setVariable("gender", input_data.gender);
+execution.setVariable("available_consignment_margin", input_data.available_consignment_margin);
+execution.setVariable("remuneration", parseFloat(input_data.base_margin_amount));
+// execution.setVariable("active_or_suspended_loan_count", input_data.active_or_suspended_loan_count);
+
+
+if (input_data &amp;&amp; input_data.cbo &amp;&amp; input_data.cbo.code) {
+  const code = input_data.cbo.code.toString();
+
+  const groupCboCode = code.slice(0, 1);
+  const familyCboCode = code.slice(0, 4);
+
+  execution.setVariable("group_cbo_code", groupCboCode);
+  execution.setVariable("family_cbo_code", familyCboCode);
+}
+if (input_data &amp;&amp; input_data.scr) {
+  execution.setVariable("scr_total_overdue_amount", input_data.scr.total_overdue_amount);
+  execution.setVariable("scr_written_off_amount", input_data.scr.written_off_amount);
+  execution.setVariable("scr_loan_due_amount_within_360d", input_data.scr.loan_due_amount_within_360d);
+  execution.setVariable("scr_total_consignment_loan_overdue_amount", input_data.scr.total_consignment_loan_overdue_amount);
+  execution.setVariable("scr_consignment_loan_written_off_amount", input_data.scr.consignment_loan_written_off_amount);
+  execution.setVariable("scr_consignment_loan_due_amount", input_data.scr.consignment_loan_due_amount);
+  execution.setVariable("scr_total_clean_loan_overdue_amount", input_data.scr.total_clean_loan_overdue_amount);
+  execution.setVariable("scr_clean_loan_written_off_amount", input_data.scr.clean_loan_written_off_amount);
+  execution.setVariable("scr_clean_loan_due_amount", input_data.scr.clean_loan_due_amount);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0gph2j5" sourceRef="Activity_1kx0520" targetRef="Activity_1rabns2" />
+    <bpmn:endEvent id="Event_1ro1vde">
+      <bpmn:incoming>Flow_1l78spv</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1qs2tmw" />
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_0dvgyv6" name="Personal Income not available">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="result_natural_person">{
+  "reason": "Unable to retrieve personal income from PH3A",
+  "status": "denied"
+}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+    </bpmn:task>
+    <bpmn:userTask id="Activity_1dbzgu1" name="Stop">
+      <bpmn:incoming>Flow_08xyb7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l78spv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1l78spv" sourceRef="Activity_1dbzgu1" targetRef="Event_1ro1vde" />
+    <bpmn:serviceTask id="Consulta_NEXAIQ_Cadastro_PJ" name="Consulta NEXAIQ Cadastro PJ" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/consulta/cadastro/v1/pj</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "cnpj": "${company_document_number}"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "nexaiq_client_id",
+    "password": "nexaiq_client_secret",
+    "grant_type": "client_credentials",
+    "path": "nexaiq_auth_url"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_NEXAIQ_Cadastro_PJ</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_cadastro_pj</camunda:inputParameter>
+          <camunda:inputParameter name="handel_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">nexaiq_base_url</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_010vv72</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vmvd8k</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_065h0ru" attachedToRef="Consulta_NEXAIQ_Cadastro_PJ">
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1fba8b3" errorRef="Error_0xheboa" camunda:errorCodeVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0amczv7" attachedToRef="Consulta_NEXAIQ_Cadastro_PJ">
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1f5odht" errorRef="Error_0k7q4i6" camunda:errorCodeVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Consulta_Rest_SCR" name="Consulta SCR" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">/banking/originator/scr</camunda:inputParameter>
+          <camunda:inputParameter name="body"> ${body_request_scr}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "celcoin_originator_client_id",
+    "password": "celcoin_originator_secret_id",
+    "grant_type": "client_credentials",
+    "path": "celcoin_auth_url"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_scr</camunda:inputParameter>
+          <camunda:inputParameter name="base_path_env">celcoin_base_url</camunda:inputParameter>
+          <camunda:inputParameter name="handler_error">true</camunda:inputParameter>
+          <camunda:inputParameter name="log_reponse">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0mxlsx4" attachedToRef="Consulta_Rest_SCR">
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0zjypa5" errorRef="Error_1irgl60" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1vmvd8k" sourceRef="Consulta_NEXAIQ_Cadastro_PJ" targetRef="Proccess_NEXAIQ_Cadastro_PJ" />
+    <bpmn:serviceTask id="Activity_0zryq8l" name="Consulta NEXAIQ Cadastro PJ" camunda:asyncAfter="true" camunda:type="external" camunda:topic="RestPostApi">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="url">https://api.nexaiq.com.br/datacredit/consulta/cadastro/v1/pj</camunda:inputParameter>
+          <camunda:inputParameter name="body">{
+  "cnpj": "42603664000195"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="authenticate">{
+    "user": "It1uLV3u9Ld3EQS8T4ccpus6pSRXjpVe",
+    "password": "9yD2CPHwX3Z6UbBBedf5YRO236OkyWaO",
+    "grant_type": "client_credentials",
+    "path": "https://api.nexaiq.com.br/datacredit/consulta/cadastro/v1/oauth2/token"
+}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="process">Consulta_NEXAIQ_Cadastro_PJ</camunda:inputParameter>
+          <camunda:inputParameter name="variable_name">response_cadastro_pj</camunda:inputParameter>
+          <camunda:inputParameter name="handel_error">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1j07qze" attachedToRef="Activity_0zryq8l">
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1pe86ne" errorRef="Error_0xheboa" camunda:errorCodeVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1v7xz76" attachedToRef="Activity_0zryq8l">
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0h5013h" errorRef="Error_0k7q4i6" camunda:errorCodeVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_08xyb7e" sourceRef="Proccess_NEXAIQ_Cadastro_PJ" targetRef="Activity_1dbzgu1" />
+    <bpmn:scriptTask id="Activity_1rabns2" name="Transformar CNPJ 8 dígitos" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0gph2j5</bpmn:incoming>
+      <bpmn:outgoing>Flow_010vv72</bpmn:outgoing>
+      <bpmn:script>// Função para calcular os dígitos verificadores do CNPJ
+function calculateCnpjCheckDigits(baseNumber, branch = '0001') {
+  // Garante 8 dígitos no número base e 4 no número da filial
+  baseNumber = baseNumber.toString().padStart(8, '0');
+  branch = branch.toString().padStart(4, '0');
+
+  const cnpjWithoutDigits = baseNumber + branch;
+
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i &lt; weights1.length; i++) {
+    sum += parseInt(cnpjWithoutDigits[i]) * weights1[i];
+  }
+  const remainder1 = sum % 11;
+  const checkDigit1 = remainder1 &lt; 2 ? 0 : 11 - remainder1;
+
+  const cnpjWithFirstDigit = cnpjWithoutDigits + checkDigit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i &lt; weights2.length; i++) {
+    sum += parseInt(cnpjWithFirstDigit[i]) * weights2[i];
+  }
+  const remainder2 = sum % 11;
+  const checkDigit2 = remainder2 &lt; 2 ? 0 : 11 - remainder2;
+
+  const fullCnpj = cnpjWithFirstDigit + checkDigit2;
+  return { numericCnpj: fullCnpj };
+}
+
+// Lógica de transformação da variável no Camunda
+const rawCnpj = execution.getVariable("company_document_number");
+const numericOnly = rawCnpj?.replace(/\D/g, ''); // remove pontos, barras, traços etc.
+
+if (numericOnly &amp;&amp; numericOnly.length &gt; 0) {
+  // Garante que o número tenha 8 dígitos, adicionando zeros à esquerda
+  const baseNumber = numericOnly.padStart(8, '0').slice(0, 8);
+
+  const { numericCnpj } = calculateCnpjCheckDigits(baseNumber);
+  execution.setVariable("company_document_number", numericCnpj);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_010vv72" sourceRef="Activity_1rabns2" targetRef="Consulta_NEXAIQ_Cadastro_PJ" />
+  </bpmn:process>
+  <bpmn:error id="Error_0gcnlk5" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmn:error id="Error_0xheboa" name="BYX524" errorCode="BYX524" camunda:errorMessage="errorCode" />
+  <bpmn:error id="Error_0k7q4i6" name="CNPJ_CPF_Not_Found" errorCode="BYX400" camunda:errorMessage="errorCode" />
+  <bpmn:error id="Error_1irgl60" name="BYX400" camunda:errorMessage="NotFound" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WIP_nexaiq_cadastro_pj">
+      <bpmndi:BPMNShape id="BPMNShape_19bptxw" bpmnElement="Consulta_Rest_SCR">
+        <dc:Bounds x="350" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_12cyuf5" bpmnElement="Consulta_NEXAIQ_Cadastro_PJ">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1u5t0bb" bpmnElement="Activity_0zryq8l">
+        <dc:Bounds x="350" y="340" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17hsnc6" bpmnElement="Activity_0dvgyv6">
+        <dc:Bounds x="550" y="340" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_148sul4_di" bpmnElement="Event_1ro1vde">
+        <dc:Bounds x="1002" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_007p5z8_di" bpmnElement="Activity_1dbzgu1" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="881" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ahpms" bpmnElement="Proccess_NEXAIQ_Cadastro_PJ">
+        <dc:Bounds x="740" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wm9tzk_di" bpmnElement="Activity_1kx0520">
+        <dc:Bounds x="220" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0efxef2_di" bpmnElement="Activity_1rabns2">
+        <dc:Bounds x="390" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1se4shn_di" bpmnElement="Event_0mxlsx4">
+        <dc:Bounds x="382" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tt6nva" bpmnElement="Event_065h0ru">
+        <dc:Bounds x="642" y="62" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kzwhlz" bpmnElement="Event_0amczv7">
+        <dc:Bounds x="642" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tre0gv" bpmnElement="Event_1j07qze">
+        <dc:Bounds x="432" y="322" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ydang5" bpmnElement="Event_1v7xz76">
+        <dc:Bounds x="432" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_010vv72_di" bpmnElement="Flow_010vv72">
+        <di:waypoint x="490" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vmvd8k_di" bpmnElement="Flow_1vmvd8k">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="740" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l78spv_di" bpmnElement="Flow_1l78spv">
+        <di:waypoint x="981" y="120" />
+        <di:waypoint x="992" y="120" />
+        <di:waypoint x="992" y="110" />
+        <di:waypoint x="1002" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08xyb7e_di" bpmnElement="Flow_08xyb7e">
+        <di:waypoint x="840" y="120" />
+        <di:waypoint x="881" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mgmwnc_di" bpmnElement="Flow_1mgmwnc">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="220" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gph2j5_di" bpmnElement="Flow_0gph2j5">
+        <di:waypoint x="320" y="120" />
+        <di:waypoint x="390" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
